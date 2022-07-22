@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from typing import Literal
+
+from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
 router = APIRouter(prefix='/ayats')
@@ -27,7 +29,9 @@ class AyatModel(BaseModel):
 
 
 @router.get('/', response_model=list[AyatModelShort])
-def get_ayats_list() -> list[AyatModelShort]:
+def get_ayats_list(
+    filter_param: Literal['not_used_in_daily_content'] = Query(default='', alias='filter')
+) -> list[AyatModelShort]:
     """Получить список аятов.
 
     :return: list[AyatModelShort]
