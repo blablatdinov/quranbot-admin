@@ -1,4 +1,5 @@
 class LimitOffsetByPageParams(object):
+    """Класс, расчитывающий лимит/отступ для SQL запросов по параметрам пагинации."""
 
     _page_num: int
     _page_size: int
@@ -8,6 +9,10 @@ class LimitOffsetByPageParams(object):
         self._page_size = page_size
 
     def calculate(self) -> tuple[int, int]:
+        """Расчитать.
+
+        :return: tuple[int, int]
+        """
         return (
             self._page_size,
             (self._page_num - 1) * self._page_size,

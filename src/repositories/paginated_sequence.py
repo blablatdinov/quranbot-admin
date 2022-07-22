@@ -1,3 +1,4 @@
+
 from asyncpg import Connection
 from pydantic import BaseModel, parse_obj_as
 
@@ -5,6 +6,7 @@ from app_types.stringable import Stringable
 
 
 class PaginatedSequence(object):
+    """Класс, предоставляющий доступ к списку объектов с пагинацией."""
 
     _connection: Connection
     _query: Stringable
@@ -15,6 +17,11 @@ class PaginatedSequence(object):
         self._query = query
         self._model_to_parse = model_to_parse
 
-    async def get(self):
+    async def get(self) -> list[BaseModel]:
+        """Получить.
+
+        :return: BaseModel
+        """
         rows = await self._connection.fetch(str(self._query))
-        return parse_obj_as(list[self._model_to_parse], rows)
+        parse_model_type: type[BaseModel] = self._model_to_parse
+        return parse_obj_as(list[parse_model_type], rows)

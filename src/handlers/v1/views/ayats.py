@@ -3,8 +3,16 @@ from fastapi import APIRouter, Depends, Request
 
 from db import db_connection
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort
-from repositories.ayat import AyatCountQuery, ShortAyatQuery, PaginatedSequenceQuery
-from services.ayats import Count, PaginatedAyatResponse, PaginatedResponse, PaginatedSequence, PrevPage, NextPage
+from repositories.ayat import AyatCountQuery, PaginatedSequenceQuery, ShortAyatQuery
+from services.ayats import (
+    Count,
+    NeighborsPageLinks,
+    NextPage,
+    PaginatedAyatResponse,
+    PaginatedResponse,
+    PaginatedSequence,
+    PrevPage,
+)
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/ayats')
@@ -13,23 +21,32 @@ router = APIRouter(prefix='/ayats')
 @router.get('/', response_model=PaginatedAyatResponse)
 async def get_ayats_list(
     request: Request,
-    db_connenction: Connection = Depends(db_connection),
+    connection: Connection = Depends(db_connection),
     page_num: int = 1,
     page_size: int = 50,
 ) -> PaginatedAyatResponse:
     """Получить список аятов.
 
+    :param request: Request
+    :param connection: Connection
+    :param page_num: int
+    :param page_size: int
     :return: list[AyatModelShort]
     """
-    url = '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path)
+    url = '{0}://{1}:{2}{3}'.format(
+        request.url.scheme,
+        request.url.hostname,
+        request.url.port,
+        request.url.path,
+    )
     count = Count(
-        db_connenction,
+        connection,
         AyatCountQuery(),
     )
     return await PaginatedResponse(
         count,
         PaginatedSequence(
-            db_connenction,
+            connection,
             PaginatedSequenceQuery(
                 ShortAyatQuery(),
                 LimitOffsetByPageParams(page_num, page_size),
@@ -37,13 +54,15 @@ async def get_ayats_list(
             AyatModelShort,
         ),
         PaginatedAyatResponse,
-        PrevPage(page_num, url),
-        NextPage(
-            page_num,
-            page_size,
-            url,
-            count,
-            LimitOffsetByPageParams(page_num, page_size)
+        NeighborsPageLinks(
+            PrevPage(page_num, url),
+            NextPage(
+                page_num,
+                page_size,
+                url,
+                count,
+                LimitOffsetByPageParams(page_num, page_size),
+            ),
         ),
     ).get()
 
