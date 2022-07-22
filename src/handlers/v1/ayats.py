@@ -1,14 +1,14 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+from typing import Optional
+
+from asyncpg import Connection
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, parse_obj_as
+
+from db import db_connection
+from services.ayats import ShortAyatQuery, AyatCountQuery, PaginatedSequenceQuery, Count, PaginatedSequence, \
+    PaginatedResponse, PaginatedAyatResponse, AyatModelShort
 
 router = APIRouter(prefix='/ayats')
-
-
-class AyatModelShort(BaseModel):
-    """Урезанная модель аята."""
-
-    id: int
-    mailing_day: int
 
 
 class AyatModel(BaseModel):
@@ -26,13 +26,35 @@ class AyatModel(BaseModel):
     mailing_day: int
 
 
-@router.get('/', response_model=list[AyatModelShort])
-def get_ayats_list() -> list[AyatModelShort]:
+@router.get('/', response_model=PaginatedAyatResponse)
+async def get_ayats_list(
+    request: Request,
+    db_connenction: Connection = Depends(db_connection),
+    page_num: int = 1,
+    page_size: int = 50,
+) -> PaginatedAyatResponse:
     """Получить список аятов.
 
     :return: list[AyatModelShort]
     """
-    return [AyatModelShort(id=1, mailing_day=1)]
+    return await PaginatedResponse(
+        page_num,
+        page_size,
+        Count(
+            db_connenction,
+            AyatCountQuery(),
+        ),
+        PaginatedSequence(
+            db_connenction,
+            PaginatedSequenceQuery(
+                ShortAyatQuery(),
+                page_num,
+                page_size,
+            ),
+            AyatModelShort,
+        ),
+        '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path)
+    ).get()
 
 
 @router.get('/{ayat_id}', response_model=AyatModel)
