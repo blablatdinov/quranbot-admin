@@ -111,8 +111,6 @@ class PaginatedResponse(object):
         :return: BaseModel
         """
         prev_page, next_page = await self._neighbors_page_links.calculate()
-        print(await self._elements.get())
-        print(self._response_model)
         return self._response_model(  # type: ignore
             count=await self._elements_count.get(),
             next=next_page,
