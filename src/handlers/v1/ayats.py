@@ -30,10 +30,11 @@ class AyatModel(BaseModel):
 
 @router.get('/', response_model=list[AyatModelShort])
 def get_ayats_list(
-    filter_param: Literal['not_used_in_daily_content'] = Query(default='', alias='filter')
+    filter_param: Literal['not_used_in_daily_content'] = Query(default='', alias='filter'),
 ) -> list[AyatModelShort]:
     """Получить список аятов.
 
+    :param filter_param: Literal['not_used_in_daily_content']
     :return: list[AyatModelShort]
     """
     return [AyatModelShort(id=1, mailing_day=1)]
