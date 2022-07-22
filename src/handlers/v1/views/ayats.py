@@ -1,29 +1,18 @@
-from typing import Optional
-
 from asyncpg import Connection
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, parse_obj_as
 
 from db import db_connection
-from services.ayats import ShortAyatQuery, AyatCountQuery, PaginatedSequenceQuery, Count, PaginatedSequence, \
-    PaginatedResponse, PaginatedAyatResponse, AyatModelShort
+from handlers.v1.schemas.ayats import AyatModel, AyatModelShort
+from repositories.ayat import AyatCountQuery, ShortAyatQuery
+from services.ayats import (
+    Count,
+    PaginatedAyatResponse,
+    PaginatedResponse,
+    PaginatedSequence,
+    PaginatedSequenceQuery,
+)
 
 router = APIRouter(prefix='/ayats')
-
-
-class AyatModel(BaseModel):
-    """Модель аята."""
-
-    id: int
-    additional_content: str
-    content: str  # noqa: WPS110
-    arab_text: str
-    trans: str
-    sura_num: int
-    ayat_num: str
-    html: str
-    audio_file: str  # TODO: AudioFileModel
-    mailing_day: int
 
 
 @router.get('/', response_model=PaginatedAyatResponse)
@@ -53,7 +42,8 @@ async def get_ayats_list(
             ),
             AyatModelShort,
         ),
-        '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path)
+        '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path),
+        PaginatedAyatResponse,
     ).get()
 
 
