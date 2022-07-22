@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from handlers.v1.messages import router as messages_router
 from handlers.v1.mailings import router as mailings_router
+from handlers.v1.messages import router as messages_router
 
 router = APIRouter()
 
