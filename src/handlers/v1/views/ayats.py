@@ -3,14 +3,9 @@ from fastapi import APIRouter, Depends, Request
 
 from db import db_connection
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort
-from repositories.ayat import AyatCountQuery, ShortAyatQuery
-from services.ayats import (
-    Count,
-    PaginatedAyatResponse,
-    PaginatedResponse,
-    PaginatedSequence,
-    PaginatedSequenceQuery,
-)
+from repositories.ayat import AyatCountQuery, ShortAyatQuery, PaginatedSequenceQuery
+from services.ayats import Count, PaginatedAyatResponse, PaginatedResponse, PaginatedSequence, PrevPage, NextPage
+from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/ayats')
 
@@ -26,24 +21,30 @@ async def get_ayats_list(
 
     :return: list[AyatModelShort]
     """
+    url = '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path)
+    count = Count(
+        db_connenction,
+        AyatCountQuery(),
+    )
     return await PaginatedResponse(
-        page_num,
-        page_size,
-        Count(
-            db_connenction,
-            AyatCountQuery(),
-        ),
+        count,
         PaginatedSequence(
             db_connenction,
             PaginatedSequenceQuery(
                 ShortAyatQuery(),
-                page_num,
-                page_size,
+                LimitOffsetByPageParams(page_num, page_size),
             ),
             AyatModelShort,
         ),
-        '{0}://{1}:{2}{3}'.format(request.url.scheme, request.url.hostname, request.url.port, request.url.path),
         PaginatedAyatResponse,
+        PrevPage(page_num, url),
+        NextPage(
+            page_num,
+            page_size,
+            url,
+            count,
+            LimitOffsetByPageParams(page_num, page_size)
+        ),
     ).get()
 
 

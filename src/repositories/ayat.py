@@ -1,10 +1,12 @@
 from asyncpg import Connection
-from pydantic import BaseModel, parse_obj_as
+from pydantic import BaseModel
 
 from app_types.stringable import Stringable
+from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
 class ShortAyatQuery(Stringable):
+    """Запрос для получению урезанного списка аятов."""
 
     _value = """
         SELECT 
@@ -16,23 +18,34 @@ class ShortAyatQuery(Stringable):
     """
 
     def __str__(self):
+        """Строковое представление.
+
+        :return: str
+        """
         return self._value
 
 
 class AyatCountQuery(Stringable):
+    """Запрос для получению кол-ва аятов."""
 
     _value = 'SELECT COUNT(*) FROM content_ayat'
 
     def __str__(self):
+        """Строковое представление.
+
+        :return: str
+        """
         return self._value
 
 
 class CountQueryResult(BaseModel):
+    """Модель для парсинга результата запроса о кол-ве элементов в БД."""
 
     count: int
 
 
 class Count(object):
+    """Класс, осуществляющий запрос на кол-во в БД."""
 
     _connection: Connection
     _query: Stringable
@@ -44,3 +57,21 @@ class Count(object):
     async def get(self):
         row = await self._connection.fetchrow(str(self._query))
         return CountQueryResult.parse_obj(row).count
+
+
+class PaginatedSequenceQuery(Stringable):
+
+    _base_query: Stringable
+    _limit_offset_by_page_params: LimitOffsetByPageParams
+
+    def __init__(
+        self,
+        base_query: Stringable,
+        limit_offset_by_page_params: LimitOffsetByPageParams,
+    ):
+        self._base_query = base_query
+        self._limit_offset_by_page_params = limit_offset_by_page_params
+
+    def __str__(self):
+        limit, offset = self._limit_offset_by_page_params.calculate()
+        return '{0}\n LIMIT {1} OFFSET {2}'.format(self._base_query, limit, offset)
