@@ -1,18 +1,10 @@
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 
 from db import db_connection
-from handlers.v1.schemas.ayats import AyatModel, AyatModelShort
+from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
 from repositories.ayat import AyatCountQuery, PaginatedSequenceQuery, ShortAyatQuery
-from services.ayats import (
-    Count,
-    NeighborsPageLinks,
-    NextPage,
-    PaginatedAyatResponse,
-    PaginatedResponse,
-    PaginatedSequence,
-    PrevPage,
-)
+from services.ayats import Count, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/ayats')
@@ -22,7 +14,7 @@ router = APIRouter(prefix='/ayats')
 async def get_ayats_list(
     request: Request,
     connection: Connection = Depends(db_connection),
-    page_num: int = 1,
+    page_num: int = Query(default=1, ge=1),
     page_size: int = 50,
 ) -> PaginatedAyatResponse:
     """Получить список аятов.

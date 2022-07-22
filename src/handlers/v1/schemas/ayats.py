@@ -23,3 +23,12 @@ class AyatModelShort(BaseModel):
 
     id: int
     mailing_day: Optional[int]
+
+
+class PaginatedAyatResponse(BaseModel):
+    """Модель ответа списка аятов с пагинацией."""
+
+    count: int
+    next: Optional[str]
+    prev: Optional[str]
+    results: list[AyatModelShort]  # noqa: WPS110 api schema field name

@@ -2,21 +2,11 @@ from typing import Optional, TypeVar
 
 from pydantic import BaseModel
 
-from handlers.v1.schemas.ayats import AyatModelShort
 from repositories.ayat import Count
 from repositories.paginated_sequence import PaginatedSequence
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
-
-
-class PaginatedAyatResponse(BaseModel):
-    """Модель ответа списка аятов с пагинацией."""
-
-    count: int
-    next: Optional[str]
-    prev: Optional[str]
-    results: list[AyatModelShort]  # noqa: WPS110 api schema field name
 
 
 class NextPage(object):
@@ -100,7 +90,7 @@ class PaginatedResponse(object):
 
     _elements_count: Count
     _elements: PaginatedSequence
-    _response_model: type[PydanticModel]
+    _response_model: type[PydanticModel]  # type: ignore
     _neighbors_page_links: NeighborsPageLinks
 
     def __init__(
@@ -121,7 +111,9 @@ class PaginatedResponse(object):
         :return: BaseModel
         """
         prev_page, next_page = await self._neighbors_page_links.calculate()
-        return self._response_model(  # type ignore
+        print(await self._elements.get())
+        print(self._response_model)
+        return self._response_model(  # type: ignore
             count=await self._elements_count.get(),
             next=next_page,
             prev=prev_page,

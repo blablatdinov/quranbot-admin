@@ -13,7 +13,7 @@ class ShortAyatQuery(Stringable):
             a.id,
             cm.day AS mailing_day
         FROM content_ayat a
-        LEFT JOIN content_morningcontent cm on a.one_day_content_id = cm.id
+        LEFT JOIN content_morningcontent cm ON a.one_day_content_id = cm.id
         ORDER BY a.id
     """
 

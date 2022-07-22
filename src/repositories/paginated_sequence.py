@@ -23,5 +23,4 @@ class PaginatedSequence(object):
         :return: BaseModel
         """
         rows = await self._connection.fetch(str(self._query))
-        parse_model_type: type[BaseModel] = self._model_to_parse
-        return parse_obj_as(list[parse_model_type], rows)
+        return parse_obj_as(list[self._model_to_parse], rows)  # type: ignore
