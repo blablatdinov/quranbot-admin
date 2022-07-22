@@ -1,11 +1,4 @@
-from fastapi.testclient import TestClient
-
-from main import app
-
-client = TestClient(app)
-
-
-def test_get_list():
+def test_get_list(client):
     got = client.get('/api/v1/messages')
 
     assert got.status_code == 200
@@ -32,7 +25,7 @@ def test_get_list():
     }
 
 
-def test_get_message():
+def test_get_message(client):
     got = client.get('/api/v1/messages/34')
 
     assert got.status_code == 200
@@ -45,7 +38,7 @@ def test_get_message():
     }
 
 
-def test_delete_message_from_telegram():
+def test_delete_message_from_telegram(client):
     got = client.delete('/api/v1/messages/34/delete-from-chat')
 
     assert got.status_code == 204
