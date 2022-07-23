@@ -5,17 +5,17 @@ import pytest
 async def ayats(test_db_connection):
     query = """
         INSERT INTO content_sura
-        (id, number, pars_hash, link, child_elements_count)
+        (ayat_id, number, pars_hash, link, child_elements_count)
         VALUES
         (1, 1, 'hash', 'link', 1);
 
         INSERT INTO content_file
-        (id, link_to_file, tg_file_id, name)
+        (ayat_id, link_to_file, tg_file_id, name)
         VALUES
         (1, 'link', 'file_id', 'name');
 
         INSERT INTO content_morningcontent
-        (id, additional_content, day)
+        (ayat_id, additional_content, day)
         VALUES
         (1, 'content', 1);
 
@@ -34,7 +34,7 @@ def test_get_ayats(client):
 
     assert got.status_code == 200
     assert list(got.json().keys()) == ['count', 'next', 'prev', 'results']
-    assert list(payload[0].keys()) == ['id', 'mailing_day']
+    assert list(payload[0].keys()) == ['ayat_id', 'mailing_day']
 
 
 @pytest.mark.slow
@@ -43,7 +43,7 @@ def test_get_ayat_detail(client):
 
     assert got.status_code == 200
     assert list(got.json().keys()) == [
-        'id',
+        'ayat_id',
         'additional_content',
         'content',
         'arab_text',
