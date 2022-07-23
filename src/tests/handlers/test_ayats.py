@@ -37,6 +37,7 @@ def test_get_ayats(client):
     assert list(payload[0].keys()) == ['id', 'mailing_day']
 
 
+@pytest.mark.slow
 def test_get_ayat_detail(client):
     got = client.get('/api/v1/ayats/1')
 
