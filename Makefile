@@ -6,7 +6,7 @@ lint:
 	isort src && flake8 src
 
 test:
-	pytest
+	pytest -m 'not slow'
 
 cov:
-	pytest --cov=src
+	pytest -m 'not slow' --cov=src
