@@ -12,14 +12,14 @@ def test_get_list(client):
         'prev': '/api/v1/messages/?page=0',
         'results': [
             {
-                'id': 1,
+                'ayat_id': 1,
                 'message_id': 1,
                 'message_source': 'from 23343',
                 'sending_date': '1000-01-01T00:00:00',
                 'text': 'Hello...',
             },
             {
-                'id': 2,
+                'ayat_id': 2,
                 'message_id': 10,
                 'message_source': 'Mailing (45)',
                 'sending_date': '1000-01-01T00:00:00',
@@ -35,7 +35,7 @@ def test_get_message(client):
 
     assert got.status_code == 200
     assert got.json() == {
-        'id': 34,
+        'ayat_id': 34,
         'message_id': 1,
         'message_source': 'from 23343',
         'sending_date': '1000-01-01T00:00:00',
