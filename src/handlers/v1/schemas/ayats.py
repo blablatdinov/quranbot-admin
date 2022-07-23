@@ -3,6 +3,13 @@ from typing import Optional
 from pydantic.main import BaseModel
 
 
+class File(BaseModel):
+    id: int
+    link: str
+    file_id: str
+    name: str
+
+
 class AyatModel(BaseModel):
     """Модель аята."""
 
@@ -14,7 +21,7 @@ class AyatModel(BaseModel):
     sura_num: int
     ayat_num: str
     html: str
-    audio_file: str  # TODO: AudioFileModel
+    audio_file: File
     mailing_day: int
 
 
