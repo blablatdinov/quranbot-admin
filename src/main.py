@@ -2,7 +2,6 @@ import time
 from typing import Callable
 
 import uvicorn
-from asyncpg import Connection
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
 
@@ -40,7 +39,7 @@ async def db_queries_count_middleware(request: Request, call_next: Callable):
     """
     connection = db_connection()
     request.state.connection = QueriesCountConnection(
-        await connection.__anext__()
+        await connection.__anext__(),  # noqa: WPS609
     )
     response = await call_next(request)
     response.headers['X-Queries-Count'] = str(request.state.connection.queries_count)
