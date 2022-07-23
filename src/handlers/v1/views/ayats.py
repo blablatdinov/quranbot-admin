@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Request
 
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import AyatCountQuery, PaginatedSequenceQuery, ShortAyatQuery, Ayat, AyatDetailQuery
+from repositories.ayat import Ayat, AyatCountQuery, AyatDetailQuery, PaginatedSequenceQuery, ShortAyatQuery
 from services.ayats import Count, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 

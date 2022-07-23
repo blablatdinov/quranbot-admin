@@ -1,8 +1,10 @@
 from asyncpg import Connection
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 
 from app_types.stringable import Stringable
-from handlers.v1.schemas.ayats import AyatModel, File
+from handlers.v1.schemas.ayats import AyatModel, FileModel
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
@@ -40,24 +42,28 @@ class AyatCountQuery(Stringable):
 
 
 class AyatDetailQuery(Stringable):
+    """Запрос для получения детальной инфы по аяту."""
 
     _sql_query = """
             SELECT
                 a.id,
                 a.additional_content,
-                s.number as sura_num,
-                s.link as sura_link,
                 a.ayat as ayat_num,
                 a.arab_text,
                 a.content,
                 a.trans,
                 a.audio_id,
                 a.html,
+
+                s.number as sura_num,
+                s.link as sura_link,
+
                 mc.day as mailing_day,
+
+                cf.id as file_id,
                 cf.tg_file_id as tg_file_id,
                 cf.link_to_file as link,
-                cf.name,
-                cf.id as file_id
+                cf.name
             FROM content_ayat a
             INNER JOIN content_sura s on a.sura_id = s.id
             INNER JOIN content_morningcontent mc on mc.id = a.one_day_content_id
@@ -80,6 +86,7 @@ class CountQueryResult(BaseModel):
 
 
 class Ayat(object):
+    """Класс, представляющий аят."""
 
     _ayat: AyatModel
 
@@ -87,13 +94,27 @@ class Ayat(object):
         self._ayat = ayat
 
     def to_pydantic(self):
+        """Преобразовать в pydantic объект.
+
+        :return: AyatModel
+        """
         return self._ayat
 
     @classmethod
-    async def from_id(cls, connection: Connection, id: int, ayat_detail_query: Stringable):
-        ayat_row = await connection.fetchrow(str(ayat_detail_query), id)
+    async def from_id(cls, connection: Connection, ayat_id: int, ayat_detail_query: Stringable):
+        """Достать из БД по идентификатору.
+
+        :param connection: Connection
+        :param ayat_id: int
+        :param ayat_detail_query: Stringable
+        :return: Ayat
+        :raises HTTPException: if not found
+        """
+        ayat_row = await connection.fetchrow(str(ayat_detail_query), ayat_id)
+        if not ayat_row:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
         ayat_row = dict(ayat_row)
-        file = File(
+        file_model = FileModel(
             id=ayat_row.pop('file_id'),
             name=ayat_row.pop('name'),
             telegram_file_id=ayat_row.pop('tg_file_id'),
@@ -101,7 +122,7 @@ class Ayat(object):
         )
         return cls(AyatModel(
             **ayat_row,
-            audio_file=file,
+            audio_file=file_model,
         ))
 
 
