@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Any, Union
+from typing import Union
 
 from loguru import logger
 
@@ -8,8 +8,8 @@ from settings import settings
 
 
 class InterceptHandler(logging.Handler):
-    """
-    Default handler from examples in loguru documentation.
+    """Default handler from examples in loguru documentation.
+
     This handler intercepts all log requests and
     passes them to loguru.
     For more info see:
@@ -17,8 +17,8 @@ class InterceptHandler(logging.Handler):
     """
 
     def emit(self, record: logging.LogRecord) -> None:
-        """
-        Propagates logs to loguru.
+        """Propagates logs to loguru.
+
         :param record: record to log.
         """
         try:
@@ -39,19 +39,19 @@ class InterceptHandler(logging.Handler):
 
 
 def configure_logging() -> None:
-    """Configures logging."""
+    """Конфигурация логера."""
     loggers = (
         logging.getLogger(name)
         for name in logging.root.manager.loggerDict
-        if name.startswith("uvicorn.")
+        if name.startswith('uvicorn.')
     )
     for uvicorn_logger in loggers:
         uvicorn_logger.handlers = []
 
     # change handler for default uvicorn logger
     intercept_handler = InterceptHandler()
-    logging.getLogger("uvicorn").handlers = [intercept_handler]
-    logging.getLogger("uvicorn.access").handlers = [intercept_handler]
+    logging.getLogger('uvicorn').handlers = [intercept_handler]
+    logging.getLogger('uvicorn.access').handlers = [intercept_handler]
 
     # set logs output, level and format
     logger.remove()

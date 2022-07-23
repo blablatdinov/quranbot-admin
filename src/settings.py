@@ -7,12 +7,12 @@ from pydantic import BaseSettings
 class LogLevel(str, enum.Enum):  # noqa: WPS600
     """Possible log levels."""
 
-    NOTSET = "NOTSET"
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    FATAL = "FATAL"
+    NOTSET = 'NOTSET'
+    DEBUG = 'DEBUG'
+    INFO = 'INFO'  # noqa: WPS110
+    WARNING = 'WARNING'
+    ERROR = 'ERROR'
+    FATAL = 'FATAL'
 
 
 class Settings(BaseSettings):
