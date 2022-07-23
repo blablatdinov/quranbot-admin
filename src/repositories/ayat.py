@@ -39,6 +39,40 @@ class AyatCountQuery(Stringable):
         return self._sql_query
 
 
+class AyatDetailQuery(Stringable):
+
+    _sql_query = """
+            SELECT
+                a.id,
+                a.additional_content,
+                s.number as sura_num,
+                s.link as sura_link,
+                a.ayat as ayat_num,
+                a.arab_text,
+                a.content,
+                a.trans,
+                a.audio_id,
+                a.html,
+                mc.day as mailing_day,
+                cf.tg_file_id as tg_file_id,
+                cf.link_to_file as link,
+                cf.name,
+                cf.id as file_id
+            FROM content_ayat a
+            INNER JOIN content_sura s on a.sura_id = s.id
+            INNER JOIN content_morningcontent mc on mc.id = a.one_day_content_id
+            INNER JOIN content_file cf on a.audio_id = cf.id
+            WHERE a.id = $1
+    """
+
+    def __str__(self):
+        """Строковое представление.
+
+        :return: str
+        """
+        return self._sql_query
+
+
 class CountQueryResult(BaseModel):
     """Модель для парсинга результата запроса о кол-ве элементов в БД."""
 
@@ -56,50 +90,18 @@ class Ayat(object):
         return self._ayat
 
     @classmethod
-    async def from_id(cls, connection: Connection, id: int):
-        get_ayat_query = """
-            SELECT
-                a.id,
-                a.additional_content,
-                s.number as sura_num,
-                s.link as sura_link,
-                a.ayat as ayat_num,
-                a.arab_text,
-                a.content,
-                a.trans,
-                a.audio_id,
-                mc.day
-                --cf.tg_file_id as audio_telegram_id,
-                --cf.link_to_file as link_to_audio_file
-            FROM content_ayat a
-            INNER JOIN content_sura s on a.sura_id = s.id
-            INNER JOIN content_morningcontent mc on mc.id = a.one_day_content_id
-            --INNER JOIN content_file cf on a.audio_id = cf.id
-            WHERE a.id = $1
-        """
-        ayat_row = await connection.fetchrow(get_ayat_query, id)
-        get_file_query = """
-            SELECT
-                cf.id,
-                cf.name,
-                cf.tg_file_id as audio_telegram_id,
-                cf.link_to_file as link_to_audio_file
-            FROM content_file cf
-            WHERE cf.id = $1
-        """
-        audio_file_row = await connection.fetchrow(get_file_query, id)
-        file = File.parse_obj(audio_file_row)
-        return super().__init__(AyatModel(
-            id=ayat_row.id,
-            additional_content=ayat_row.additional_content,
-            content=ayat_row.content,
-            arab_text=ayat_row.arab_text,
-            trans=ayat_row.trans,
-            sura_num=ayat_row.sura_num,
-            ayat_num=ayat_row.ayat_num,
-            html=ayat_row.html,
+    async def from_id(cls, connection: Connection, id: int, ayat_detail_query: Stringable):
+        ayat_row = await connection.fetchrow(str(ayat_detail_query), id)
+        ayat_row = dict(ayat_row)
+        file = File(
+            id=ayat_row.pop('file_id'),
+            name=ayat_row.pop('name'),
+            telegram_file_id=ayat_row.pop('tg_file_id'),
+            link=ayat_row.pop('link'),
+        )
+        return cls(AyatModel(
+            **ayat_row,
             audio_file=file,
-            mailing_day=ayat_row.day,
         ))
 
 

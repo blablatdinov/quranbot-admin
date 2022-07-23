@@ -6,8 +6,8 @@ from pydantic.main import BaseModel
 class File(BaseModel):
     id: int
     link: str
-    file_id: str
-    name: str
+    telegram_file_id: str
+    name: Optional[str]
 
 
 class AyatModel(BaseModel):

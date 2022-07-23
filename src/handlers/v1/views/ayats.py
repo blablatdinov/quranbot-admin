@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Request
 
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import AyatCountQuery, PaginatedSequenceQuery, ShortAyatQuery, Ayat
+from repositories.ayat import AyatCountQuery, PaginatedSequenceQuery, ShortAyatQuery, Ayat, AyatDetailQuery
 from services.ayats import Count, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
@@ -59,8 +59,9 @@ async def get_ayats_list(
 async def get_ayat_detail(request: Request, ayat_id: int) -> AyatModel:
     """Получить детальную инфу по аяту.
 
+    :param request: Request
     :param ayat_id: int
     :return: AyatModel
     """
-    ayat = await Ayat.from_id(request.state.connection, ayat_id)
+    ayat = await Ayat.from_id(request.state.connection, ayat_id, AyatDetailQuery())
     return ayat.to_pydantic()
