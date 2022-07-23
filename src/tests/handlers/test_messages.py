@@ -1,3 +1,7 @@
+import pytest
+
+
+@pytest.mark.slow
 def test_get_list(client):
     got = client.get('/api/v1/messages')
 
@@ -25,6 +29,7 @@ def test_get_list(client):
     }
 
 
+@pytest.mark.slow
 def test_get_message(client):
     got = client.get('/api/v1/messages/34')
 
@@ -38,6 +43,7 @@ def test_get_message(client):
     }
 
 
+@pytest.mark.slow
 def test_delete_message_from_telegram(client):
     got = client.delete('/api/v1/messages/34/delete-from-chat')
 
