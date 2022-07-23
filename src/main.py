@@ -7,6 +7,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 from db import QueriesCountConnection, db_connection
 from handlers.registration_handlers import router
+from logging_settings import configure_logging
 from settings import settings
 
 app = FastAPI()
@@ -48,6 +49,7 @@ async def db_queries_count_middleware(request: Request, call_next: Callable):
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+configure_logging()
 
 if __name__ == '__main__':
     uvicorn.run('main:app', reload=True, port=settings.PORT)
