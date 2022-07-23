@@ -3,11 +3,11 @@ from typing import Literal
 
 from fastapi import APIRouter, Query, Request, status
 
-from handlers.v1.schemas.messages import PaginatedMessagesResponse, Message
+from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
 from repositories.ayat import Count, PaginatedSequenceQuery
-from repositories.messages import MessagesCountQuery, ShortMessageQuery
+from repositories.messages import MessagesCountQuery, MessagesSqlFilter, ShortMessageQuery
 from repositories.paginated_sequence import PaginatedSequence
-from services.ayats import NeighborsPageLinks, PrevPage, NextPage, PaginatedResponse
+from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/messages')
@@ -24,7 +24,8 @@ async def get_messages_list(
 
     :param request: Request
     :param filter_param: str
-    :param page: int
+    :param page_num: int
+    :param page_size: int
     :return: PaginatedResponse
     """
     url = '{0}://{1}:{2}{3}'.format(
@@ -35,14 +36,18 @@ async def get_messages_list(
     )
     count = Count(
         request.state.connection,
-        MessagesCountQuery(),
+        MessagesCountQuery(
+            MessagesSqlFilter(filter_param),
+        ),
     )
     return await PaginatedResponse(
         count,
         PaginatedSequence(
             request.state.connection,
             PaginatedSequenceQuery(
-                ShortMessageQuery(),
+                ShortMessageQuery(
+                    MessagesSqlFilter(filter_param),
+                ),
                 LimitOffsetByPageParams(page_num, page_size),
             ),
             Message,
