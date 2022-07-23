@@ -49,7 +49,7 @@ test = ["astroid", "pytest"]
 name = "asyncpg"
 version = "0.25.0"
 description = "An asyncio PostgreSQL driver"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.0"
 
@@ -213,7 +213,7 @@ python-versions = "*"
 
 [[package]]
 name = "faker"
-version = "13.15.0"
+version = "13.15.1"
 description = "Faker is a Python package that generates fake data for you."
 category = "dev"
 optional = false
@@ -1037,7 +1037,7 @@ typing_extensions = ">=3.6,<5.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "12aa97e6e1896c69d884d19b38246e4fb7c256879bb2c5c10a7b24f67d2c54c8"
+content-hash = "128ef0a62198d0dd81abfc4c1fcae9fa18884a4f6ca4b93dbba0bf28cc0090b4"
 
 [metadata.files]
 anyio = [
