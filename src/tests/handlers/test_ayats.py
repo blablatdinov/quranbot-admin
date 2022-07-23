@@ -27,7 +27,8 @@ async def ayats(test_db_connection):
     await test_db_connection.execute(query)
 
 
-def test_get_ayats(client, db, ayats):
+@pytest.mark.slow
+def test_get_ayats(client):
     got = client.get('/api/v1/ayats')
     payload = got.json()['results']
 
@@ -36,7 +37,7 @@ def test_get_ayats(client, db, ayats):
     assert list(payload[0].keys()) == ['id', 'mailing_day']
 
 
-def test_get_ayat_detail(client, db, ayats):
+def test_get_ayat_detail(client):
     got = client.get('/api/v1/ayats/1')
 
     assert got.status_code == 200

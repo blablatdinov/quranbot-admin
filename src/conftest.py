@@ -17,7 +17,8 @@ async def create_db():  # noqa: WPS217
     base_connection = await asyncpg.connect(settings.DATABASE_URL)
     await base_connection.execute('DROP DATABASE IF EXISTS qbot_test')
     await base_connection.execute('CREATE DATABASE qbot_test')
-    connection = await asyncpg.connect(settings.DATABASE_URL.replace('qbot', 'qbot_test'))
+    await base_connection.execute('GRANT ALL PRIVILEGES ON DATABASE qbot_test TO qbot')
+    connection = await asyncpg.connect(settings.DATABASE_URL.replace('qbot_db', 'qbot_test'))
     with open(settings.BASE_DIR / 'tests/fixtures/db_schema.sql', 'r') as sql_schema_file:
         await connection.execute(sql_schema_file.read())
         yield connection
