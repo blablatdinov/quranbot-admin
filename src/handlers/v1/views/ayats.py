@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Query, Request, Depends
 
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import Ayat, AyatCountQuery, AyatDetailQuery, PaginatedSequenceQuery, ShortAyatQuery
-from services.ayats import Count, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
+from pypika import Query as SqlQuery, Table
+from pypika.functions import Count
+from repositories.ayat import Ayat, AyatDetailQuery
+from services.ayats import ElementsCount, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/ayats')
@@ -13,6 +15,8 @@ async def get_ayats_list(
     request: Request,
     page_num: int = Query(default=1, ge=1),
     page_size: int = 50,
+    elements_count: ElementsCount = Depends(),
+    paginated_sequence: PaginatedSequence = Depends()
 ) -> PaginatedAyatResponse:
     """Получить список аятов.
 
@@ -21,33 +25,35 @@ async def get_ayats_list(
     :param page_size: int
     :return: list[AyatModelShort]
     """
-    url = '{0}://{1}:{2}{3}'.format(
-        request.url.scheme,
-        request.url.hostname,
-        request.url.port,
-        request.url.path,
+    ayats_table = Table('content_ayat')
+    count = elements_count.update_query(
+        str(SqlQuery().from_(ayats_table).select(Count('*'))),
     )
-    count = Count(
-        request.state.connection,
-        AyatCountQuery(),
-    )
+    morning_content_table = Table('content_morningcontent')
+    limit, offset = LimitOffsetByPageParams(page_num, page_size).calculate()
     return await PaginatedResponse(
         count,
-        PaginatedSequence(
-            request.state.connection,
-            PaginatedSequenceQuery(
-                ShortAyatQuery(),
-                LimitOffsetByPageParams(page_num, page_size),
-            ),
-            AyatModelShort,
+        (
+            paginated_sequence
+            .update_query(str(
+                SqlQuery()
+                .from_(ayats_table)
+                .select(ayats_table.id, morning_content_table.day)
+                .left_join(morning_content_table)
+                .on(ayats_table.one_day_content_id == morning_content_table.id)
+                .orderby(ayats_table.id)
+                .limit(limit)
+                .offset(offset)
+            ))
+            .update_model_to_parse(AyatModelShort)
         ),
         PaginatedAyatResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, url),
+            PrevPage(page_num, request.url),
             NextPage(
                 page_num,
                 page_size,
-                url,
+                request.url,
                 count,
                 LimitOffsetByPageParams(page_num, page_size),
             ),

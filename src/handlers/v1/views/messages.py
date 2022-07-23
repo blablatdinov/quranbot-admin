@@ -2,10 +2,12 @@ import datetime
 from typing import Literal
 
 from fastapi import APIRouter, Query, Request, status
+from pypika import Query as SqlQuery
+from pypika.functions import Count
 
 from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
-from repositories.ayat import Count, PaginatedSequenceQuery
-from repositories.messages import MessagesCountQuery, MessagesSqlFilter, ShortMessageQuery
+from repositories.ayat import ElementsCount
+from repositories.messages import MessagesSqlFilter, ShortMessageQuery
 from repositories.paginated_sequence import PaginatedSequence
 from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
@@ -34,11 +36,9 @@ async def get_messages_list(
         request.url.port,
         request.url.path,
     )
-    count = Count(
+    count = ElementsCount(
+        SqlQuery().from_('bot_init_message').select(Count('*')),
         request.state.connection,
-        MessagesCountQuery(
-            MessagesSqlFilter(filter_param),
-        ),
     )
     return await PaginatedResponse(
         count,
