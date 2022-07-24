@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_create(client):
     got = client.post('/api/v1/daily-content/', json={
         'day_num': 1,

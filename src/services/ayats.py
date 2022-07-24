@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from starlette.requests import URL
 
 from repositories.ayat import ElementsCountInterface
-from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
+from repositories.paginated_sequence import PaginatedSequenceInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
@@ -47,7 +47,7 @@ class NextPage(object):
             self._url.hostname,
             self._url.port,
             self._url.path,
-            self._page_num + 1
+            self._page_num + 1,
         )
 
 
@@ -73,7 +73,7 @@ class PrevPage(object):
             self._url.hostname,
             self._url.port,
             self._url.path,
-            self._page_num - 1
+            self._page_num - 1,
         )
 
 
@@ -124,9 +124,6 @@ class PaginatedResponse(object):
         :return: BaseModel
         """
         prev_page, next_page = await self._neighbors_page_links.calculate()
-        elements = await self._elements.get()
-        # print(type(elements))
-        print(elements[0])
         return self._response_model(  # type: ignore
             count=await self._elements_count.get(),
             next=next_page,

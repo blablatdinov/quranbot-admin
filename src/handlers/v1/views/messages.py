@@ -1,8 +1,9 @@
 import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Query, Request, status, Depends
-from pypika import Query as SqlQuery, Table
+from fastapi import APIRouter, Depends, Query, Request, status
+from pypika import Query as SqlQuery
+from pypika import Table
 from pypika.functions import Count
 
 from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
@@ -21,7 +22,7 @@ async def get_messages_list(
     page_num: int = 1,
     page_size: int = 50,
     elements_count: ElementsCount = Depends(),
-    paginated_sequence: PaginatedSequence = Depends()
+    paginated_sequence: PaginatedSequence = Depends(),
 ) -> PaginatedMessagesResponse:
     """Получить сообщения.
 
@@ -29,6 +30,8 @@ async def get_messages_list(
     :param filter_param: str
     :param page_num: int
     :param page_size: int
+    :param elements_count: ElementsCount
+    :param paginated_sequence: PaginatedSequence
     :return: PaginatedResponse
     """
     messages_table = Table('bot_init_message')
@@ -48,7 +51,13 @@ async def get_messages_list(
         query.where(messages_table.mailing_id.isnull())
     elif filter_param == 'unknown':
         query.where(messages_table.is_unknown is True)
-    count = elements_count.update_query(str(SqlQuery().from_(messages_table).select(Count('*'))))
+    count = elements_count.update_query(
+        str(
+            SqlQuery()
+            .from_(messages_table)
+            .select(Count('*')),
+        ),
+    )
     return await PaginatedResponse(
         count,
         paginated_sequence.update_query(query).update_model_to_parse(Message),

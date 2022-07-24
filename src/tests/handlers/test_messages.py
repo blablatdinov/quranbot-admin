@@ -1,7 +1,5 @@
 import datetime
 
-import pytest
-
 from handlers.v1.schemas.messages import Message
 from main import app
 from repositories.ayat import ElementsCount
@@ -35,10 +33,17 @@ app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
 
 def test_get_list(client):
     got = client.get('/api/v1/messages')
+    payload = got.json()['results']
 
     assert got.status_code == 200
     assert list(got.json().keys()) == ['count', 'next', 'prev', 'results']
-    assert list(got.json()['results'][0].keys()) == ['id', 'message_source', 'sending_date', 'message_id', 'text']
+    assert list(payload[0].keys()) == [
+        'id',
+        'message_source',
+        'sending_date',
+        'message_id',
+        'text',
+    ]
 
 
 def test_get_message(client):

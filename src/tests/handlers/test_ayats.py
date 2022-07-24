@@ -1,6 +1,6 @@
-from handlers.v1.schemas.ayats import AyatModelShort, AyatModel, FileModel
+from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, FileModel
 from main import app
-from repositories.ayat import ElementsCount, ElementsCountInterface, AyatRepositoryInterface, AyatRepository
+from repositories.ayat import AyatRepository, AyatRepositoryInterface, ElementsCount, ElementsCountInterface
 from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
 
 
@@ -41,7 +41,7 @@ class AyatRepositoryMock(AyatRepositoryInterface):
                 id=1,
                 link='',
                 telegram_file_id='',
-                name=None
+                name=None,
             ),
             mailing_day=1,
         )

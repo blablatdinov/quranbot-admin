@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_get_mailings(client):
     got = client.get('/api/v1/mailings')
 
