@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Query, Request, Depends
-
-from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from pypika import Query as SqlQuery, Table
+from asyncpg import Connection
+from fastapi import APIRouter, Depends, Query, Request
+from pypika import Parameter
+from pypika import Query as SqlQuery
+from pypika import Table
 from pypika.functions import Count
-from repositories.ayat import Ayat, AyatDetailQuery
-from services.ayats import ElementsCount, NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
+
+from db import db_connection
+from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
+from repositories.ayat import AyatRepository, ElementsCount
+from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PaginatedSequence, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 router = APIRouter(prefix='/ayats')
@@ -61,13 +65,15 @@ async def get_ayats_list(
     ).get()
 
 
-@router.get('/{ayat_id}', response_model=AyatModel)
-async def get_ayat_detail(request: Request, ayat_id: int) -> AyatModel:
+@router.get('/{ayat_id}/', response_model=AyatModel)
+async def get_ayat_detail(
+    ayat_id: int,
+    ayat_repository: AyatRepository = Depends(),
+) -> AyatModel:
     """Получить детальную инфу по аяту.
 
     :param request: Request
     :param ayat_id: int
     :return: AyatModel
     """
-    ayat = await Ayat.from_id(request.state.connection, ayat_id, AyatDetailQuery())
-    return ayat.to_pydantic()
+    return await ayat_repository.get_ayat_detail(ayat_id)

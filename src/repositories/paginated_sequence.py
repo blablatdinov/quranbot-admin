@@ -1,6 +1,6 @@
 from asyncpg import Connection
-from pydantic import BaseModel, parse_obj_as
 from fastapi import Depends
+from pydantic import BaseModel, parse_obj_as
 
 from app_types.stringable import Stringable
 from db import db_connection
