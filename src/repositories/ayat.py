@@ -1,6 +1,7 @@
 from asyncpg import Connection
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
+from pydantic.main import BaseModel
 from pypika import Parameter
 from pypika import Query as SqlQuery
 from pypika import Table
@@ -78,6 +79,12 @@ class ElementsCountInterface(object):
         :return: int
         """
         raise NotImplementedError
+
+
+class CountQueryResult(BaseModel):
+    """Модель для парсинга результата запроса о кол-ве элементов в БД."""
+
+    count: int
 
 
 class ElementsCount(ElementsCountInterface):

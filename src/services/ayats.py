@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from starlette.requests import URL
 
 from repositories.ayat import ElementsCountInterface
-from repositories.paginated_sequence import PaginatedSequence
+from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
@@ -102,14 +102,14 @@ class PaginatedResponse(object):
     """Класс, представляющий ответ с пагинацией."""
 
     _elements_count: ElementsCountInterface
-    _elements: PaginatedSequence
+    _elements: PaginatedSequenceInterface
     _response_model: type[PydanticModel]  # type: ignore
     _neighbors_page_links: NeighborsPageLinks
 
     def __init__(
         self,
         elements_count: ElementsCountInterface,
-        elements: PaginatedSequence,
+        elements: PaginatedSequenceInterface,
         response_model: type[PydanticModel],
         neighbors_page_links: NeighborsPageLinks,
     ):
