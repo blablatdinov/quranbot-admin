@@ -1,9 +1,10 @@
 from typing import Optional, TypeVar
 
 from pydantic import BaseModel
+from starlette.requests import URL
 
-from repositories.ayat import Count
-from repositories.paginated_sequence import PaginatedSequence
+from repositories.ayat import ElementsCountInterface
+from repositories.paginated_sequence import PaginatedSequenceInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
@@ -14,16 +15,16 @@ class NextPage(object):
 
     _page_num: int
     _page_size: int
-    _url: str
-    _elements_count: Count
+    _url: URL
+    _elements_count: ElementsCountInterface
     _limit_offset_by_page_params: LimitOffsetByPageParams
 
     def __init__(  # noqa: WPS211
         self,
         page_num: int,
         page_size: int,
-        url: str,
-        elements_count: Count,
+        url: URL,
+        elements_count: ElementsCountInterface,
         limit_offset_by_page_params: LimitOffsetByPageParams,
     ):
         self._page_num = page_num
@@ -41,16 +42,22 @@ class NextPage(object):
         _, offset = self._limit_offset_by_page_params.calculate()
         if offset + self._page_size > elements_count:
             return None
-        return '{0}?page_num={1}'.format(self._url, self._page_num + 1)
+        return '{0}://{1}:{2}{3}?page_num={4}'.format(
+            self._url.scheme,
+            self._url.hostname,
+            self._url.port,
+            self._url.path,
+            self._page_num + 1,
+        )
 
 
 class PrevPage(object):
     """Класс умеющий расчитывать ссылку на пред. страницу."""
 
     _page_num: int
-    _url: str
+    _url: URL
 
-    def __init__(self, page_num: int, url: str):
+    def __init__(self, page_num: int, url: URL):
         self._page_num = page_num
         self._url = url
 
@@ -61,7 +68,13 @@ class PrevPage(object):
         """
         if self._page_num == 1:
             return None
-        return '{0}?page_num={1}'.format(self._url, self._page_num - 1)
+        return '{0}://{1}:{2}{3}?page_num={4}'.format(
+            self._url.scheme,
+            self._url.hostname,
+            self._url.port,
+            self._url.path,
+            self._page_num - 1,
+        )
 
 
 class NeighborsPageLinks(object):
@@ -88,15 +101,15 @@ class NeighborsPageLinks(object):
 class PaginatedResponse(object):
     """Класс, представляющий ответ с пагинацией."""
 
-    _elements_count: Count
-    _elements: PaginatedSequence
+    _elements_count: ElementsCountInterface
+    _elements: PaginatedSequenceInterface
     _response_model: type[PydanticModel]  # type: ignore
     _neighbors_page_links: NeighborsPageLinks
 
     def __init__(
         self,
-        elements_count: Count,
-        elements: PaginatedSequence,
+        elements_count: ElementsCountInterface,
+        elements: PaginatedSequenceInterface,
         response_model: type[PydanticModel],
         neighbors_page_links: NeighborsPageLinks,
     ):

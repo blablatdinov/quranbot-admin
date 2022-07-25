@@ -1,41 +1,58 @@
-import pytest
+import datetime
+
+from app_types.query import QueryInterface
+from handlers.v1.schemas.messages import Message
+from main import app
+from repositories.ayat import ElementsCount
+from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
+from tests.handlers.test_ayats import ElementsCountMock
 
 
-@pytest.mark.slow
+class PaginatedSequenceMock(PaginatedSequenceInterface):
+
+    def update_query(self, query: QueryInterface):
+        return self
+
+    def update_model_to_parse(self, model_to_parse):
+        return self
+
+    async def get(self):
+        return [
+            Message(
+                id=1,
+                message_source=123,
+                sending_date=datetime.datetime(2022, 4, 5),
+                message_id=435,
+                text='text',
+            ),
+        ]
+
+
+app.dependency_overrides[ElementsCount] = ElementsCountMock
+app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+
+
 def test_get_list(client):
     got = client.get('/api/v1/messages')
+    payload = got.json()['results']
 
     assert got.status_code == 200
-    assert got.json() == {
-        'count': 2,
-        'next': '/api/v1/messages/?page=2',
-        'prev': '/api/v1/messages/?page=0',
-        'results': [
-            {
-                'ayat_id': 1,
-                'message_id': 1,
-                'message_source': 'from 23343',
-                'sending_date': '1000-01-01T00:00:00',
-                'text': 'Hello...',
-            },
-            {
-                'ayat_id': 2,
-                'message_id': 10,
-                'message_source': 'Mailing (45)',
-                'sending_date': '1000-01-01T00:00:00',
-                'text': 'Bye...',
-            },
-        ],
-    }
+    assert list(got.json().keys()) == ['count', 'next', 'prev', 'results']
+    assert list(payload[0].keys()) == [
+        'id',
+        'message_source',
+        'sending_date',
+        'message_id',
+        'text',
+    ]
 
 
-@pytest.mark.slow
 def test_get_message(client):
     got = client.get('/api/v1/messages/34')
 
     assert got.status_code == 200
     assert got.json() == {
-        'ayat_id': 34,
+        'id': 34,
         'message_id': 1,
         'message_source': 'from 23343',
         'sending_date': '1000-01-01T00:00:00',
@@ -43,7 +60,6 @@ def test_get_message(client):
     }
 
 
-@pytest.mark.slow
 def test_delete_message_from_telegram(client):
     got = client.delete('/api/v1/messages/34/delete-from-chat')
 

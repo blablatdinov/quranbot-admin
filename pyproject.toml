@@ -12,6 +12,7 @@ requests = "^2.28.1"
 asyncpg = "^0.25.0"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 loguru = "^0.6.0"
+PyPika = "^0.48.9"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.16.1"
