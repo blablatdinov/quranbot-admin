@@ -1,6 +1,7 @@
+from starlette.requests import URL
+
 from repositories.ayat import ElementsCountInterface
 from services.ayats import PrevPage
-from starlette.requests import URL
 
 
 class ElementsCountMock(ElementsCountInterface):
@@ -28,7 +29,7 @@ async def test_for_middle_page():
         5,
         1,
         ElementsCountMock(50),
-        URL('http://localhost')
+        URL('http://localhost'),
     ).calculate()
 
     assert 'page_num=4' in got
@@ -40,7 +41,7 @@ async def test_for_out_of_scope_ayat():
         7,
         1,
         ElementsCountMock(3),
-        URL('http://localhost')
+        URL('http://localhost'),
     ).calculate()
 
     assert got is None
@@ -51,7 +52,7 @@ async def test_first_page_out_of_scope():
         4,
         2,
         ElementsCountMock(8),
-        URL('http://localhost')
+        URL('http://localhost'),
     ).calculate()
 
     assert 'page_num=3' in got
