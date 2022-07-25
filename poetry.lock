@@ -585,6 +585,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "nats-py"
+version = "2.1.4"
+description = "NATS client for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+nkeys = ["nkeys"]
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -1071,7 +1082,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "46509f96089146c45d4d8d696f08c6ca851297e276018dbd5f7273533bfcd693"
+content-hash = "043f15dded7d1249b479e9e8a3d8550a0485161581a918d43fc33f4a299b9efe"
 
 [metadata.files]
 anyio = [
@@ -1296,6 +1307,7 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
+nats-py = []
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
     {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
