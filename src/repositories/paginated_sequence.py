@@ -37,7 +37,7 @@ class PaginatedSequence(PaginatedSequenceInterface):
     """Класс, предоставляющий доступ к списку объектов с пагинацией."""
 
     _connection: Connection
-    _query: str
+    _query: QueryInterface
     _model_to_parse: type[BaseModel]
 
     def __init__(self, connection: Connection = Depends(db_connection)):

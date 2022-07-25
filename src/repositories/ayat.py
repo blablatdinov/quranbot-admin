@@ -5,6 +5,7 @@ from pydantic.main import BaseModel
 from pypika import Parameter
 from pypika import Query as SqlQuery
 from pypika import Table
+from pypika.queries import QueryBuilder
 
 from app_types.query import QueryInterface
 from db import db_connection
@@ -55,7 +56,7 @@ class AyatPaginatedQuery(QueryInterface):
         )
 
 
-class AyatDetailQuery(object):
+class AyatDetailQuery(QueryInterface):
     """Запрос для получения детального аята."""
 
     _ayat_table = Table('content_ayat')
@@ -63,7 +64,7 @@ class AyatDetailQuery(object):
     _morning_content_table = Table('content_morningcontent')
     _file_table = Table('content_file')
 
-    def query(self):
+    def query(self) -> QueryBuilder:
         """Возвращает запрос.
 
         :return: str
@@ -95,7 +96,7 @@ class AyatDetailQuery(object):
             .on(self._ayat_table.one_day_content_id == self._morning_content_table.id)
             .inner_join(self._file_table).on(self._ayat_table.audio_id == self._file_table.id)
         )
-        return str(
+        return (
             joins
             .where(self._ayat_table.id == Parameter('$1')),
         )
@@ -122,7 +123,7 @@ class AyatRepository(AyatRepositoryInterface):
         :return: AyatModel
         :raises HTTPException: if ayat not found
         """
-        ayat_row = await self._connection.fetchrow(self._ayat_detail_query.query(), ayat_id)
+        ayat_row = await self._connection.fetchrow(str(self._ayat_detail_query.query()), ayat_id)
         if not ayat_row:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
         ayat_row = dict(ayat_row)

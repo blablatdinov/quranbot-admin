@@ -1,3 +1,4 @@
+from app_types.query import QueryInterface
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, FileModel
 from main import app
 from repositories.ayat import AyatRepository, AyatRepositoryInterface, ElementsCount, ElementsCountInterface
@@ -15,7 +16,7 @@ class ElementsCountMock(ElementsCountInterface):
 
 class PaginatedSequenceMock(PaginatedSequenceInterface):
 
-    def update_query(self, query: str):
+    def update_query(self, query: QueryInterface):
         return self
 
     def update_model_to_parse(self, model_to_parse):

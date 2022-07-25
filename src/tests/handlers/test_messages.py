@@ -1,5 +1,6 @@
 import datetime
 
+from app_types.query import QueryInterface
 from handlers.v1.schemas.messages import Message
 from main import app
 from repositories.ayat import ElementsCount
@@ -9,7 +10,7 @@ from tests.handlers.test_ayats import ElementsCountMock
 
 class PaginatedSequenceMock(PaginatedSequenceInterface):
 
-    def update_query(self, query: str):
+    def update_query(self, query: QueryInterface):
         return self
 
     def update_model_to_parse(self, model_to_parse):

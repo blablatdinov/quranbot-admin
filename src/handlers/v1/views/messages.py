@@ -8,6 +8,7 @@ from pypika.functions import Count
 
 from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
 from repositories.ayat import ElementsCount
+from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
 from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
@@ -35,22 +36,6 @@ async def get_messages_list(
     :return: PaginatedResponse
     """
     messages_table = Table('bot_init_message')
-    query = (
-        SqlQuery()
-        .from_(messages_table)
-        .select(
-            messages_table.id,
-            messages_table.from_user_id.as_('message_source'),
-            messages_table.date.as_('sending_date'),
-            messages_table.message_id,
-            messages_table.text,
-        )
-        .orderby(messages_table.id)
-    )
-    if filter_param == 'without_mailing':
-        query.where(messages_table.mailing_id.isnull())
-    elif filter_param == 'unknown':
-        query.where(messages_table.is_unknown is True)
     count = elements_count.update_query(
         str(
             SqlQuery()
@@ -60,7 +45,19 @@ async def get_messages_list(
     )
     return await PaginatedResponse(
         count,
-        paginated_sequence.update_query(query).update_model_to_parse(Message),
+        (
+            paginated_sequence
+            .update_query(
+                PaginatedMessagesQuery(
+                    FilteredMessageQuery(
+                        MessagesQuery(),
+                        filter_param,
+                    ),
+                    LimitOffsetByPageParams(page_num, page_size),
+                ),
+            )
+            .update_model_to_parse(Message)
+        ),
         PaginatedMessagesResponse,
         NeighborsPageLinks(
             PrevPage(page_num, request.url),
