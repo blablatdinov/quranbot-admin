@@ -55,25 +55,33 @@ class PrevPage(object):
     """Класс умеющий расчитывать ссылку на пред. страницу."""
 
     _page_num: int
+    _page_size: int
     _url: URL
+    _elements_count: ElementsCountInterface
 
-    def __init__(self, page_num: int, url: URL):
+    def __init__(self, page_num: int, page_size: int, elements_count: ElementsCountInterface, url: URL):
         self._page_num = page_num
+        self._page_size = page_size
         self._url = url
+        self._elements_count = elements_count
 
     async def calculate(self) -> Optional[str]:
         """Расчет.
 
         :return: str
         """
+        elements_count = await self._elements_count.get()
+        if elements_count < self._page_num * self._page_size:
+            return None
         if self._page_num == 1:
             return None
-        return '{0}://{1}:{2}{3}?page_num={4}'.format(
+        return '{0}://{1}:{2}{3}?page_num={4}&page_size={5}'.format(
             self._url.scheme,
             self._url.hostname,
             self._url.port,
             self._url.path,
             self._page_num - 1,
+            self._page_size,
         )
 
 
