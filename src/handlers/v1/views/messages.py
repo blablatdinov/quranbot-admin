@@ -1,11 +1,14 @@
 import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
+from pypika import Query as SqlQuery
+from pypika import Table
+from pypika.functions import Count
 
 from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
-from repositories.ayat import Count, PaginatedSequenceQuery
-from repositories.messages import MessagesCountQuery, MessagesSqlFilter, ShortMessageQuery
+from repositories.ayat import ElementsCount
+from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
 from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
@@ -19,6 +22,8 @@ async def get_messages_list(
     filter_param: Literal['without_mailing', 'unknown'] = Query(default='', alias='filter'),
     page_num: int = 1,
     page_size: int = 50,
+    elements_count: ElementsCount = Depends(),
+    paginated_sequence: PaginatedSequence = Depends(),
 ) -> PaginatedMessagesResponse:
     """Получить сообщения.
 
@@ -26,39 +31,40 @@ async def get_messages_list(
     :param filter_param: str
     :param page_num: int
     :param page_size: int
+    :param elements_count: ElementsCount
+    :param paginated_sequence: PaginatedSequence
     :return: PaginatedResponse
     """
-    url = '{0}://{1}:{2}{3}'.format(
-        request.url.scheme,
-        request.url.hostname,
-        request.url.port,
-        request.url.path,
-    )
-    count = Count(
-        request.state.connection,
-        MessagesCountQuery(
-            MessagesSqlFilter(filter_param),
+    messages_table = Table('bot_init_message')
+    count = elements_count.update_query(
+        str(
+            SqlQuery()
+            .from_(messages_table)
+            .select(Count('*')),
         ),
     )
     return await PaginatedResponse(
         count,
-        PaginatedSequence(
-            request.state.connection,
-            PaginatedSequenceQuery(
-                ShortMessageQuery(
-                    MessagesSqlFilter(filter_param),
+        (
+            paginated_sequence
+            .update_query(
+                PaginatedMessagesQuery(
+                    FilteredMessageQuery(
+                        MessagesQuery(),
+                        filter_param,
+                    ),
+                    LimitOffsetByPageParams(page_num, page_size),
                 ),
-                LimitOffsetByPageParams(page_num, page_size),
-            ),
-            Message,
+            )
+            .update_model_to_parse(Message)
         ),
         PaginatedMessagesResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, url),
+            PrevPage(page_num, request.url),
             NextPage(
                 page_num,
                 page_size,
-                url,
+                request.url,
                 count,
                 LimitOffsetByPageParams(page_num, page_size),
             ),
