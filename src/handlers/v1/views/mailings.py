@@ -1,5 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from pydantic import BaseModel
+
+from services.mailing import Mailing
 
 router = APIRouter(prefix='/mailings')
 
@@ -41,10 +43,11 @@ def delete_mailing_from_telegram(mailing_id: int):
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=MailingCreateResponseModel)
-def create_mailing_from_telegram(input_data: MailingCreateModel) -> MailingCreateResponseModel:
+async def create_mailing_from_telegram(input_data: MailingCreateModel, mailing_service: Mailing = Depends()) -> MailingCreateResponseModel:
     """Создание рассылки.
 
     :param input_data: MailingCreateModel
     :return: MailingCreateResponseModel
     """
+    await mailing_service.create(input_data.text)
     return MailingCreateResponseModel(id=1, text=input_data.text)
