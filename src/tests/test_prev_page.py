@@ -32,6 +32,7 @@ async def test_for_middle_page():
         URL('http://localhost'),
     ).calculate()
 
+    assert got is not None
     assert 'page_num=4' in got
     assert 'page_size=1' in got
 
@@ -55,5 +56,6 @@ async def test_first_page_out_of_scope():
         URL('http://localhost'),
     ).calculate()
 
+    assert got is not None
     assert 'page_num=3' in got
     assert 'page_size=2' in got
