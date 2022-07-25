@@ -60,7 +60,7 @@ async def get_messages_list(
         ),
         PaginatedMessagesResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, page_size, elements_count, request.url),
+            PrevPage(page_num, page_size, count, request.url),
             NextPage(
                 page_num,
                 page_size,

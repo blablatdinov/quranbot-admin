@@ -45,7 +45,7 @@ async def get_ayats_list(
         ),
         PaginatedAyatResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, page_size, elements_count, request.url),
+            PrevPage(page_num, page_size, count, request.url),
             NextPage(
                 page_num,
                 page_size,
