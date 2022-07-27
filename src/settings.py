@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     BASE_DIR: Path = Path(__file__).parent
     LOG_LEVEL: LogLevel = LogLevel.DEBUG
+    JWT_SECRET: str
+    JWT_ALGORITHM: str = 'HS256'
+    JWT_EXPIRES_S: int = 3600
 
     class Config(object):
         env_file = '.env'
