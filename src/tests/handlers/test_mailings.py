@@ -1,3 +1,16 @@
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
+from main import app
+
+
+class QueueIntegrationMock(QueueIntegrationInterface):
+
+    async def send(self, event: dict, event_name: str, version: int):
+        pass
+
+
+app.dependency_overrides[NatsIntegration] = QueueIntegrationMock
+
+
 def test_get_mailings(client):
     got = client.get('/api/v1/mailings')
 
