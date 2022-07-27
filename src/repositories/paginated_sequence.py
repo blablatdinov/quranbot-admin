@@ -1,13 +1,14 @@
 import json
+
+from aioredis.client import Redis
 from asyncpg import Connection
 from fastapi import Depends
-from pydantic import BaseModel, parse_obj_as, parse_raw_as
 from loguru import logger
+from pydantic import BaseModel, parse_obj_as, parse_raw_as
 
 from app_types.query import QueryInterface
 from caching import redis_connection
 from db import db_connection
-from aioredis import Connection as RedisConnection
 
 
 class PaginatedSequenceInterface(object):
@@ -76,7 +77,7 @@ class PaginatedSequence(PaginatedSequenceInterface):
     async def get(self) -> list[BaseModel]:
         """Получить.
 
-        :return: BaseModel
+        :return: list[BaseModel]
         """
         rows = await self._connection.fetch(str(self._query))
         return parse_obj_as(list[self._model_to_parse], rows)  # type: ignore
@@ -86,25 +87,31 @@ class PaginatedSequence(PaginatedSequenceInterface):
 
 
 class CachedPaginatedSequence(PaginatedSequenceInterface):
+    """Класс для кеширования результата."""
 
     _origin: PaginatedSequenceInterface
-    _cache_connection: RedisConnection
+    _cache_connection: Redis
+    _model_to_parse: type[BaseModel]
 
     def __init__(
         self,
-        redis: RedisConnection = Depends(redis_connection),
+        redis: Redis = Depends(redis_connection),
         paginated_sequence: PaginatedSequenceInterface = Depends(PaginatedSequence),
     ):
         self._origin = paginated_sequence
         self._cache_connection = redis
 
     def update_query(self, query: QueryInterface):
+        """Обновить запрос для хранилища.
+
+        :param query: str
+        :return: PaginatedSequenceInterface
+        """
         origin = self._origin.update_query(query)
-        new_instance = CachedPaginatedSequence(
+        return CachedPaginatedSequence(
             self._cache_connection,
             origin,
         )
-        return new_instance
 
     def update_model_to_parse(self, model_to_parse: type[BaseModel]):
         """ОБновить валидирующую модель.
@@ -117,19 +124,28 @@ class CachedPaginatedSequence(PaginatedSequenceInterface):
             self._cache_connection,
             origin,
         )
+        new_instance._model_to_parse = model_to_parse  # noqa: WPS437
         return new_instance
 
     async def get(self):
+        """Получить.
+
+        :return: list[BaseModel]
+        """
         logger.info('Searching cached...')
         cache = await self._cache_connection.get(str(hash(self._origin)))
         if cache:
             logger.info('Cached data founded')
-            return parse_raw_as(list[self._origin._model_to_parse], cache)
-        else:
-            logger.info('Cached data not founded')
-            c = await self._origin.get()
-            logger.info('Setting data to cache')
-            x = [a.dict() for a in c]
-            await self._cache_connection.set(str(hash(self._origin)), json.dumps(x))
-            logger.info('Data setted to cache')
-            return c
+            return parse_raw_as(list[self._model_to_parse], cache)  # type: ignore
+
+        logger.info('Cached data not founded')
+        origin_get_result = await self._origin.get()
+        logger.info('Setting data to cache')
+        pagination_elements = [pagination_element.dict() for pagination_element in origin_get_result]
+        await self._cache_connection.set(
+            str(hash(self._origin)),
+            json.dumps(pagination_elements),
+            ex=60 * 60,
+        )
+        logger.info('Data setted to cache')
+        return origin_get_result

@@ -5,7 +5,7 @@ from app_types.query import QueryInterface
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, FileModel
 from main import app
 from repositories.ayat import AyatRepository, AyatRepositoryInterface, ElementsCount, ElementsCountInterface
-from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
+from repositories.paginated_sequence import CachedPaginatedSequence, PaginatedSequence, PaginatedSequenceInterface
 
 
 class ElementsCountMock(ElementsCountInterface):
@@ -67,6 +67,7 @@ def override_dependency():
     app.dependency_overrides[ElementsCount] = ElementsCountMock
     app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
     app.dependency_overrides[AyatRepository] = AyatRepositoryMock
+    app.dependency_overrides[CachedPaginatedSequence] = PaginatedSequenceMock
 
 
 def test_get_ayats(client):
