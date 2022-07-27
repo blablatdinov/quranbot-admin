@@ -1,8 +1,9 @@
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel
-from starlette.requests import URL
+from pydantic.main import BaseModel
+from starlette.requests import Request
 
+from app_types.stringable import Stringable
 from repositories.ayat import ElementsCountInterface
 from repositories.paginated_sequence import PaginatedSequenceInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
@@ -10,12 +11,30 @@ from services.limit_offset_by_page_params import LimitOffsetByPageParams
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
 
 
+class UrlWithoutQueryParams(Stringable):
+    """Класс, составляющий url без query параметров."""
+
+    def __init__(self, request: Request):
+        self._request = request
+
+    def __str__(self):
+        """Строковое представление.
+
+        :return: str
+        """
+        return '{0}://{1}{2}'.format(
+            self._request.url.scheme,
+            self._request.headers['host'],
+            self._request.scope['path'],
+        )
+
+
 class NextPage(object):
     """Класс умеющий расчитывать ссылку на след. страницу."""
 
     _page_num: int
     _page_size: int
-    _url: URL
+    _url: Stringable
     _elements_count: ElementsCountInterface
     _limit_offset_by_page_params: LimitOffsetByPageParams
 
@@ -23,7 +42,7 @@ class NextPage(object):
         self,
         page_num: int,
         page_size: int,
-        url: URL,
+        url: Stringable,
         elements_count: ElementsCountInterface,
         limit_offset_by_page_params: LimitOffsetByPageParams,
     ):
@@ -42,12 +61,10 @@ class NextPage(object):
         _, offset = self._limit_offset_by_page_params.calculate()
         if offset + self._page_size > elements_count:
             return None
-        return '{0}://{1}:{2}{3}?page_num={4}'.format(
-            self._url.scheme,
-            self._url.hostname,
-            self._url.port,
-            self._url.path,
+        return '{0}?page_num={1}&page_size={2}'.format(
+            self._url,
             self._page_num + 1,
+            self._page_size,
         )
 
 
@@ -56,10 +73,16 @@ class PrevPage(object):
 
     _page_num: int
     _page_size: int
-    _url: URL
+    _url: Stringable
     _elements_count: ElementsCountInterface
 
-    def __init__(self, page_num: int, page_size: int, elements_count: ElementsCountInterface, url: URL):
+    def __init__(
+        self,
+        page_num: int,
+        page_size: int,
+        elements_count: ElementsCountInterface,
+        url: Stringable,
+    ):
         self._page_num = page_num
         self._page_size = page_size
         self._url = url
@@ -75,11 +98,8 @@ class PrevPage(object):
             return None
         if self._page_num == 1:
             return None
-        return '{0}://{1}:{2}{3}?page_num={4}&page_size={5}'.format(
-            self._url.scheme,
-            self._url.hostname,
-            self._url.port,
-            self._url.path,
+        return '{0}?page_num={1}&page_size={2}'.format(
+            self._url,
             self._page_num - 1,
             self._page_size,
         )
