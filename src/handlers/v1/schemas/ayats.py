@@ -31,7 +31,12 @@ class AyatModelShort(BaseModel):
     """Урезанная модель аята."""
 
     id: int
-    mailing_day: Optional[int]
+    content: str  # noqa: WPS110
+    arab_text: str
+    trans: str
+    sura_num: int
+    ayat_num: str
+    audio_file_link: str
 
 
 class PaginatedAyatResponse(BaseModel):
