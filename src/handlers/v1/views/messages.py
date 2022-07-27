@@ -10,6 +10,7 @@ from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
 from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
+from services.auth import User
 from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
@@ -24,6 +25,7 @@ async def get_messages_list(
     page_size: int = 50,
     elements_count: ElementsCount = Depends(),
     paginated_sequence: PaginatedSequence = Depends(),
+    user: User = Depends(User.get_from_token),
 ) -> PaginatedMessagesResponse:
     """Получить сообщения.
 

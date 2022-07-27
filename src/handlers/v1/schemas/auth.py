@@ -7,5 +7,5 @@ class AuthInputData(BaseModel):
 
 
 class TokenResponse(BaseModel):
-    type: str = 'access'
-    token: str
+    access_token: str
+    token_type: str = 'bearer'

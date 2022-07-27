@@ -1,13 +1,17 @@
 import datetime
 
-from fastapi import Depends
+from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from passlib.hash import pbkdf2_sha256
-from jose import jwt
+from jose import jwt, JWTError
+from pydantic import ValidationError
 
 from handlers.v1.schemas.auth import TokenResponse
-from repositories.auth import UserRepositoryInterface, UserRepository
+from repositories.auth import UserRepositoryInterface, UserRepository, UserSchema
 from settings import settings
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/')
 
 
 class Password(object):
@@ -28,7 +32,7 @@ class Password(object):
         return input_password_hash == password_hash_id_storage
 
 
-class Token(object):
+class AuthService(object):
 
     _user_repository: UserRepositoryInterface
 
@@ -55,4 +59,43 @@ class Token(object):
             settings.JWT_SECRET,
             algorithm=settings.JWT_ALGORITHM,
         )
-        return TokenResponse(token=token)
+        return TokenResponse(access_token=token)
+
+
+class Token(object):
+
+    _token: str
+
+    def __init__(self, token: str):
+        self._token = token
+
+    def verify_token(self) -> UserSchema:
+        exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Could not validate credentials',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+        try:
+            payload = jwt.decode(
+                self._token,
+                settings.JWT_SECRET,
+                algorithms=[settings.JWT_ALGORITHM],
+            )
+        except JWTError:
+            raise exception from None
+
+        user_data = payload.get('user')
+
+        try:
+            user = UserSchema.parse_obj(user_data)
+        except ValidationError:
+            raise exception from None
+
+        return user
+
+
+class User(object):
+
+    @classmethod
+    def get_from_token(cls, token: str = Depends(oauth2_scheme)):
+        return Token(token).verify_token()
