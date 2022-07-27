@@ -1,10 +1,14 @@
 import datetime
 
+from fastapi import Header
+
 from app_types.query import QueryInterface
 from handlers.v1.schemas.messages import Message
 from main import app
+from repositories.auth import UserSchema
 from repositories.ayat import ElementsCount
 from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface
+from services.auth import User
 from tests.handlers.test_ayats import ElementsCountMock
 
 
@@ -28,8 +32,16 @@ class PaginatedSequenceMock(PaginatedSequenceInterface):
         ]
 
 
+class UserMock(object):
+
+    @classmethod
+    def get_from_token(cls, _: str = Header(..., alias='Authorization')):
+        return UserSchema(id=1, username='user', password='1')  # noqa: S106
+
+
 app.dependency_overrides[ElementsCount] = ElementsCountMock
 app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+app.dependency_overrides[User.get_from_token] = UserMock.get_from_token
 
 
 def test_get_list(client):

@@ -7,12 +7,13 @@ from pypika import Table
 from pypika.functions import Count
 
 from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
+from repositories.auth import UserSchema
 from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
 from services.auth import User
-from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/messages')
 
@@ -25,7 +26,7 @@ async def get_messages_list(
     page_size: int = 50,
     elements_count: ElementsCount = Depends(),
     paginated_sequence: PaginatedSequence = Depends(),
-    user: User = Depends(User.get_from_token),
+    user: UserSchema = Depends(User.get_from_token),
 ) -> PaginatedMessagesResponse:
     """Получить сообщения.
 
@@ -35,6 +36,7 @@ async def get_messages_list(
     :param page_size: int
     :param elements_count: ElementsCount
     :param paginated_sequence: PaginatedSequence
+    :param user: UserSchema
     :return: PaginatedResponse
     """
     messages_table = Table('bot_init_message')
@@ -62,11 +64,11 @@ async def get_messages_list(
         ),
         PaginatedMessagesResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, page_size, elements_count, request.url),
+            PrevPage(page_num, page_size, count, UrlWithoutQueryParams(request)),
             NextPage(
                 page_num,
                 page_size,
-                request.url,
+                UrlWithoutQueryParams(request),
                 count,
                 LimitOffsetByPageParams(page_num, page_size),
             ),
@@ -75,10 +77,11 @@ async def get_messages_list(
 
 
 @router.get('/{message_id}', response_model=Message)
-def get_message(message_id: int) -> Message:
+def get_message(message_id: int, user: UserSchema = Depends(User.get_from_token)) -> Message:
     """Получить сообщения.
 
     :param message_id: int
+    :param user: UserSchema
     :return: PaginatedResponse
     """
     return Message(
@@ -91,10 +94,11 @@ def get_message(message_id: int) -> Message:
 
 
 @router.delete('/{message_id}/delete-from-chat', status_code=status.HTTP_204_NO_CONTENT)
-def delete_message_from_telegram(message_id: int):
+def delete_message_from_telegram(message_id: int, user: UserSchema = Depends(User.get_from_token)):
     """Получить сообщения.
 
     :param message_id: int
+    :param user: UserSchema
     :return: None
     """
     return  # noqa: WPS324

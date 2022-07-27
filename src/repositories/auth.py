@@ -1,13 +1,13 @@
 from asyncpg.connection import Connection
-from pydantic import BaseModel
 from fastapi import Depends
-
-from pypika import Table, Query
+from pydantic import BaseModel
+from pypika import Query, Table
 
 from db import db_connection
 
 
 class UserSchema(BaseModel):
+    """Модель пользователя."""
 
     id: int
     username: str
@@ -15,12 +15,19 @@ class UserSchema(BaseModel):
 
 
 class UserRepositoryInterface(object):
+    """Интерфейс для работы с хранилищем пользователей."""
 
     async def get_by_username(self, username: str):
+        """Получить пользователя.
+
+        :param username: str
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
 
 class UserRepository(UserRepositoryInterface):
+    """Класс для работы с хранилищем пользователей."""
 
     _connection: Connection
 
@@ -28,11 +35,16 @@ class UserRepository(UserRepositoryInterface):
         self._connection = connection
 
     async def get_by_username(self, username: str):
+        """Получить пользователя.
+
+        :param username: str
+        :return: UserSchema
+        """
         user_table = Table('auth_user')
         query = str(
             Query
             .select(user_table.id, user_table.username, user_table.password)
-            .from_(user_table).where(user_table.username == username)
+            .from_(user_table).where(user_table.username == username),
         )
         row = await self._connection.fetchrow(query)
         return UserSchema.parse_obj(row)
