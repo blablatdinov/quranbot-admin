@@ -1,3 +1,6 @@
+import pytest
+from faker import Faker
+
 from app_types.query import QueryInterface
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, FileModel
 from main import app
@@ -23,7 +26,15 @@ class PaginatedSequenceMock(PaginatedSequenceInterface):
         return self
 
     async def get(self):
-        return [AyatModelShort(id=1, mailing_day=1)]
+        return [AyatModelShort(
+            id=1,
+            content=Faker().text(),
+            arab_text=Faker().text(),
+            trans=Faker().text(),
+            sura_num=1,
+            ayat_num=Faker().text(),
+            audio_file_link=Faker().text(),
+        )]
 
 
 class AyatRepositoryMock(AyatRepositoryInterface):
@@ -48,9 +59,11 @@ class AyatRepositoryMock(AyatRepositoryInterface):
         )
 
 
-app.dependency_overrides[ElementsCount] = ElementsCountMock
-app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
-app.dependency_overrides[AyatRepository] = AyatRepositoryMock
+@pytest.fixture(autouse=True)
+def override_dependency():
+    app.dependency_overrides[ElementsCount] = ElementsCountMock
+    app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+    app.dependency_overrides[AyatRepository] = AyatRepositoryMock
 
 
 def test_get_ayats(client):
@@ -59,10 +72,17 @@ def test_get_ayats(client):
 
     assert got.status_code == 200
     assert list(got.json().keys()) == ['count', 'next', 'prev', 'results']
-    assert list(payload[0].keys()) == ['id', 'mailing_day']
+    assert list(payload[0].keys()) == [
+        'id',
+        'content',
+        'arab_text',
+        'trans',
+        'sura_num',
+        'ayat_num',
+        'audio_file_link',
+    ]
 
 
-# def test_get_ayat_detail(client_factory):
 def test_get_ayat_detail(client):
 
     got = client.get('/api/v1/ayats/1')

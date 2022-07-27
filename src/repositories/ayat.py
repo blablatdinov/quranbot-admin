@@ -29,7 +29,8 @@ class AyatPaginatedQuery(QueryInterface):
     """Зпрос для получения списка аятов с пагинацией."""
 
     _ayats_table = Table('content_ayat')
-    _morning_content_table = Table('content_morningcontent')
+    _sura_table = Table('content_sura')
+    _file_table = Table('content_file')
     _limit_offset_calculator: LimitOffsetByPageParams
 
     def __init__(self, limit_offset_calculator: LimitOffsetByPageParams):
@@ -44,12 +45,23 @@ class AyatPaginatedQuery(QueryInterface):
         select = (
             SqlQuery()
             .from_(self._ayats_table)
-            .select(self._ayats_table.id, self._morning_content_table.day)
+            .select(
+                self._ayats_table.id,
+                self._ayats_table.content,
+                self._ayats_table.arab_text,
+                self._ayats_table.trans,
+                self._ayats_table.ayat.as_('ayat_num'),
+                self._sura_table.number.as_('sura_num'),
+                self._file_table.link_to_file.as_('audio_file_link'),
+            )
+        )
+        joins = (
+            select
+            .inner_join(self._sura_table).on(self._ayats_table.sura_id == self._sura_table.id)
+            .inner_join(self._file_table).on(self._ayats_table.audio_id == self._file_table.id)
         )
         return str(
-            select
-            .left_join(self._morning_content_table)
-            .on(self._ayats_table.one_day_content_id == self._morning_content_table.id)
+            joins
             .orderby(self._ayats_table.id)
             .limit(limit)
             .offset(offset),
