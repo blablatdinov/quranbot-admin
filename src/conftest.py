@@ -6,4 +6,6 @@ from main import app
 
 @pytest.fixture()
 def client():
-    return TestClient(app)
+    http_client = TestClient(app)
+    http_client.headers = {'Authorization': ''}
+    return http_client
