@@ -31,7 +31,6 @@ async def get_ayats_list(
     count = elements_count.update_query(
         str(SqlQuery().from_('content_ayat').select(Count('*'))),
     )
-    LimitOffsetByPageParams(page_num, page_size)
     return await PaginatedResponse(
         count,
         (
