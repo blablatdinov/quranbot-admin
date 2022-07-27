@@ -1,5 +1,6 @@
 import datetime
 
+import pytest
 from fastapi import Header
 
 from app_types.query import QueryInterface
@@ -39,8 +40,12 @@ class UserMock(object):
         return UserSchema(id=1, username='user', password='1')  # noqa: S106
 
 
-app.dependency_overrides[ElementsCount] = ElementsCountMock
-app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+@pytest.fixture(autouse=True)
+def override_dependency():
+    app.dependency_overrides[ElementsCount] = ElementsCountMock
+    app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+
+
 app.dependency_overrides[User.get_from_token] = UserMock.get_from_token
 
 
