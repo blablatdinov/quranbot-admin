@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from repositories.auth import UserSchema
 from services.auth import User
+from services.mailing import Mailing
 
 router = APIRouter(prefix='/mailings')
 
@@ -46,14 +47,17 @@ def delete_mailing_from_telegram(mailing_id: int, user: UserSchema = Depends(Use
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=MailingCreateResponseModel)
-def create_mailing_from_telegram(
+async def create_mailing_from_telegram(
     input_data: MailingCreateModel,
+    mailing_service: Mailing = Depends(),
     user: UserSchema = Depends(User.get_from_token),
 ) -> MailingCreateResponseModel:
     """Создание рассылки.
 
     :param input_data: MailingCreateModel
+    :param mailing_service: Mailing
     :param user: UserSchema
     :return: MailingCreateResponseModel
     """
+    await mailing_service.create(input_data.text)
     return MailingCreateResponseModel(id=1, text=input_data.text)
