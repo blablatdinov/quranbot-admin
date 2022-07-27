@@ -9,7 +9,7 @@ from quranbot_schema_registry import validate_schema
 class QueueIntegrationInterface(object):
     """Интерфейс интеграции с шиной событий."""
 
-    async def send(self, event, event_name, version):
+    async def send(self, event: dict, event_name: str, version: int):
         """Отправить событие.
 
         :param event: dict
