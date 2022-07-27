@@ -98,7 +98,7 @@ class AyatDetailQuery(QueryInterface):
         )
         return (
             joins
-            .where(self._ayat_table.id == Parameter('$1')),
+            .where(self._ayat_table.id == Parameter('$1'))
         )
 
 

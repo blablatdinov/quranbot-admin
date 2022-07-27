@@ -10,8 +10,8 @@ from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
 from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
-from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/messages')
 
@@ -60,11 +60,11 @@ async def get_messages_list(
         ),
         PaginatedMessagesResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, request.url),
+            PrevPage(page_num, page_size, count, UrlWithoutQueryParams(request)),
             NextPage(
                 page_num,
                 page_size,
-                request.url,
+                UrlWithoutQueryParams(request),
                 count,
                 LimitOffsetByPageParams(page_num, page_size),
             ),
