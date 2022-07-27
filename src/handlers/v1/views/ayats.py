@@ -4,7 +4,7 @@ from pypika.functions import Count
 
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
 from repositories.ayat import AyatPaginatedQuery, AyatRepository, ElementsCount
-from repositories.paginated_sequence import PaginatedSequence
+from repositories.paginated_sequence import PaginatedSequence, CachedPaginatedSequence
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
@@ -17,7 +17,7 @@ async def get_ayats_list(
     page_num: int = Query(default=1, ge=1),
     page_size: int = 50,
     elements_count: ElementsCount = Depends(),
-    paginated_sequence: PaginatedSequence = Depends(),
+    paginated_sequence: CachedPaginatedSequence = Depends(),
 ) -> PaginatedAyatResponse:
     """Получить список аятов.
 

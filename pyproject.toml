@@ -19,6 +19,7 @@ passlib = "^1.7.4"
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
 quranbot-schema-registry = "0.0.2"
+aioredis = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.16.1"
