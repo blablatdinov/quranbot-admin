@@ -1,9 +1,10 @@
 from fastapi import Depends
 
-from integrations.queue_integration import QueueIntegrationInterface, NatsIntegration
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 
 
 class Mailing(object):
+    """Рассылка."""
 
     _queue_integration: QueueIntegrationInterface
 
@@ -11,4 +12,12 @@ class Mailing(object):
         self._queue_integration = queue_integration
 
     async def create(self, text: str):
-        await self._queue_integration.send(text)
+        """Создание.
+
+        :param text: str
+        """
+        await self._queue_integration.send(
+            {'text': text},
+            'Mailing.Created',
+            1,
+        )
