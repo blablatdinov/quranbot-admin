@@ -5,8 +5,8 @@ from pypika.functions import Count
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
 from repositories.ayat import AyatPaginatedQuery, AyatRepository, ElementsCount
 from repositories.paginated_sequence import PaginatedSequence
-from services.ayats import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/ayats')
 
@@ -31,7 +31,6 @@ async def get_ayats_list(
     count = elements_count.update_query(
         str(SqlQuery().from_('content_ayat').select(Count('*'))),
     )
-    LimitOffsetByPageParams(page_num, page_size)
     return await PaginatedResponse(
         count,
         (
@@ -45,11 +44,16 @@ async def get_ayats_list(
         ),
         PaginatedAyatResponse,
         NeighborsPageLinks(
-            PrevPage(page_num, page_size, elements_count, request.url),
+            PrevPage(
+                page_num,
+                page_size,
+                count,
+                UrlWithoutQueryParams(request),
+            ),
             NextPage(
                 page_num,
                 page_size,
-                request.url,
+                UrlWithoutQueryParams(request),
                 count,
                 LimitOffsetByPageParams(page_num, page_size),
             ),
