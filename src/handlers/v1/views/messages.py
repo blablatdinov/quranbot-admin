@@ -1,18 +1,19 @@
 import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status, Response
 from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.functions import Count
 
-from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse
+from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse, DeleteMessagesRequest
 from repositories.auth import UserSchema
 from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import PaginatedSequence
 from services.auth import User
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/messages')
@@ -93,12 +94,18 @@ def get_message(message_id: int, user: UserSchema = Depends(User.get_from_token)
     )
 
 
-@router.delete('/{message_id}/delete-from-chat', status_code=status.HTTP_204_NO_CONTENT)
-def delete_message_from_telegram(message_id: int, user: UserSchema = Depends(User.get_from_token)):
-    """Получить сообщения.
+@router.delete('/', status_code=status.HTTP_201_CREATED)
+async def delete_message_from_telegram(
+    input_data: DeleteMessagesRequest,
+    messages_service: Messages = Depends(),
+    user: UserSchema = Depends(User.get_from_token),
+):
+    """Удалить сообщения.
+
+    Используется статус 201, т. к. с 204 проблемы (см. https://github.com/tiangolo/fastapi/issues/717)
 
     :param message_id: int
     :param user: UserSchema
     :return: None
     """
-    return  # noqa: WPS324
+    await messages_service.delete(input_data.message_ids)
