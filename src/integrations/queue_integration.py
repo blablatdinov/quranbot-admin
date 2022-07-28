@@ -41,3 +41,4 @@ class NatsIntegration(QueueIntegrationInterface):
         validate_schema(event, event_name, version)
         nats_client = await nats.connect('localhost')
         await nats_client.publish('foo', json.dumps(event).encode('utf-8'))
+        await nats_client.close()
