@@ -24,5 +24,6 @@ class PaginatedMessagesResponse(BaseModel):
 
 
 class DeleteMessagesRequest(BaseModel):
+    """Модель входных данных для удаления сообщений."""
 
     message_ids: list[int]

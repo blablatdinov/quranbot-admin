@@ -1,12 +1,12 @@
 import datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Query, Request, status, Response
+from fastapi import APIRouter, Depends, Query, Request, status
 from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.functions import Count
 
-from handlers.v1.schemas.messages import Message, PaginatedMessagesResponse, DeleteMessagesRequest
+from handlers.v1.schemas.messages import DeleteMessagesRequest, Message, PaginatedMessagesResponse
 from repositories.auth import UserSchema
 from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
@@ -104,8 +104,8 @@ async def delete_message_from_telegram(
 
     Используется статус 201, т. к. с 204 проблемы (см. https://github.com/tiangolo/fastapi/issues/717)
 
-    :param message_id: int
+    :param input_data: DeleteMessagesRequest
+    :param messages_service: Messages
     :param user: UserSchema
-    :return: None
     """
     await messages_service.delete(input_data.message_ids)
