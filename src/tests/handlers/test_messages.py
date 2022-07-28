@@ -5,6 +5,7 @@ from fastapi import Header
 
 from app_types.query import QueryInterface
 from handlers.v1.schemas.messages import Message
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from main import app
 from repositories.auth import UserSchema
 from repositories.ayat import ElementsCount
@@ -40,10 +41,17 @@ class UserMock(object):
         return UserSchema(id=1, username='user', password='1')  # noqa: S106
 
 
+class QueueMock(QueueIntegrationInterface):
+
+    async def send(self, event: dict, event_name: str, version: int):
+        pass
+
+
 @pytest.fixture(autouse=True)
 def override_dependency():
     app.dependency_overrides[ElementsCount] = ElementsCountMock
     app.dependency_overrides[PaginatedSequence] = PaginatedSequenceMock
+    app.dependency_overrides[NatsIntegration] = QueueMock
 
 
 app.dependency_overrides[User.get_from_token] = UserMock.get_from_token
@@ -78,6 +86,8 @@ def test_get_message(client):
 
 
 def test_delete_message_from_telegram(client):
-    got = client.delete('/api/v1/messages/34/delete-from-chat')
+    got = client.delete('/api/v1/messages/', json={
+        'message_ids': [1, 2, 3],
+    })
 
-    assert got.status_code == 204
+    assert got.status_code == 201

@@ -21,3 +21,9 @@ class PaginatedMessagesResponse(BaseModel):
     next: Optional[str]
     prev: Optional[str]
     results: list[Message]  # noqa: WPS110
+
+
+class DeleteMessagesRequest(BaseModel):
+    """Модель входных данных для удаления сообщений."""
+
+    message_ids: list[int]
