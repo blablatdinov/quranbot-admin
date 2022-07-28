@@ -25,6 +25,9 @@ databases = {extras = ["asyncpg"], version = "^0.6.0"}
 aiofiles = "^0.8.0"
 alembic = "^1.8.1"
 SQLAlchemy = "^1.4.40"
+aiohttp = "^3.8.1"
+beautifulsoup4 = "^4.11.1"
+lxml = "^4.9.1"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.16.1"

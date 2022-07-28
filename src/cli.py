@@ -10,10 +10,12 @@ import sys
 from caching import redis_connection
 from db.connection import database
 from exceptions import CliError
+from integrations.client import HttpClient
 from integrations.event_handlers.message_created import MessageCreatedEvent
 from integrations.event_handlers.notification_created import NotificationCreatedEvent
 from integrations.event_handlers.user_subscribed import UserSubscribedEvent
 from integrations.queue_integration import NatsEvents, NatsIntegration
+from integrations.umma import AbsolutedSuraPages, FilteredSuraPages, SuraPages
 from repositories.auth import UserRepository
 from repositories.messages import MessageRepository
 from repositories.notification import NotificationRepository
@@ -40,6 +42,31 @@ async def start_events_receiver() -> None:
     ]).receive()
 
 
+class QuranParser(object):
+
+    def __init__(self, sura_links: SuraPagesInterface):
+        self._sura_links = sura_links
+
+    async def run(self):
+        links = await self._sura_links.get_links()
+        print(links)
+
+
+class Main(object):
+
+    def main(self):
+        parser = QuranParser(
+            AbsolutedSuraPages(
+                FilteredSuraPages(
+                    SuraPages(
+                        HttpClient('https://umma.ru/perevod-korana/'),
+                    ),
+                ),
+            )
+        ).run()
+        asyncio.run(parser)
+
+
 def main() -> None:
     """Entrypoint.
 
@@ -56,7 +83,3 @@ def main() -> None:
         raise CliError
 
     asyncio.run(func())
-
-
-if __name__ == '__main__':
-    main()
