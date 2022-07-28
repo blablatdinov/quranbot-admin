@@ -4,6 +4,7 @@ from typing import Callable
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
+from handlers.websockets import websocket_endpoint
 
 from handlers.registration_handlers import router
 from logging_settings import configure_logging
@@ -27,6 +28,9 @@ async def add_process_time_header(request: Request, call_next: Callable):
     process_time = time.time() - start_time
     response.headers['X-Process-Time'] = '{0} s'.format(str(process_time))
     return response
+
+
+app.websocket('/ws/')(websocket_endpoint)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
