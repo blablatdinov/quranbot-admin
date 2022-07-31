@@ -20,6 +20,16 @@ from repositories.auth import UserRepository
 from repositories.messages import MessageRepository
 from repositories.notification import NotificationRepository
 from repositories.user_action import UserActionRepository
+from integrations.client import HttpClient
+from integrations.umma import SuraPages, FilteredSuraPages, SuraPagesInterface, AbsolutedSuraPages
+from integrations.client import ClientRequest
+from integrations.umma import (
+    AbsolutedSuraPages,
+    FilteredSuraPages,
+    RequestListFromUrls,
+    SuraPages,
+    SuraPagesHTML, PreloadedStateStrings, TrimmedPreloadedStateString,
+)
 
 
 async def start_events_receiver() -> None:
@@ -44,24 +54,33 @@ async def start_events_receiver() -> None:
 
 class QuranParser(object):
 
-    def __init__(self, sura_links: SuraPagesInterface):
-        self._sura_links = sura_links
+    def __init__(self, data):
+        self._data = data
 
     async def run(self):
-        links = await self._sura_links.get_links()
-        print(links)
+        res = self._data.find()
+        async for x in res:
+            print(x)
 
 
 class Main(object):
 
     def main(self):
         parser = QuranParser(
-            AbsolutedSuraPages(
-                FilteredSuraPages(
-                    SuraPages(
-                        HttpClient('https://umma.ru/perevod-korana/'),
-                    ),
-                ),
+            TrimmedPreloadedStateString(
+                PreloadedStateStrings(
+                    SuraPagesHTML(
+                        RequestListFromUrls(
+                            AbsolutedSuraPages(
+                                FilteredSuraPages(
+                                    SuraPages(
+                                        ClientRequest.new().url('https://umma.ru/perevod-korana/'),
+                                    ),
+                                ),
+                            ),
+                        )
+                    )
+                )
             )
         ).run()
         asyncio.run(parser)
