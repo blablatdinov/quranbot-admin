@@ -200,5 +200,5 @@ class ElementsCount(ElementsCountInterface):
 
         :return: int
         """
-        row = await self._connection.fetchrow(self._query)
+        row = await self._connection.fetch_one(self._query)
         return CountQueryResult.parse_obj(row).count

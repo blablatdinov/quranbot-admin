@@ -79,7 +79,7 @@ class PaginatedSequence(PaginatedSequenceInterface):
 
         :return: list[BaseModel]
         """
-        rows = await self._connection.fetch(str(self._query))
+        rows = await self._connection.fetch_all(str(self._query))
         return parse_obj_as(list[self._model_to_parse], rows)  # type: ignore
 
     def __hash__(self):
