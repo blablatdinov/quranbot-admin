@@ -29,8 +29,7 @@ async def add_process_time_header(request: Request, call_next: Callable):
     return response
 
 
-app.add_middleware(GZipMiddleware, minimum_size=1000)
-configure_logging()
+#app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True, port=settings.PORT)
+    uvicorn.run('main:app', port=settings.PORT, workers=10)
