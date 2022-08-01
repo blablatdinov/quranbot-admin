@@ -1,3 +1,9 @@
+"""Схемы для аутентификации.
+
+Classes:
+    AuthInputData
+    TokenResponse
+"""
 from pydantic import BaseModel
 
 

@@ -1,3 +1,12 @@
+"""Модуль с функционалом для пагинации.
+
+Classes:
+    PaginatedSequenceInterface
+    PaginatedSequence
+    CachedPaginatedSequence
+    ElementsCountInterface
+    ElementsCount
+"""
 import json
 
 from aioredis.client import Redis

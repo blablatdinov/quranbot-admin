@@ -1,3 +1,12 @@
+"""Модуль с настройками приложения.
+
+Classes:
+    LogLevel: перечисление уровней логгирования
+    Settings: конфигурация приложения
+
+Misc variables:
+    settings: объект для использования настроек в коде
+"""
 import enum
 from pathlib import Path
 

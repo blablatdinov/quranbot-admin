@@ -1,3 +1,11 @@
+"""Модуль для работы с хранилищем аятов.
+
+Classes:
+    AyatRepositoryInterface
+    AyatPaginatedQuery
+    AyatDetailQuery
+    AyatRepository
+"""
 from databases import Database
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException

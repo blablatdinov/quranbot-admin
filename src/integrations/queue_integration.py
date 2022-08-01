@@ -1,3 +1,14 @@
+"""Интеграция с шиной сообщений.
+
+В кач-ве шины сообщений используется https://nats.io/
+Для валидации сообщений, отправляемых в шину и поддержки совместимости используется собственное решение,
+основанное на https://json-schema.org/
+Репозиторий схем событий - https://github.com/blablatdinov/quranbot-schema-registry
+
+Classes:
+    QueueIntegrationInterface
+    NatsIntegration
+"""
 import datetime
 import json
 import uuid

@@ -1,3 +1,9 @@
+"""Модуль с исключениями.
+
+Classes:
+    UserNotFoundError
+    IncorrectCredentialsError
+"""
 from http.client import HTTPException
 
 
