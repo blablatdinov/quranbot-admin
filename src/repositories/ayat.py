@@ -139,17 +139,20 @@ class AyatRepository(AyatRepositoryInterface):
             str(self._ayat_detail_query.query()),
             {'ayat_id': ayat_id},
         )
-        if not ayat_row:
+        if ayat_row is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
-        ayat_row = dict(ayat_row._mapping)  # noqa: WPS437
+        ayat_mapping = ayat_row._mapping  # noqa: WPS437
+        if ayat_mapping is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
+        ayat_dict = dict(ayat_mapping)
         file_model = FileModel(
-            id=ayat_row.pop('file_id'),
-            name=ayat_row.pop('name'),
-            telegram_file_id=ayat_row.pop('tg_file_id'),
-            link=ayat_row.pop('link'),
+            id=ayat_dict.pop('file_id'),
+            name=ayat_dict.pop('name'),
+            telegram_file_id=ayat_dict.pop('tg_file_id'),
+            link=ayat_dict.pop('link'),
         )
         return AyatModel(
-            **ayat_row,
+            **ayat_dict,
             audio_file=file_model,
         )
 

@@ -17,14 +17,14 @@ def event_loop():
     return asyncio.get_event_loop()
 
 
-async def _create_test_db():
+async def _create_test_db() -> None:
     origin_db = Database(settings.DATABASE_URL)
     await origin_db.connect()
     await origin_db.execute('CREATE DATABASE test_qbot')
     await origin_db.disconnect()
 
 
-async def _dump_test_db_schema():
+async def _dump_test_db_schema() -> None:
     test_db_connection = await asyncpg.connect(test_db_dsn)
     db_schema_file = Path(settings.BASE_DIR / 'tests' / 'fixtures' / 'db_schema.sql').read_text()
     await test_db_connection.execute(db_schema_file)
@@ -32,7 +32,7 @@ async def _dump_test_db_schema():
     await test_db_connection.close()
 
 
-async def _remove_test_db():
+async def _remove_test_db() -> None:
     origin_db = Database(settings.DATABASE_URL)
     await origin_db.connect()
     await origin_db.execute('DROP DATABASE IF EXISTS test_qbot')
