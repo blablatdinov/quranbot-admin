@@ -1,3 +1,8 @@
+"""Сервисный слой для работы с сообщениями.
+
+Classes:
+    Messages
+"""
 from fastapi import Depends
 
 from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface

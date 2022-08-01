@@ -1,3 +1,11 @@
+"""Конфигурация логирования.
+
+Classes:
+    InterceptHandler
+
+Functions:
+    configure_logging
+"""
 import logging
 import sys
 from typing import Union

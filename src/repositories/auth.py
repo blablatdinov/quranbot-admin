@@ -1,3 +1,10 @@
+"""Модуль для работы с данными аутентификации.
+
+Classes:
+    UserSchema
+    UserRepositoryInterface
+    UserRepository
+"""
 from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel

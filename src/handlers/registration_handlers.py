@@ -1,3 +1,8 @@
+"""Регистрация обработчиков HTTP запросов.
+
+Misc variables:
+    router
+"""
 from fastapi import APIRouter
 
 from handlers.v1.daily_content import router as daily_content_router

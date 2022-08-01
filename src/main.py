@@ -1,3 +1,9 @@
+"""Точка входа в приложение.
+
+Functions:
+    add_process_time_header: TODO move it into middlewares module
+    startup
+"""
 import time
 from typing import Callable
 

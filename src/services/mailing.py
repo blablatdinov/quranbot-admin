@@ -1,3 +1,8 @@
+"""Сервисный слой для работы с рассылками.
+
+Classes:
+    Mailing
+"""
 from fastapi import Depends
 
 from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
