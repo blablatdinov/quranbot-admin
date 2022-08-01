@@ -4,8 +4,9 @@ from faker import Faker
 from app_types.query import QueryInterface
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, FileModel
 from main import app
-from repositories.ayat import AyatRepository, AyatRepositoryInterface, ElementsCount, ElementsCountInterface
-from repositories.paginated_sequence import CachedPaginatedSequence, PaginatedSequence, PaginatedSequenceInterface
+from repositories.ayat import AyatRepository, AyatRepositoryInterface
+from repositories.paginated_sequence import CachedPaginatedSequence, PaginatedSequence, PaginatedSequenceInterface, ElementsCountInterface, \
+    ElementsCount
 
 
 class ElementsCountMock(ElementsCountInterface):

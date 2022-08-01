@@ -1,7 +1,6 @@
 from databases import Database
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from pydantic.main import BaseModel
 from pypika import Parameter
 from pypika import Query as SqlQuery
 from pypika import Table
@@ -155,56 +154,3 @@ class AyatRepository(AyatRepositoryInterface):
             **ayat_dict,
             audio_file=file_model,
         )
-
-
-class ElementsCountInterface(object):
-    """Интерфейс для получение кол-ва элементов в хранилище."""
-
-    def update_query(self, query: str) -> 'ElementsCountInterface':
-        """Обновить запрос.
-
-        :param query: str
-        :raises NotImplementedError: if not implemented
-        """
-        raise NotImplementedError
-
-    async def get(self) -> int:
-        """Получить.
-
-        :raises NotImplementedError: if not implemented
-        """
-        raise NotImplementedError
-
-
-class CountQueryResult(BaseModel):
-    """Модель для парсинга результата запроса о кол-ве элементов в БД."""
-
-    count: int
-
-
-class ElementsCount(ElementsCountInterface):
-    """Класс, осуществляющий запрос на кол-во в БД."""
-
-    _connection: Database
-    _query: str
-
-    def __init__(self, connection: Database = Depends(db_connection)):  # noqa: WPS404 Found complex default value
-        self._connection = connection
-
-    def update_query(self, query: str) -> 'ElementsCount':
-        """Обновить запрос.
-
-        :param query: str
-        :return: ElementsCount
-        """
-        new_instance = ElementsCount(self._connection)
-        new_instance._query = query  # noqa: WPS437 Found protected attribute usage
-        return new_instance
-
-    async def get(self) -> int:
-        """Получить.
-
-        :return: int
-        """
-        row = await self._connection.fetch_one(self._query)
-        return CountQueryResult.parse_obj(row).count

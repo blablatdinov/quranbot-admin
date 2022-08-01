@@ -4,8 +4,7 @@ from pydantic.main import BaseModel
 from starlette.requests import Request
 
 from app_types.stringable import Stringable
-from repositories.ayat import ElementsCountInterface
-from repositories.paginated_sequence import PaginatedSequenceInterface
+from repositories.paginated_sequence import PaginatedSequenceInterface, ElementsCountInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)

@@ -149,3 +149,49 @@ class CachedPaginatedSequence(PaginatedSequenceInterface):
         )
         logger.info('Data setted to cache')
         return origin_get_result
+
+
+class ElementsCountInterface(object):
+    """Интерфейс для получение кол-ва элементов в хранилище."""
+
+    def update_query(self, query: str) -> 'ElementsCountInterface':
+        """Обновить запрос.
+
+        :param query: str
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+    async def get(self) -> int:
+        """Получить.
+
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+
+class ElementsCount(ElementsCountInterface):
+    """Класс, осуществляющий запрос на кол-во в БД."""
+
+    _connection: Database
+    _query: str
+
+    def __init__(self, connection: Database = Depends(db_connection)):  # noqa: WPS404 Found complex default value
+        self._connection = connection
+
+    def update_query(self, query: str) -> 'ElementsCount':
+        """Обновить запрос.
+
+        :param query: str
+        :return: ElementsCount
+        """
+        new_instance = ElementsCount(self._connection)
+        new_instance._query = query  # noqa: WPS437 Found protected attribute usage
+        return new_instance
+
+    async def get(self) -> int:
+        """Получить.
+
+        :return: int
+        """
+        return await self._connection.fetch_val(self._query, column='count')
