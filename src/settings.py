@@ -1,7 +1,7 @@
 import enum
 from pathlib import Path
 
-from pydantic import BaseSettings, RedisDsn
+from pydantic import BaseSettings, RedisDsn, PostgresDsn
 
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     """Класс настроек приложения."""
 
     PORT: int = 8000
-    DATABASE_URL: str
+    DATABASE_URL: PostgresDsn
     REDIS_DSN: RedisDsn
     BASE_DIR: Path = Path(__file__).parent
     LOG_LEVEL: LogLevel = LogLevel.DEBUG

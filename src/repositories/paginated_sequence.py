@@ -1,8 +1,8 @@
 import json
 
 from aioredis.client import Redis
-from asyncpg import Connection
 from fastapi import Depends
+from databases import Database
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as, parse_raw_as
 
@@ -41,11 +41,11 @@ class PaginatedSequenceInterface(object):
 class PaginatedSequence(PaginatedSequenceInterface):
     """Класс, предоставляющий доступ к списку объектов с пагинацией."""
 
-    _connection: Connection
+    _connection: Database
     _query: QueryInterface
     _model_to_parse: type[BaseModel]
 
-    def __init__(self, connection: Connection = Depends(db_connection)):
+    def __init__(self, connection: Database = Depends(db_connection)):
         self._connection = connection
 
     def update_query(self, query: QueryInterface):

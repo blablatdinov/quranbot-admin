@@ -1,4 +1,3 @@
-from asyncpg import Connection
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from pydantic.main import BaseModel
@@ -6,6 +5,7 @@ from pypika import Parameter
 from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.queries import QueryBuilder
+from databases import Database
 
 from app_types.query import QueryInterface
 from db import db_connection
@@ -117,13 +117,13 @@ class AyatDetailQuery(QueryInterface):
 class AyatRepository(AyatRepositoryInterface):
     """Класс для работы с хранилищем аятов."""
 
-    _connection: Connection
+    _connection: Database
     _ayat_detail_query: AyatDetailQuery
 
     def __init__(
         self,
         ayat_detail_query: AyatDetailQuery = Depends(),
-        connection: Connection = Depends(db_connection),
+        connection: Database = Depends(db_connection),
     ):
         self._connection = connection
         self._ayat_detail_query = ayat_detail_query
@@ -179,10 +179,10 @@ class CountQueryResult(BaseModel):
 class ElementsCount(ElementsCountInterface):
     """Класс, осуществляющий запрос на кол-во в БД."""
 
-    _connection: Connection
+    _connection: Database
     _query: str
 
-    def __init__(self, connection: Connection = Depends(db_connection)):  # noqa: WPS404 Found complex default value
+    def __init__(self, connection: Database = Depends(db_connection)):  # noqa: WPS404 Found complex default value
         self._connection = connection
 
     def update_query(self, query: str) -> 'ElementsCount':
