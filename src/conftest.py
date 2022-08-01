@@ -52,8 +52,10 @@ async def test_db(event_loop):
 
 @pytest.fixture()
 async def db_session(test_db, event_loop):
-    async with test_db.transaction(force_rollback=True):
-        yield test_db
+    session = Database(test_db_dsn, force_rollback=True)
+    await session.connect()
+    yield session
+    await session.disconnect()
 
 
 @pytest.fixture()
