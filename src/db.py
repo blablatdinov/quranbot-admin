@@ -1,3 +1,11 @@
+"""Модуль, отвечающий за работу с БД приложения.
+
+В кач-ве постоянного хранилища приложения используется БД postgres
+https://www.postgresql.org/
+
+Functions:
+    db_connection
+"""
 from typing import AsyncGenerator
 
 from databases import Database

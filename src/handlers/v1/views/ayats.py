@@ -1,3 +1,9 @@
+"""Обработчики HTTP запросов для просмотра аятов.
+
+Functions:
+    get_ayats_list
+    get_ayat_detail
+"""
 from fastapi import APIRouter, Depends, Query, Request
 from pypika import Query as SqlQuery
 from pypika.functions import Count

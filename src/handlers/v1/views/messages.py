@@ -1,3 +1,10 @@
+"""Обработчики HTTP запросов для работы с сообщенияеми.
+
+Functions:
+    get_messages_list
+    get_message
+    delete_message_from_telegram
+"""
 import datetime
 from typing import Literal
 

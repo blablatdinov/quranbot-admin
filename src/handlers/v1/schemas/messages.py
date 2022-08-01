@@ -1,3 +1,10 @@
+"""Схемы сообщений в мессенджере.
+
+Classes:
+    Message
+    PaginatedMessagesResponse
+    DeleteMessagesRequest
+"""
 import datetime
 from typing import Optional
 

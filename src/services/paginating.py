@@ -1,3 +1,12 @@
+"""Сервисный слой для представления данных с пагинацией.
+
+Classes:
+    UrlWithoutQueryParams
+    NextPage
+    PrevPage
+    NeighborsPageLinks
+    PaginatedResponse
+"""
 from typing import Optional, TypeVar
 
 from pydantic.main import BaseModel

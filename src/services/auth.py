@@ -1,3 +1,12 @@
+"""Сервисный слой для аутентификации.
+
+Classes:
+    PasswordInterface
+    Password
+    AuthService
+    Token
+    User
+"""
 import datetime
 
 from fastapi import Depends, status

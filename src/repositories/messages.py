@@ -1,3 +1,13 @@
+"""Модуль для работы с хранилищем сообщений.
+
+Classes:
+    MessagesCountQuery
+    MessagesQuery
+    FilteredMessageQuery
+    PaginatedMessagesQuery
+    MessagesSqlFilter
+    ShortMessageQuery
+"""
 from typing import Literal
 
 from pypika import Query as SqlQuery

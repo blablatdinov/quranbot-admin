@@ -1,3 +1,8 @@
+"""Модуль, содержащий интерфейс запроса к хранилищу.
+
+Classes:
+    QueryInterface
+"""
 from pypika.queries import QueryBuilder
 
 
