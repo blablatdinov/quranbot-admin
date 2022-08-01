@@ -11,6 +11,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: db_user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: qbot
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 55
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -33,7 +44,7 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
     - name: create .env file
-      run: cp .env.example .env
+      run: cp .github/.ci.env .env
     - name: Lint with flake8
       run: .venv/bin/flake8 src
     - name: Check types with mypy

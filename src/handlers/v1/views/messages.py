@@ -8,9 +8,8 @@ from pypika.functions import Count
 
 from handlers.v1.schemas.messages import DeleteMessagesRequest, Message, PaginatedMessagesResponse
 from repositories.auth import UserSchema
-from repositories.ayat import ElementsCount
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
-from repositories.paginated_sequence import PaginatedSequence
+from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.auth import User
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.messages import Messages
