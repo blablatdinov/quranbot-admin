@@ -1,10 +1,13 @@
 import asyncio
+from pathlib import Path
 
+import asyncpg
 import pytest
 from databases import Database
-import asyncpg
 
 from settings import settings
+
+test_db_dsn = settings.DATABASE_URL.replace('/qbot', '/test_qbot')
 
 
 @pytest.fixture(scope='session')
@@ -12,23 +15,36 @@ def event_loop():
     return asyncio.get_event_loop()
 
 
-@pytest.fixture(scope='session')
-async def test_db(event_loop):
+async def _create_test_db():
+    origin_db = Database(settings.DATABASE_URL)
+    await origin_db.connect()
+    await origin_db.execute('CREATE DATABASE test_qbot')
+    await origin_db.disconnect()
+
+
+async def _dump_test_db_schema():
+    test_db_connection = await asyncpg.connect(test_db_dsn)
+    db_schema_file = Path(settings.BASE_DIR / 'tests' / 'fixtures' / 'db_schema.sql').read_text()
+    await test_db_connection.execute(db_schema_file)
+
+    await test_db_connection.close()
+
+
+async def _remove_test_db():
     origin_db = Database(settings.DATABASE_URL)
     await origin_db.connect()
     await origin_db.execute('DROP DATABASE IF EXISTS test_qbot')
-    await origin_db.execute('CREATE DATABASE test_qbot')
-    test_db_connection = await asyncpg.connect(settings.DATABASE_URL.replace('/qbot', '/test_qbot'))
-    with open(settings.BASE_DIR / 'tests' / 'fixtures' / 'db_schema.sql') as f:
-        await test_db_connection.execute(f.read())
+    await origin_db.disconnect()
 
-    await test_db_connection.close()
-    test_db = Database(settings.DATABASE_URL.replace('/qbot', '/test_qbot'))
+
+@pytest.fixture(scope='session')
+async def test_db(event_loop):
+    await _create_test_db()
+    await _dump_test_db_schema()
+    test_db = Database(test_db_dsn)
     await test_db.connect()
     yield test_db
     await test_db.disconnect()
-    await origin_db.execute('DROP DATABASE IF EXISTS test_qbot')
-    await origin_db.disconnect()
 
 
 @pytest.fixture()

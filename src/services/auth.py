@@ -7,7 +7,7 @@ from jose import JWTError, jwt
 from passlib.hash import pbkdf2_sha256
 from pydantic import ValidationError
 
-from exceptions import UserNotFoundError, IncorrectCredentialsError
+from exceptions import IncorrectCredentialsError, UserNotFoundError
 from handlers.v1.schemas.auth import TokenResponse
 from repositories.auth import UserRepository, UserRepositoryInterface, UserSchema
 from settings import settings
@@ -43,6 +43,7 @@ class Password(PasswordInterface):
         :param username: str
         :param password: str
         :return: bool
+        :raises IncorrectCredentialsError: если пользователь не найден
         """
         try:
             user = await self._user_repository.get_by_username(username)

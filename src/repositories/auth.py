@@ -1,7 +1,7 @@
+from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel
 from pypika import Query, Table
-from databases import Database
 
 from db import db_connection
 from exceptions import UserNotFoundError
@@ -40,6 +40,7 @@ class UserRepository(UserRepositoryInterface):
 
         :param username: str
         :return: UserSchema
+        :raises UserNotFoundError: если пользователь не найден
         """
         user_table = Table('auth_user')
         query = str(
@@ -50,4 +51,5 @@ class UserRepository(UserRepositoryInterface):
         row = await self._connection.fetch_one(query)
         if not row:
             raise UserNotFoundError
-        return UserSchema.parse_obj(row._mapping)
+        # https://github.com/encode/databases/pull/447
+        return UserSchema.parse_obj(row._mapping)  # noqa: WPS437

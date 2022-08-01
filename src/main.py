@@ -30,8 +30,9 @@ async def add_process_time_header(request: Request, call_next: Callable):
     return response
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def startup():
+    """Действия, при запуске приложения."""
     await database.connect()
 
 

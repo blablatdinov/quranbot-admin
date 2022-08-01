@@ -1,7 +1,7 @@
 import enum
 from pathlib import Path
 
-from pydantic import BaseSettings, RedisDsn, PostgresDsn
+from pydantic import BaseSettings, PostgresDsn, RedisDsn
 
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600

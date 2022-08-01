@@ -1,8 +1,8 @@
 import json
 
 from aioredis.client import Redis
-from fastapi import Depends
 from databases import Database
+from fastapi import Depends
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as, parse_raw_as
 

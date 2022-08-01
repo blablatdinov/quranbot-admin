@@ -1,3 +1,4 @@
+from databases import Database
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from pydantic.main import BaseModel
@@ -5,7 +6,6 @@ from pypika import Parameter
 from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.queries import QueryBuilder
-from databases import Database
 
 from app_types.query import QueryInterface
 from db import db_connection
