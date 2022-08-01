@@ -110,7 +110,7 @@ class AyatDetailQuery(QueryInterface):
         )
         return (
             joins
-            .where(self._ayat_table.id == Parameter('$1'))
+            .where(self._ayat_table.id == Parameter(':ayat_id'))
         )
 
 
@@ -135,10 +135,13 @@ class AyatRepository(AyatRepositoryInterface):
         :return: AyatModel
         :raises HTTPException: if ayat not found
         """
-        ayat_row = await self._connection.fetchrow(str(self._ayat_detail_query.query()), ayat_id)
+        ayat_row = await self._connection.fetch_one(
+            str(self._ayat_detail_query.query()),
+            {'ayat_id': ayat_id},
+        )
         if not ayat_row:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Item not found')
-        ayat_row = dict(ayat_row)
+        ayat_row = dict(ayat_row._mapping)  # noqa: WPS437
         file_model = FileModel(
             id=ayat_row.pop('file_id'),
             name=ayat_row.pop('name'),

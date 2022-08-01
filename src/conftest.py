@@ -1,13 +1,12 @@
-from fastapi.testclient import TestClient
-
-from main import app
 import asyncio
 from pathlib import Path
 
 import asyncpg
 import pytest
 from databases import Database
+from fastapi.testclient import TestClient
 
+from main import app
 from settings import settings
 
 test_db_dsn = settings.DATABASE_URL.replace('/qbot', '/test_qbot')
