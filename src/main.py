@@ -44,6 +44,3 @@ async def startup():
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 configure_logging()
-
-if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True, port=settings.PORT)

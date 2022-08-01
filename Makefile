@@ -1,6 +1,5 @@
 run:
-# 	uvicorn main:app --reload --app-dir src
-	python src/main.py
+	uvicorn main:app --reload --app-dir src
 
 lint:
 	isort src && flake8 src
