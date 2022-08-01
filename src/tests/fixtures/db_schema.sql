@@ -1,11 +1,7 @@
 create sequence content_audiofile_id_seq
 	as integer;
 
-alter sequence content_audiofile_id_seq owner to almazilaletdinov;
-
 create sequence content_file_id_seq;
-
-alter sequence content_file_id_seq owner to almazilaletdinov;
 
 create table auth_group
 (
@@ -16,8 +12,6 @@ create table auth_group
 		constraint auth_group_name_key
 			unique
 );
-
-alter table auth_group owner to almazilaletdinov;
 
 create index auth_group_name_a6ea08ec_like
 	on auth_group (name varchar_pattern_ops);
@@ -41,8 +35,6 @@ create table auth_user
 	date_joined timestamp with time zone not null
 );
 
-alter table auth_user owner to almazilaletdinov;
-
 create index auth_user_username_6821ab7c_like
 	on auth_user (username varchar_pattern_ops);
 
@@ -63,8 +55,6 @@ create table auth_user_groups
 		unique (user_id, group_id)
 );
 
-alter table auth_user_groups owner to almazilaletdinov;
-
 create index auth_user_groups_group_id_97559544
 	on auth_user_groups (group_id);
 
@@ -81,8 +71,6 @@ create table bot_init_adminmessage
 	key varchar(128) not null
 );
 
-alter table bot_init_adminmessage owner to almazilaletdinov;
-
 create table bot_init_callbackdata
 (
 	id bigserial
@@ -95,8 +83,6 @@ create table bot_init_callbackdata
 	json text not null
 );
 
-alter table bot_init_callbackdata owner to almazilaletdinov;
-
 create table bot_init_mailing
 (
 	id bigserial
@@ -104,8 +90,6 @@ create table bot_init_mailing
 			primary key,
 	is_cleaned boolean not null
 );
-
-alter table bot_init_mailing owner to almazilaletdinov;
 
 create table bot_init_message
 (
@@ -125,8 +109,6 @@ create table bot_init_message
 	is_unknown boolean not null
 );
 
-alter table bot_init_message owner to almazilaletdinov;
-
 create index bot_init_message_mailing_id_c1836acc
 	on bot_init_message (mailing_id);
 
@@ -140,8 +122,6 @@ create table bot_init_subscriber_favourite_ayats
 	constraint bot_init_subscriber_favo_subscriber_id_ayat_id_b4a5e060_uniq
 		unique (subscriber_id, ayat_id)
 );
-
-alter table bot_init_subscriber_favourite_ayats owner to almazilaletdinov;
 
 create index bot_init_subscriber_favourite_ayats_ayat_id_3da782a4
 	on bot_init_subscriber_favourite_ayats (ayat_id);
@@ -159,8 +139,6 @@ create table content_file
 	name varchar(128)
 );
 
-alter table content_file owner to almazilaletdinov;
-
 alter sequence content_audiofile_id_seq owned by content_file.id;
 
 alter sequence content_file_id_seq owned by content_file.id;
@@ -175,8 +153,6 @@ create table content_morningcontent
 		constraint content_morningcontent_day_3b283716_uniq
 			unique
 );
-
-alter table content_morningcontent owner to almazilaletdinov;
 
 create table content_podcast
 (
@@ -193,8 +169,6 @@ create table content_podcast
 	article_link varchar(512)
 );
 
-alter table content_podcast owner to almazilaletdinov;
-
 create table content_sura
 (
 	id bigserial
@@ -205,8 +179,6 @@ create table content_sura
 	link varchar(128) not null,
 	child_elements_count integer not null
 );
-
-alter table content_sura owner to almazilaletdinov;
 
 create table content_ayat
 (
@@ -235,8 +207,6 @@ create table content_ayat
 	content text not null
 );
 
-alter table content_ayat owner to almazilaletdinov;
-
 create index content_ayat_one_day_content_id_1f7105d0
 	on content_ayat (one_day_content_id);
 
@@ -254,8 +224,6 @@ create table django_content_type
 		unique (app_label, model)
 );
 
-alter table django_content_type owner to almazilaletdinov;
-
 create table auth_permission
 (
 	id serial
@@ -270,8 +238,6 @@ create table auth_permission
 	constraint auth_permission_content_type_id_codename_01ab375a_uniq
 		unique (content_type_id, codename)
 );
-
-alter table auth_permission owner to almazilaletdinov;
 
 create table auth_group_permissions
 (
@@ -289,8 +255,6 @@ create table auth_group_permissions
 	constraint auth_group_permissions_group_id_permission_id_0cd325b0_uniq
 		unique (group_id, permission_id)
 );
-
-alter table auth_group_permissions owner to almazilaletdinov;
 
 create index auth_group_permissions_group_id_b120cbf9
 	on auth_group_permissions (group_id);
@@ -317,8 +281,6 @@ create table auth_user_user_permissions
 	constraint auth_user_user_permissions_user_id_permission_id_14a6b632_uniq
 		unique (user_id, permission_id)
 );
-
-alter table auth_user_user_permissions owner to almazilaletdinov;
 
 create index auth_user_user_permissions_permission_id_1fbb5f2c
 	on auth_user_user_permissions (permission_id);
@@ -348,8 +310,6 @@ create table django_admin_log
 				deferrable initially deferred
 );
 
-alter table django_admin_log owner to almazilaletdinov;
-
 create index django_admin_log_content_type_id_c4bce8eb
 	on django_admin_log (content_type_id);
 
@@ -366,8 +326,6 @@ create table django_migrations
 	applied timestamp with time zone not null
 );
 
-alter table django_migrations owner to almazilaletdinov;
-
 create table django_session
 (
 	session_key varchar(40) not null
@@ -376,8 +334,6 @@ create table django_session
 	session_data text not null,
 	expire_date timestamp with time zone not null
 );
-
-alter table django_session owner to almazilaletdinov;
 
 create index django_session_expire_date_a5c62663
 	on django_session (expire_date);
@@ -394,8 +350,6 @@ create table prayer_city
 	name varchar(200) not null,
 	source varchar(16) not null
 );
-
-alter table prayer_city owner to almazilaletdinov;
 
 create table bot_init_subscriber
 (
@@ -419,8 +373,6 @@ create table bot_init_subscriber
 				deferrable initially deferred
 );
 
-alter table bot_init_subscriber owner to almazilaletdinov;
-
 create table bot_init_admin
 (
 	id bigserial
@@ -433,8 +385,6 @@ create table bot_init_admin
 			references bot_init_subscriber
 				deferrable initially deferred
 );
-
-alter table bot_init_admin owner to almazilaletdinov;
 
 create index bot_init_subscriber_city_id_95701f89
 	on bot_init_subscriber (city_id);
@@ -455,8 +405,6 @@ create table bot_init_subscriberaction
 				deferrable initially deferred
 );
 
-alter table bot_init_subscriberaction owner to almazilaletdinov;
-
 create index bot_init_subscriberaction_subscriber_id_a17a3e22
 	on bot_init_subscriberaction (subscriber_id);
 
@@ -467,8 +415,6 @@ create table prayer_day
 			primary key,
 	date date not null
 );
-
-alter table prayer_day owner to almazilaletdinov;
 
 create table prayer_prayer
 (
@@ -487,8 +433,6 @@ create table prayer_prayer
 				deferrable initially deferred
 );
 
-alter table prayer_prayer owner to almazilaletdinov;
-
 create index prayer_prayer_city_id_8a5a0ed4
 	on prayer_prayer (city_id);
 
@@ -501,8 +445,6 @@ create table prayer_prayeratusergroup
 		constraint prayer_prayeratusergroup_pkey
 			primary key
 );
-
-alter table prayer_prayeratusergroup owner to almazilaletdinov;
 
 create table prayer_prayeratuser
 (
@@ -523,8 +465,6 @@ create table prayer_prayeratuser
 			references bot_init_subscriber
 				deferrable initially deferred
 );
-
-alter table prayer_prayeratuser owner to almazilaletdinov;
 
 create index prayer_prayeratuser_prayer_group_id_f03cdb09
 	on prayer_prayeratuser (prayer_group_id);

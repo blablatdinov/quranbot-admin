@@ -1,8 +1,11 @@
 from typing import AsyncGenerator
 
-import asyncpg
+from databases import Database
 
 from settings import settings
+
+connection_pool = None
+database = Database(settings.DATABASE_URL)
 
 
 async def db_connection() -> AsyncGenerator:
@@ -10,6 +13,4 @@ async def db_connection() -> AsyncGenerator:
 
     :yields: Connection
     """
-    connection = await asyncpg.connect(settings.DATABASE_URL)
-    yield connection
-    await connection.close()
+    yield database
