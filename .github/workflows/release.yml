@@ -33,7 +33,7 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
     - name: create .env file
-      run: cp .env.example .env
+      run: cp .env.ci .env
     - name: Lint with flake8
       run: .venv/bin/flake8 src
     - name: Check types with mypy

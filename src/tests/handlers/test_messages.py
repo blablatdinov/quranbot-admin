@@ -8,7 +8,7 @@ from handlers.v1.schemas.messages import Message
 from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from main import app
 from repositories.auth import UserSchema
-from repositories.paginated_sequence import PaginatedSequence, PaginatedSequenceInterface, ElementsCount
+from repositories.paginated_sequence import ElementsCount, PaginatedSequence, PaginatedSequenceInterface
 from services.auth import User
 from tests.handlers.test_ayats import ElementsCountMock
 
