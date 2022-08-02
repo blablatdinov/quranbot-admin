@@ -1,5 +1,5 @@
 run:
-	uvicorn main:app --reload --app-dir src --port 8010
+	uvicorn main:app --reload --app-dir src --port 8012
 
 lint:
 	isort src && flake8 src
