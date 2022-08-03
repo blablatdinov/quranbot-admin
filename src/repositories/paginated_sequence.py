@@ -55,6 +55,10 @@ class PaginatedSequence(PaginatedSequenceInterface):
     _model_to_parse: type[BaseModel]
 
     def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     def update_query(self, query: QueryInterface):
@@ -92,6 +96,10 @@ class PaginatedSequence(PaginatedSequenceInterface):
         return parse_obj_as(list[self._model_to_parse], rows)  # type: ignore
 
     def __hash__(self):
+        """Хэширование объекта.
+
+        :return: str
+        """
         return hash(self._query)
 
 
@@ -107,6 +115,11 @@ class CachedPaginatedSequence(PaginatedSequenceInterface):
         redis: Redis = Depends(redis_connection),
         paginated_sequence: PaginatedSequenceInterface = Depends(PaginatedSequence),
     ):
+        """Конструктор класса.
+
+        :param redis: Redis
+        :param paginated_sequence: PaginatedSequenceInterface
+        """
         self._origin = paginated_sequence
         self._cache_connection = redis
 
@@ -186,6 +199,10 @@ class ElementsCount(ElementsCountInterface):
     _query: str
 
     def __init__(self, connection: Database = Depends(db_connection)):  # noqa: WPS404 Found complex default value
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     def update_query(self, query: str) -> 'ElementsCount':
