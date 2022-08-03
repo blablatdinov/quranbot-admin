@@ -12,6 +12,11 @@ class LimitOffsetByPageParams(object):
     _page_size: int
 
     def __init__(self, page_num: int, page_size: int):
+        """Конструктор класса.
+
+        :param page_num: int
+        :param page_size: int
+        """
         self._page_num = page_num
         self._page_size = page_size
 

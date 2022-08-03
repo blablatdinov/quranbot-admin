@@ -23,6 +23,10 @@ class UrlWithoutQueryParams(Stringable):
     """Класс, составляющий url без query параметров."""
 
     def __init__(self, request: Request):
+        """Конструктор класса.
+
+        :param request: Request
+        """
         self._request = request
 
     def __str__(self):
@@ -54,6 +58,14 @@ class NextPage(object):
         elements_count: ElementsCountInterface,
         limit_offset_by_page_params: LimitOffsetByPageParams,
     ):
+        """Конструктор класса.
+
+        :param page_num: int
+        :param page_size: int
+        :param url: Stringable
+        :param elements_count: ElementsCountInterface
+        :param limit_offset_by_page_params: LimitOffsetByPageParams
+        """
         self._page_num = page_num
         self._page_size = page_size
         self._url = url
@@ -91,6 +103,13 @@ class PrevPage(object):
         elements_count: ElementsCountInterface,
         url: Stringable,
     ):
+        """Конструктор класса.
+
+        :param page_num: int
+        :param page_size: int
+        :param elements_count: ElementsCountInterface
+        :param url: Stringable
+        """
         self._page_num = page_num
         self._page_size = page_size
         self._url = url
@@ -120,6 +139,11 @@ class NeighborsPageLinks(object):
     _next_page: NextPage
 
     def __init__(self, prev_page: PrevPage, next_page: NextPage):
+        """Конструктор класса.
+
+        :param prev_page: PrevPage
+        :param next_page: NextPage
+        """
         self._prev_page = prev_page
         self._next_page = next_page
 
@@ -149,6 +173,13 @@ class PaginatedResponse(object):
         response_model: type[PydanticModel],
         neighbors_page_links: NeighborsPageLinks,
     ):
+        """Конструктор класса.
+
+        :param elements_count: ElementsCountInterface,
+        :param elements: PaginatedSequenceInterface,
+        :param response_model: type[PydanticModel],
+        :param neighbors_page_links: NeighborsPageLinks,
+        """
         self._elements_count = elements_count
         self._elements = elements
         self._response_model = response_model

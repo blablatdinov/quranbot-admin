@@ -10,6 +10,11 @@ class DateRange(object):
     """Depend для использования start_date, finish_date в query параметрах."""
 
     def __init__(self, start_date: datetime.date = None, finish_date: datetime.date = None):
+        """Конструктор класса.
+
+        :param start_date: datetime.date
+        :param finish_date: datetime.date
+        """
         default_time_range_days = 30
         today = datetime.datetime.today()
         if not start_date:
