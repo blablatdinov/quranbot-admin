@@ -13,7 +13,12 @@ from services.dates_iterator import DatesIterator
 class StartValue(object):
     """Класс, расчитывающий начальное значение для графика."""
 
-    def __init__(self, user_action_repository, date: datetime.date):
+    def __init__(self, user_action_repository: UserActionRepositoryInterface, date: datetime.date):
+        """Конструктор класса.
+
+        :param user_action_repository: UserActionRepositoryInterface
+        :param date: datetime.date
+        """
         self._user_action_repository = user_action_repository
         self._date = date
 
@@ -33,6 +38,11 @@ class UserCountGraphData(object):
     """Класс, составляющий данные для графика кол-ва пользователей."""
 
     def __init__(self, user_action_repository: UserActionRepositoryInterface, start_value: StartValue):
+        """Конструктор класса.
+
+        :param user_action_repository: UserActionRepositoryInterface
+        :param start_value: StartValue
+        """
         self._user_repository = user_action_repository
         self._start_value = start_value
 

@@ -44,6 +44,10 @@ class Password(PasswordInterface):
     _raw_password: str
 
     def __init__(self, user_repository: UserRepository = Depends()):
+        """Конструктор класса.
+
+        :param user_repository: UserRepositoryInterface
+        """
         self._user_repository = user_repository
 
     async def check(self, username, password) -> bool:
@@ -72,6 +76,12 @@ class AuthService(object):
     _user_repository: UserRepositoryInterface
 
     def __init__(self, user_repository: UserRepositoryInterface, username: str, password: Password):
+        """Конструктор класса.
+
+        :param user_repository: UserRepositoryInterface
+        :param username: str
+        :param password: Password
+        """
         self._user_repository = user_repository
         self._username = username
         self._password = password
@@ -110,6 +120,10 @@ class Token(object):
     _token: str
 
     def __init__(self, token: str):
+        """Конструктор класса.
+
+        :param token: str
+        """
         self._token = token
 
     def verify_token(self) -> UserSchema:

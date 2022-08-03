@@ -14,6 +14,10 @@ class Messages(object):
     _queue_integration: QueueIntegrationInterface
 
     def __init__(self, queue_integration: QueueIntegrationInterface = Depends(NatsIntegration)):
+        """Конструктор класса.
+
+        :param queue_integration: QueueIntegrationInterface
+        """
         self._queue_integration = queue_integration
 
     async def delete(self, message_ids: list[int]):

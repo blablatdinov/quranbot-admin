@@ -41,6 +41,10 @@ class AyatPaginatedQuery(QueryInterface):
     _limit_offset_calculator: LimitOffsetByPageParams
 
     def __init__(self, limit_offset_calculator: LimitOffsetByPageParams):
+        """Конструктор класса.
+
+        :param limit_offset_calculator: LimitOffsetByPageParams
+        """
         self._limit_offset_calculator = limit_offset_calculator
 
     def query(self):
@@ -132,6 +136,11 @@ class AyatRepository(AyatRepositoryInterface):
         ayat_detail_query: AyatDetailQuery = Depends(),
         connection: Database = Depends(db_connection),
     ):
+        """Конструктор класса.
+
+        :param ayat_detail_query: AyatDetailQuery
+        :param connection: Database
+        """
         self._connection = connection
         self._ayat_detail_query = ayat_detail_query
 

@@ -40,6 +40,10 @@ class UserRepository(UserRepositoryInterface):
     _connection: Database
 
     def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     async def get_by_username(self, username: str):

@@ -15,6 +15,7 @@ from pypika import Table
 
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
+from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
 class MessagesCountQuery(Stringable):
@@ -24,6 +25,10 @@ class MessagesCountQuery(Stringable):
     _sql_filter_param: Stringable
 
     def __init__(self, sql_filter_param: Stringable):
+        """Конструктор класса.
+
+        :param sql_filter_param: Stringable
+        """
         self._sql_filter_param = sql_filter_param
 
     def __str__(self):
@@ -63,7 +68,12 @@ class FilteredMessageQuery(QueryInterface):
 
     _messages_table = Table('bot_init_message')
 
-    def __init__(self, messages_query: QueryInterface, filter_param):
+    def __init__(self, messages_query: QueryInterface, filter_param: str):
+        """Конструктор класса.
+
+        :param messages_query: QueryInterface
+        :param filter_param: str
+        """
         self._origin = messages_query
         self._filter_param = filter_param
 
@@ -85,7 +95,12 @@ class PaginatedMessagesQuery(QueryInterface):
 
     _messages_table = Table('bot_init_message')
 
-    def __init__(self, messages_query: QueryInterface, limit_offset_calculator):
+    def __init__(self, messages_query: QueryInterface, limit_offset_calculator: LimitOffsetByPageParams):
+        """Конструктор класса.
+
+        :param messages_query: QueryInterface
+        :param limit_offset_calculator: LimitOffsetByPageParams
+        """
         self._origin = messages_query
         self._limit_offset_calculator = limit_offset_calculator
 
@@ -104,6 +119,10 @@ class MessagesSqlFilter(Stringable):
     _filter_param: Literal['without_mailing', 'unknown']
 
     def __init__(self, filter_param: Literal['without_mailing', 'unknown']):
+        """Конструктор класса.
+
+        :param filter_param: Literal['without_mailing', 'unknown']
+        """
         self._filter_param = filter_param
 
     def __str__(self):
@@ -136,6 +155,10 @@ class ShortMessageQuery(Stringable):
     _sql_filter_param: Stringable
 
     def __init__(self, sql_filter_param: Stringable):
+        """Конструктор класса.
+
+        :param sql_filter_param: Stringable
+        """
         self._sql_filter_param = sql_filter_param
 
     def __str__(self):

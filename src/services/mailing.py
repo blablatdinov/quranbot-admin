@@ -14,6 +14,10 @@ class Mailing(object):
     _queue_integration: QueueIntegrationInterface
 
     def __init__(self, queue_integration: NatsIntegration = Depends()):
+        """Конструктор класса.
+
+        :param queue_integration: QueueIntegrationInterface
+        """
         self._queue_integration = queue_integration
 
     async def create(self, text: str):

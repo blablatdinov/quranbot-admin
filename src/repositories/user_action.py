@@ -56,6 +56,10 @@ class UserActionRepository(UserActionRepositoryInterface):
     """Класс для работы с хранилищем действий пользователей."""
 
     def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     async def get_action_count_map_until_date(self, date: datetime.date) -> ActionCountMapQueryResult:
