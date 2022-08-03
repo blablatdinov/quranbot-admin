@@ -1,21 +1,38 @@
+import datetime
+
 import pytest
 
 from main import app
-from repositories.paginated_sequence import ElementsCount, ElementsCountInterface
+from repositories.paginated_sequence import ElementsCountInterface, ElementsCount
+from repositories.user_action import UserActionRepositoryInterface, UserActionRepository, ActionCountMapQueryResult, QueryResult
+
+
+class UserActionRepositoryMock(UserActionRepositoryInterface):
+
+    async def get_action_count_map_until_date(self, date: datetime.date):
+        return ActionCountMapQueryResult(
+            subscribed=1,
+            unsubscribed=2,
+            reactivated=8,
+        )
+
+    async def get_user_actions_by_date_range(self, start_date: datetime.date, finish_date: datetime.date):
+        return [QueryResult(date=datetime.date(2020, 1, 1), action='subscribed')]
 
 
 class ElementsCountMock(ElementsCountInterface):
 
-    def __init__(self, input_value: int):
-        self._input_value = input_value
+    def update_query(self, query: str) -> ElementsCountInterface:
+        return self
 
     async def get(self):
-        return self._input_value
+        return 4
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def override_dependency():
     app.dependency_overrides[ElementsCount] = ElementsCountMock
+    app.dependency_overrides[UserActionRepository] = UserActionRepositoryMock
 
 
 def test(client):
@@ -26,5 +43,8 @@ def test(client):
 
 def test_users_count(client):
     got = client.get('/api/v1/users/count-github-badge/')
+    # '/api/v1/users/count-github-badge/'
+
+    print(got.json())
 
     assert got.status_code == 200

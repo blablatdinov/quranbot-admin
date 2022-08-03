@@ -1,4 +1,3 @@
-import time
 import datetime
 
 
@@ -13,5 +12,7 @@ class DatesIterator(object):
 
     def __next__(self):
         value = self._start_date
+        if value >= self._finish_date:
+            raise StopIteration
         self._start_date += datetime.timedelta(days=1)
         return value

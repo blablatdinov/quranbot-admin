@@ -8,12 +8,6 @@ from pydantic import BaseModel, parse_obj_as
 from db import db_connection
 
 
-class UserActionRepositoryInterface(object):
-
-    async def get_user_actions_by_date_range(self, start_date: datetime.date, finish_date: datetime.date):
-        raise NotImplementedError
-
-
 class ActionTypeEnum(str, enum.Enum):
 
     SUBSCRIBED = 'subscribed'
@@ -30,10 +24,18 @@ class QueryResult(BaseModel):
 
 class ActionCountMapQueryResult(BaseModel):
 
-    deactivate: int
     subscribed: int
     unsubscribed: int
     reactivated: int
+
+
+class UserActionRepositoryInterface(object):
+
+    async def get_action_count_map_until_date(self, date: datetime.date) -> ActionCountMapQueryResult:
+        raise NotImplementedError
+
+    async def get_user_actions_by_date_range(self, start_date: datetime.date, finish_date: datetime.date):
+        raise NotImplementedError
 
 
 class UserActionRepository(UserActionRepositoryInterface):
@@ -41,7 +43,7 @@ class UserActionRepository(UserActionRepositoryInterface):
     def __init__(self, connection: Database = Depends(db_connection)):
         self._connection = connection
 
-    async def get_action_count_map_until_date(self, date: datetime.date):
+    async def get_action_count_map_until_date(self, date: datetime.date) -> ActionCountMapQueryResult:
         query = """
             SELECT
                 action,
@@ -51,6 +53,10 @@ class UserActionRepository(UserActionRepositoryInterface):
             GROUP BY action
         """
         rows = await self._connection.fetch_all(query, {'date': date})
+        print({
+            row._mapping['action']: row._mapping['count']
+            for row in rows
+        })
         return ActionCountMapQueryResult(**{
             row._mapping['action']: row._mapping['count']
             for row in rows

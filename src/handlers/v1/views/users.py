@@ -16,7 +16,7 @@ router = APIRouter(prefix='/users')
 def _get_date_range(start_date: datetime.date = None, finish_date: datetime.date = None):
     today = datetime.datetime.today()
     if not start_date:
-        start_date = today - datetime.timedelta(days=30)
+        start_date = (today - datetime.timedelta(days=30)).date()
     if not finish_date:
         finish_date = today.date()
     return namedtuple('DateRange', 'start_date,finish_date')(
