@@ -1,10 +1,10 @@
 import datetime
 
-from handlers.v1.views.users import _get_date_range
+from services.date_range import DateRange
 
 
 def test():
-    start, finish = _get_date_range()
+    got = DateRange()
 
-    assert type(start) == datetime.date
-    assert type(finish) == datetime.date
+    assert isinstance(got.start_date, datetime.date)
+    assert isinstance(got.finish_date, datetime.date)

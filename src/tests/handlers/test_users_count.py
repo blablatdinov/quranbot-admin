@@ -3,8 +3,13 @@ import datetime
 import pytest
 
 from main import app
-from repositories.paginated_sequence import ElementsCountInterface, ElementsCount
-from repositories.user_action import UserActionRepositoryInterface, UserActionRepository, ActionCountMapQueryResult, QueryResult
+from repositories.paginated_sequence import ElementsCount, ElementsCountInterface
+from repositories.user_action import (
+    ActionCountMapQueryResult,
+    QueryResult,
+    UserActionRepository,
+    UserActionRepositoryInterface,
+)
 
 
 class UserActionRepositoryMock(UserActionRepositoryInterface):
@@ -43,8 +48,5 @@ def test(client):
 
 def test_users_count(client):
     got = client.get('/api/v1/users/count-github-badge/')
-    # '/api/v1/users/count-github-badge/'
-
-    print(got.json())
 
     assert got.status_code == 200
