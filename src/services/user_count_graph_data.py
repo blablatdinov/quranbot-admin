@@ -54,7 +54,7 @@ class UserCountGraphData(object):
             start_value = return_value[date]
         return return_value
 
-    def _map_to_date_users_count(self, date, actions_grouped_by_date, return_value):
+    def _map_to_date_users_count(self, date, actions_grouped_by_date, return_value) -> None:
         for date_obj in actions_grouped_by_date:
             if date_obj.action in {ActionTypeEnum.SUBSCRIBED, ActionTypeEnum.REACTIVATED}:
                 return_value[date] += 1

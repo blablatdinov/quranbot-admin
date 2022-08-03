@@ -6,7 +6,7 @@ from main import app
 from repositories.paginated_sequence import ElementsCount, ElementsCountInterface
 from repositories.user_action import (
     ActionCountMapQueryResult,
-    QueryResult,
+    ActionsByDateRangeQueryResult,
     UserActionRepository,
     UserActionRepositoryInterface,
 )
@@ -22,7 +22,7 @@ class UserActionRepositoryMock(UserActionRepositoryInterface):
         )
 
     async def get_user_actions_by_date_range(self, start_date: datetime.date, finish_date: datetime.date):
-        return [QueryResult(date=datetime.date(2020, 1, 1), action='subscribed')]
+        return [ActionsByDateRangeQueryResult(date=datetime.date(2020, 1, 1), action='subscribed')]
 
 
 class ElementsCountMock(ElementsCountInterface):
