@@ -5,7 +5,7 @@ lint:
 	isort src && flake8 src
 
 test:
-	pytest --ignore=src/tests/integration/
+	pytest src --ignore=src/tests/integration/
 
 cov:
-	pytest --cov=src
+	pytest src --cov=src
