@@ -25,7 +25,7 @@ databases = {extras = ["asyncpg"], version = "^0.6.0"}
 wemake-python-styleguide = "^0.16.1"
 ipython = "^8.4.0"
 mypy = "^0.961"
-asyncpg-stubs = "^0.25.4"
+asyncpg-stubs = "^0.26.0"
 Faker = "^13.14.0"
 pytest-cov = "^3.0.0"
 pytest = "^7.1.2"
