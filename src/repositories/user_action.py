@@ -26,9 +26,9 @@ class ActionsByDateRangeQueryResult(BaseModel):
 class ActionCountMapQueryResult(BaseModel):
     """Схема для парсинга результата о кол-ве действий."""
 
-    subscribed: int
-    unsubscribed: int
-    reactivated: int
+    subscribed: int = 0
+    unsubscribed: int = 0
+    reactivated: int = 0
 
 
 class UserActionRepositoryInterface(object):
@@ -98,7 +98,7 @@ class UserActionRepository(UserActionRepositoryInterface):
                 date_time::DATE AS date,
                 action
             FROM bot_init_subscriberaction
-            WHERE date_time::TIMESTAMP BETWEEN :start_date AND :finish_date
+            WHERE date_time::TIMESTAMP BETWEEN :start_date AND :finish_date AND action <> 'deactivate'
             ORDER BY date_time
         """
         rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
