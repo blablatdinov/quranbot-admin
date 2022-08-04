@@ -8,8 +8,6 @@ Classes:
     MessagesSqlFilter
     ShortMessageQuery
 """
-from typing import Literal
-
 from pypika import Query as SqlQuery
 from pypika import Table
 
