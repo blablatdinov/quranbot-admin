@@ -12,7 +12,6 @@ from databases import Database
 
 from settings import settings
 
-connection_pool = None
 database = Database(settings.DATABASE_URL)
 
 

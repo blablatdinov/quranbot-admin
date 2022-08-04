@@ -4,30 +4,56 @@ Functions:
     get_users_count_graph_data
     get_users_count
 """
+import datetime
+
 from fastapi import APIRouter, Depends
+from fastapi.exceptions import RequestValidationError
+from pydantic.error_wrappers import ErrorWrapper
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
+from constants import FIRST_USER_ACTION_LOG_DATE
+from exceptions import DateTimeError
 from handlers.v1.schemas.auth import UsersCountGithubBadge
 from repositories.paginated_sequence import ElementsCount
 from repositories.user_action import UserActionRepository
+from services.auth import User
 from services.date_range import DateRange
 from services.user_count_graph_data import StartValue, UserCountGraphData
 
 router = APIRouter(prefix='/users')
 
 
+def _start_date(start_date: datetime.date = None):
+    if not start_date:
+        return None
+    if start_date < FIRST_USER_ACTION_LOG_DATE:
+        raise RequestValidationError(errors=[
+            ErrorWrapper(
+                DateTimeError(limit_value=FIRST_USER_ACTION_LOG_DATE),
+                loc=('query', 'start_date'),
+            ),
+        ])
+
+    return start_date
+
+
 @router.get('/graph-data/')
 async def get_users_count_graph_data(
-    date_range: DateRange = Depends(),
     user_action_repository: UserActionRepository = Depends(),
+    start_date: datetime.date = Depends(_start_date),
+    finish_date: datetime.date = None,
+    _: User = Depends(User.get_from_token),
 ):
     """Получить данные для графика по кол-ву пользователей.
 
-    :param date_range: DateRange
     :param user_action_repository: UserActionRepository
+    :param start_date: datetime.date
+    :param finish_date: datetime.date
+    :param _: User - param for checking authentification
     :return: dict
     """
+    date_range = DateRange(start_date, finish_date)
     return await UserCountGraphData(
         user_action_repository,
         StartValue(
