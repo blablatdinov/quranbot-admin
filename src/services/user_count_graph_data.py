@@ -25,11 +25,15 @@ class StartValue(object):
     async def calculate(self) -> int:
         """Расчет.
 
+        Чтобы учитывать кол-во пользователей, которые были зарегистрированы до внедрения
+        логгирования действий пользователей используется переменная start_value
+
+        Функционал логгирования появился 7 июля 2020 (2020-07-29)
+        https://github.com/blablatdinov/quranbot/commit/efb95e9
+
         :return: int
         """
-        # Чтобы учитывать кол-во пользователей, которые были зарегистрированы до внедрения
-        # логгирования действий пользователей используется переменная start_value
-        start_value = 0  # TODO: найти и вписать реальное
+        start_value = 1222  # TODO: найти и вписать реальное
         counts = await self._user_action_repository.get_action_count_map_until_date(self._date)
         return start_value + counts.subscribed + counts.reactivated - counts.unsubscribed
 

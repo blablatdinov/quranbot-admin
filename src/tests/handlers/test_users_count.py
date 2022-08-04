@@ -40,10 +40,30 @@ def override_dependency():
     app.dependency_overrides[UserActionRepository] = UserActionRepositoryMock
 
 
-def test(client):
+def test(client, override_auth_dep):
     got = client.get('/api/v1/users/graph-data/')
 
     assert got.status_code == 200
+
+
+def test_users_graph_data_invalid_input(client, override_auth_dep):
+    got = client.get('/api/v1/users/graph-data/?start_date=2020-07-02')
+
+    assert got.json() == {
+        'detail': [
+            {
+                'ctx': {
+                    'limit_value': '2020-07-29',
+                },
+                'loc': [
+                    'query',
+                    'start_date',
+                ],
+                'msg': 'start date must be greater than 2020-07-09',
+                'type': 'value_error.date.not_ge',
+            },
+        ],
+    }
 
 
 def test_users_count(client):

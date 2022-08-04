@@ -4,9 +4,12 @@ from pathlib import Path
 import asyncpg
 import pytest
 from databases import Database
+from fastapi import Header
 from fastapi.testclient import TestClient
 
 from main import app
+from repositories.auth import UserSchema
+from services.auth import User
 from settings import settings
 
 test_db_dsn = settings.DATABASE_URL.replace('/qbot', '/test_qbot')
@@ -63,3 +66,15 @@ def client():
     http_client = TestClient(app)
     http_client.headers = {'Authorization': ''}
     return http_client
+
+
+class UserMock(object):
+
+    @classmethod
+    def get_from_token(cls, _: str = Header(..., alias='Authorization')):
+        return UserSchema(id=1, username='user', password='1')  # noqa: S106
+
+
+@pytest.fixture()
+def override_auth_dep():
+    app.dependency_overrides[User.get_from_token] = UserMock.get_from_token
