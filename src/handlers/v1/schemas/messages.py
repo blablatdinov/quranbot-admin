@@ -4,6 +4,7 @@ Classes:
     Message
     PaginatedMessagesResponse
     DeleteMessagesRequest
+    MessageGraphDataItem
 """
 import datetime
 from typing import Optional
@@ -34,3 +35,9 @@ class DeleteMessagesRequest(BaseModel):
     """Модель входных данных для удаления сообщений."""
 
     message_ids: list[int]
+
+
+class MessageGraphDataItem(BaseModel):
+
+    date: datetime.date
+    messages_count: int

@@ -4,6 +4,7 @@ Functions:
     get_messages_list
     get_message
     delete_message_from_telegram
+    get_count_graph
 """
 import datetime
 from typing import Literal
@@ -13,7 +14,12 @@ from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.functions import Count
 
-from handlers.v1.schemas.messages import DeleteMessagesRequest, Message, PaginatedMessagesResponse
+from handlers.v1.schemas.messages import (
+    DeleteMessagesRequest,
+    Message,
+    MessageGraphDataItem,
+    PaginatedMessagesResponse,
+)
 from repositories.auth import UserSchema
 from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
@@ -118,5 +124,11 @@ async def delete_message_from_telegram(
 
 
 @router.get('/count-graph/')
-def get_count_graph():
-    return 1
+def get_count_graph() -> list[MessageGraphDataItem]:
+    return [
+        MessageGraphDataItem(date=datetime.date(2020, 1, 1), messages_count=50),
+        MessageGraphDataItem(date=datetime.date(2020, 1, 2), messages_count=60),
+        MessageGraphDataItem(date=datetime.date(2020, 1, 3), messages_count=70),
+        MessageGraphDataItem(date=datetime.date(2020, 1, 4), messages_count=80),
+        MessageGraphDataItem(date=datetime.date(2020, 1, 5), messages_count=90),
+    ]
