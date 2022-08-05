@@ -7,8 +7,6 @@ Functions:
 import datetime
 
 from fastapi import APIRouter, Depends
-from fastapi.exceptions import RequestValidationError
-from pydantic.error_wrappers import ErrorWrapper
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
