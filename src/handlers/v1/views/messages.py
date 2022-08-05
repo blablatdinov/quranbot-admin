@@ -115,3 +115,8 @@ async def delete_message_from_telegram(
     :param user: UserSchema
     """
     await messages_service.delete(input_data.message_ids)
+
+
+@router.get('/count-graph/')
+def get_count_graph():
+    return 1
