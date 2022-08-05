@@ -27,6 +27,10 @@ from services.auth import User
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
+from services.start_date_dependency import start_date_dependency
+from services.date_range import DateRange
+from db import db_connection
+from repositories.messages import MessageRepository, MessageRepositoryInterface
 
 router = APIRouter(prefix='/messages')
 
@@ -124,7 +128,13 @@ async def delete_message_from_telegram(
 
 
 @router.get('/count-graph/')
-def get_count_graph() -> list[MessageGraphDataItem]:
+async def get_count_graph(
+    finish_date: datetime.date = None,
+    start_date: datetime.date = Depends(start_date_dependency),
+    messages_repository: MessageRepository = Depends(),
+) -> list[MessageGraphDataItem]:
+    date_range = DateRange(start_date, finish_date)
+    rows = await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)
     return [
         MessageGraphDataItem(date=datetime.date(2020, 1, 1), messages_count=50),
         MessageGraphDataItem(date=datetime.date(2020, 1, 2), messages_count=60),
