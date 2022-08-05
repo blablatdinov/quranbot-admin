@@ -1,4 +1,10 @@
-import pytest
+from main import app
+
+
+
+
+def override_dependency():
+    app.dependency_overrides[]
 
 
 def test(client):

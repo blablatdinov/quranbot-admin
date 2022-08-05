@@ -8,7 +8,7 @@ Classes:
 """
 from typing import Optional
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 
 class FileModel(BaseModel):

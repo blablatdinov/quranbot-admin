@@ -20,17 +20,13 @@ from db import db_connection
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from handlers.v1.schemas.messages import MessageGraphDataItem
 
 
 class MessageRepositoryInterface(object):
     
     async def get_messages_for_graph(self):
         raise NotImplementedError
-
-
-class MessagesForGraphQueryResult(BaseModel):
-
-    date: datetime.date
 
 
 class MessageRepository(MessageRepositoryInterface):
@@ -44,13 +40,18 @@ class MessageRepository(MessageRepositoryInterface):
         self,
         start_date: datetime.date,
         finish_date: datetime.date,
-    ) -> list[MessagesForGraphQueryResult]:
+    ) -> list[MessageGraphDataItem]:
         query = """
-            SELECT date FROM bot_init_message
+            SELECT
+                date::DATE,
+                COUNT(*) AS messages_count
+            FROM bot_init_message
             WHERE date BETWEEN :start_date AND :finish_date
+            GROUP BY date::DATE
+            ORDER BY date
         """
         rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
-        return parse_obj_as(list[MessagesForGraphQueryResult], rows)
+        return parse_obj_as(list[MessageGraphDataItem], rows)
 
 
 class MessagesCountQuery(Stringable):

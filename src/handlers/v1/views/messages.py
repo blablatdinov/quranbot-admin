@@ -134,11 +134,4 @@ async def get_count_graph(
     messages_repository: MessageRepository = Depends(),
 ) -> list[MessageGraphDataItem]:
     date_range = DateRange(start_date, finish_date)
-    rows = await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)
-    return [
-        MessageGraphDataItem(date=datetime.date(2020, 1, 1), messages_count=50),
-        MessageGraphDataItem(date=datetime.date(2020, 1, 2), messages_count=60),
-        MessageGraphDataItem(date=datetime.date(2020, 1, 3), messages_count=70),
-        MessageGraphDataItem(date=datetime.date(2020, 1, 4), messages_count=80),
-        MessageGraphDataItem(date=datetime.date(2020, 1, 5), messages_count=90),
-    ]
+    return await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)
