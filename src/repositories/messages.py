@@ -28,6 +28,31 @@ class MessageRepositoryInterface(object):
         raise NotImplementedError
 
 
+class MessagesForGraphQueryResult(BaseModel):
+
+    date: datetime.date
+
+
+class MessageRepository(object):
+
+    self._connection: Database
+
+    def __init__(self, connection: Database = Depends(db_connection)):
+        self._connection = connection
+    
+    async def get_messages_for_graph(
+        self,
+        start_date: datetime.date,
+        finish_date: datetime.date,
+    ) -> list[MessagesForGraphQueryResult]:
+        query = """
+            SELECT date FROM bot_init_message
+            WHERE date BETWEEN :start_date AND :finish_date
+        """
+        rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
+        return parse_obj_as(list[MessagesCountQuery], rows)
+
+
 class MessagesCountQuery(Stringable):
     """Запрос для получению кол-ва сообщений."""
 
