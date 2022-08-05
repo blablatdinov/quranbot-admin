@@ -8,12 +8,24 @@ Classes:
     MessagesSqlFilter
     ShortMessageQuery
 """
+import datetime
+
+from databases import Database
 from pypika import Query as SqlQuery
 from pypika import Table
+from pydantic import BaseModel, parse_obj_as
+from fastapi import Depends
+from db import db_connection
 
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+
+
+class MessageRepositoryInterface(object):
+    
+    async def get_messages_for_graph(self):
+        raise NotImplementedError
 
 
 class MessagesCountQuery(Stringable):
