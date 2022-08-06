@@ -15,7 +15,7 @@ class GraphZeroValueItemSave(object):
         finish_date: datetime.date,
     ) -> list[MessageGraphDataItem]:
         db_query_result = await self._message_repository.get_messages_for_graph(start_date, finish_date)
-        while start_date < finish_date:
+        while start_date <= finish_date:
             if start_date not in db_query_result:
                 db_query_result[start_date] = 0
             start_date += datetime.timedelta(days=1)

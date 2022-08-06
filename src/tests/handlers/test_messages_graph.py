@@ -10,7 +10,7 @@ from repositories.messages import MessageRepository, MessageRepositoryInterface
 class MessageRepositoryMock(MessageRepositoryInterface):
 
     async def get_messages_for_graph(self, start_date, finish_date):
-        return [MessageGraphDataItem(date=datetime.date(2022, 8, 6), messages_count=1)]
+        return {datetime.date(2022, 8, 6): 1}
 
 
 @pytest.fixture(autouse=True)
@@ -33,6 +33,6 @@ def test_time_range(client):
 
     payload = got.json()
 
-    assert len(payload) == 30
-    assert payload[0].date == datetime.date(2022, 8, 6)
-    assert payload[-1].date == datetime.date(2022, 9, 6)
+    assert len(payload) == 32
+    assert payload[0]['date'] == '2022-08-06'
+    assert payload[-1]['date'] == '2022-09-06'

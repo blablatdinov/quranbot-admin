@@ -29,6 +29,7 @@ from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 from services.start_date_dependency import start_date_dependency
+from services.empty_graphe_item_fill import GraphZeroValueItemSave
 
 router = APIRouter(prefix='/messages')
 
@@ -139,4 +140,6 @@ async def get_count_graph(
     :return: list[MessageGraphDataItem]
     """
     date_range = DateRange(start_date, finish_date)
-    return await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)
+    return await GraphZeroValueItemSave(
+        messages_repository,
+    ).get_messages_for_graph(date_range.start_date, date_range.finish_date)
