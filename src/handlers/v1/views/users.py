@@ -10,15 +10,13 @@ from fastapi import APIRouter, Depends
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
-from constants import FIRST_USER_ACTION_LOG_DATE
-from exceptions import DateTimeError
 from handlers.v1.schemas.auth import UsersCountGithubBadge
 from repositories.paginated_sequence import ElementsCount
 from repositories.user_action import UserActionRepository
 from services.auth import User
 from services.date_range import DateRange
-from services.user_count_graph_data import StartValue, UserCountGraphData
 from services.start_date_dependency import start_date_dependency
+from services.user_count_graph_data import StartValue, UserCountGraphData
 
 router = APIRouter(prefix='/users')
 

@@ -11,29 +11,41 @@ Classes:
 import datetime
 
 from databases import Database
+from fastapi import Depends
+from pydantic import parse_obj_as
 from pypika import Query as SqlQuery
 from pypika import Table
-from pydantic import BaseModel, parse_obj_as
-from fastapi import Depends
-from db import db_connection
 
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from db import db_connection
 from handlers.v1.schemas.messages import MessageGraphDataItem
+from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
 class MessageRepositoryInterface(object):
-    
-    async def get_messages_for_graph(self):
+    """Интерфейс для работы с хранилищем сообщений."""
+
+    async def get_messages_for_graph(self, start_date: datetime.date, finish_date: datetime.date):
+        """Получить данные для графика кол-ва сообщений.
+
+        :param start_date: datetime.date
+        :param finish_date: datetime.date
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
 
 class MessageRepository(MessageRepositoryInterface):
+    """Класс для работы с хранилищем сообщений."""
 
     _connection: Database
 
     def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     async def get_messages_for_graph(
@@ -41,6 +53,12 @@ class MessageRepository(MessageRepositoryInterface):
         start_date: datetime.date,
         finish_date: datetime.date,
     ) -> list[MessageGraphDataItem]:
+        """Получить данные для графика кол-ва сообщений.
+
+        :param start_date: datetime.date
+        :param finish_date: datetime.date
+        :return: list[MessageGraphDataItem]
+        """
         query = """
             SELECT
                 date::DATE,

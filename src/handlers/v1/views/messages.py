@@ -21,16 +21,14 @@ from handlers.v1.schemas.messages import (
     PaginatedMessagesResponse,
 )
 from repositories.auth import UserSchema
-from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
+from repositories.messages import FilteredMessageQuery, MessageRepository, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.auth import User
+from services.date_range import DateRange
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 from services.start_date_dependency import start_date_dependency
-from services.date_range import DateRange
-from db import db_connection
-from repositories.messages import MessageRepository, MessageRepositoryInterface
 
 router = APIRouter(prefix='/messages')
 
@@ -133,5 +131,12 @@ async def get_count_graph(
     start_date: datetime.date = Depends(start_date_dependency),
     messages_repository: MessageRepository = Depends(),
 ) -> list[MessageGraphDataItem]:
+    """Получить данные для графика кол-ва сообщений.
+
+    :param finish_date: datetime.date
+    :param start_date: datetime.date
+    :param messages_repository: MessageRepository
+    :return: list[MessageGraphDataItem]
+    """
     date_range = DateRange(start_date, finish_date)
     return await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)

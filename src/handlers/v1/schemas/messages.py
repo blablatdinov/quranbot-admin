@@ -38,6 +38,7 @@ class DeleteMessagesRequest(BaseModel):
 
 
 class MessageGraphDataItem(BaseModel):
+    """Элемент ответа запроса данных для графика кол-ва сообщений."""
 
     date: datetime.date
     messages_count: int
