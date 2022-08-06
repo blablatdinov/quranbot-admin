@@ -2,7 +2,6 @@ import datetime
 
 import pytest
 
-from handlers.v1.schemas.messages import MessageGraphDataItem
 from main import app
 from repositories.messages import MessageRepository, MessageRepositoryInterface
 

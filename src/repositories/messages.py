@@ -70,8 +70,8 @@ class MessageRepository(MessageRepositoryInterface):
         """
         rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
         return {
-            x.date: x.messages_count
-            for x in parse_obj_as(list[MessageGraphDataItem], rows)
+            message_graph_data_item.date: message_graph_data_item.messages_count
+            for message_graph_data_item in parse_obj_as(list[MessageGraphDataItem], rows)
         }
 
 

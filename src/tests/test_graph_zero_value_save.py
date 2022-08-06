@@ -1,8 +1,7 @@
 import datetime
 
-from services.empty_graphe_item_fill import GraphZeroValueItemSave
-from handlers.v1.schemas.messages import MessageGraphDataItem
 from repositories.messages import MessageRepositoryInterface
+from services.empty_graphe_item_fill import GraphZeroValueItemSave
 
 
 class MessageRepositoryMock(MessageRepositoryInterface):
