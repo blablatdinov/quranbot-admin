@@ -9,7 +9,7 @@ Classes:
 """
 from typing import Optional, TypeVar
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 from starlette.requests import Request
 
 from app_types.stringable import Stringable
