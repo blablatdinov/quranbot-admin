@@ -8,7 +8,7 @@ from repositories.messages import MessageRepositoryInterface
 class MessageRepositoryMock(MessageRepositoryInterface):
 
     async def get_messages_for_graph(self, start_date, finish_date):
-        return [MessageGraphDataItem(date=datetime.date(2022, 8, 6), messages_count=1)]
+        return {datetime.date(2022, 8, 6): 1}
 
 
 async def test():
@@ -16,3 +16,7 @@ async def test():
         datetime.date(2022, 7, 6),
         datetime.date(2022, 8, 6),
     )
+
+    assert len(got) == 32
+    assert got[0].date == datetime.date(2022, 7, 6)
+    assert got[-1].date == datetime.date(2022, 8, 6)

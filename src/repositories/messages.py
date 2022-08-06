@@ -52,12 +52,12 @@ class MessageRepository(MessageRepositoryInterface):
         self,
         start_date: datetime.date,
         finish_date: datetime.date,
-    ) -> list[MessageGraphDataItem]:
+    ) -> dict[datetime.date, int]:
         """Получить данные для графика кол-ва сообщений.
 
         :param start_date: datetime.date
         :param finish_date: datetime.date
-        :return: list[MessageGraphDataItem]
+        :return: dict[datetime.date, int]
         """
         query = """
             SELECT
@@ -69,7 +69,10 @@ class MessageRepository(MessageRepositoryInterface):
             ORDER BY date
         """
         rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
-        return parse_obj_as(list[MessageGraphDataItem], rows)
+        return {
+            x.date: x.messages_count
+            for x in parse_obj_as(list[MessageGraphDataItem], rows)
+        }
 
 
 class MessagesCountQuery(Stringable):
