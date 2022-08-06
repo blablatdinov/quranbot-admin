@@ -4,6 +4,7 @@ Functions:
     get_messages_list
     get_message
     delete_message_from_telegram
+    get_count_graph
 """
 import datetime
 from typing import Literal
@@ -13,14 +14,21 @@ from pypika import Query as SqlQuery
 from pypika import Table
 from pypika.functions import Count
 
-from handlers.v1.schemas.messages import DeleteMessagesRequest, Message, PaginatedMessagesResponse
+from handlers.v1.schemas.messages import (
+    DeleteMessagesRequest,
+    Message,
+    MessageGraphDataItem,
+    PaginatedMessagesResponse,
+)
 from repositories.auth import UserSchema
-from repositories.messages import FilteredMessageQuery, MessagesQuery, PaginatedMessagesQuery
+from repositories.messages import FilteredMessageQuery, MessageRepository, MessagesQuery, PaginatedMessagesQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.auth import User
+from services.date_range import DateRange
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
+from services.start_date_dependency import start_date_dependency
 
 router = APIRouter(prefix='/messages')
 
@@ -115,3 +123,20 @@ async def delete_message_from_telegram(
     :param user: UserSchema
     """
     await messages_service.delete(input_data.message_ids)
+
+
+@router.get('/count-graph/')
+async def get_count_graph(
+    finish_date: datetime.date = None,
+    start_date: datetime.date = Depends(start_date_dependency),
+    messages_repository: MessageRepository = Depends(),
+) -> list[MessageGraphDataItem]:
+    """Получить данные для графика кол-ва сообщений.
+
+    :param finish_date: datetime.date
+    :param start_date: datetime.date
+    :param messages_repository: MessageRepository
+    :return: list[MessageGraphDataItem]
+    """
+    date_range = DateRange(start_date, finish_date)
+    return await messages_repository.get_messages_for_graph(date_range.start_date, date_range.finish_date)
