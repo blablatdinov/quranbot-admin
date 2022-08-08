@@ -9,12 +9,15 @@ Classes:
     QueueIntegrationInterface
     NatsIntegration
 """
+import asyncio
 import datetime
 import json
 import uuid
 
 import nats
+from loguru import logger
 from quranbot_schema_registry import validate_schema
+from aioredis.client import Redis
 
 
 class QueueIntegrationInterface(object):
@@ -34,6 +37,8 @@ class QueueIntegrationInterface(object):
 class NatsIntegration(QueueIntegrationInterface):
     """Интеграция с nats."""
 
+    _queue_name = 'default'
+
     async def send(self, event_data, event_name, version):
         """Отправить событие.
 
@@ -51,5 +56,64 @@ class NatsIntegration(QueueIntegrationInterface):
         }
         validate_schema(event, event_name, version)
         nats_client = await nats.connect('localhost')
-        await nats_client.publish('foo', json.dumps(event).encode('utf-8'))
+
+        logger.info('Publishing to queue: {0}, event_id: {1}'.format(self._queue_name, event['event_id']))
+        await nats_client.publish(self._queue_name, json.dumps(event).encode('utf-8'))
+        logger.info('Event: {0} to queue: {1} successful published'.format(event['event_id'], self._queue_name))
         await nats_client.close()
+
+
+class NatsEvents(object):
+
+    def __init__(self, handlers: list):
+        self._handlers = handlers
+
+    async def receive(self) -> None:
+        """Прием сообщений."""
+        nats_client = await nats.connect('localhost')
+        logger.info('Start handling events...')
+        logger.info('Receive evenst list: {0}'.format([handler.event_name for handler in self._handlers]))
+        await nats_client.subscribe('default', cb=self._message_handler)
+        while True:  # noqa: WPS457
+            await asyncio.sleep(1)
+
+    async def _message_handler(self, event):
+        event_dict = json.loads(event.data.decode())
+        event_log_data = 'event_id={0} event_name={1}'.format(event_dict['event_id'], event_dict['event_name'])
+        logger.info('Event {0} received'.format(event_log_data))
+        try:
+            validate_schema(event_dict, event_dict['event_name'], event_dict['event_version'])
+        except TypeError as event_validate_error:
+            logger.error('Validate {0} failed {1}'.format(event_log_data, str(event_validate_error)))
+            return
+
+        for event_handler in self._handlers:
+            print(event_handler.event_name, event_dict['event_name'])
+            print(event_handler.event_name == event_dict['event_name'])
+            if event_handler.event_name == event_dict['event_name']:
+                logger.info('Handling {0} event...'.format(event_log_data))
+                await event_handler.handle_event(event_dict['data'])
+                logger.info('Event {0} handled successful'.format(event_log_data))
+                return
+
+        logger.info('Event {0} skipped because not find handler'.format(event_log_data))
+
+
+class NotificationCreatedEvent(object):
+    """Событие создания уведомления."""
+
+    event_name = 'Notification.Created'
+    _redis: Redis
+
+    def __init__(self, redis: Redis, nats_integration: QueueIntegrationInterface):
+        self._redis = redis
+        self._nats_integration = nats_integration
+
+    async def handle_event(self, event):
+        """Обработка события.
+
+        :param event: dict
+        """
+        notification_message = event['text']
+        # TODO: saving in database if user has not connection by websocket
+        await self._nats_integration.send({'text': notification_message}, 'Websocket.NotificationCreated', 1)

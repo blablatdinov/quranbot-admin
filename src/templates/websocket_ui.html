@@ -20,8 +20,8 @@
   var app = new Vue({
     el: '#app',
     data: {
-      username: 'blablatdinov',
-      password: 'ehodof21',
+      username: '',
+      password: '',
       schema: '{{ request.url }}'.split(':')[0],
       domain: '{{ request.url }}'.split('/').slice(2, 3).join('/'),
       ws: null,
@@ -31,7 +31,7 @@
         let formData = new FormData()
         formData.append('username', this.username)
         formData.append('password', this.password)
-        fetch(`${this.schema}://${this.domain}/api/v1/auth/?token=`, {
+        fetch(`${this.schema}://${this.domain}/api/v1/auth/`, {
           method: 'POST',
           body: formData,
         })
@@ -39,6 +39,7 @@
           .then((data) => localStorage.setItem('accessToken', data.access_token))
         console.log(localStorage.getItem('accessToken'))
         this.ws = new WebSocket(`ws://${this.domain}/ws/?token=${localStorage.getItem('accessToken')}`)
+        this.ws.onmessage = (message) => console.log(message);
       },
     }
   })
