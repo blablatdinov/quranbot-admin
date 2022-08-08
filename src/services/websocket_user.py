@@ -24,7 +24,7 @@ class WebsocketUser(object):
         self._websocket = websocket
         self._user = user
 
-    async def __call__(self, event):
+    async def receive(self, event):
         """Обработчик событий.
 
         :param event: str
