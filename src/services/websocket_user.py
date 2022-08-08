@@ -40,7 +40,7 @@ class WebsocketUser(object):
             return
         await self._websocket.send_text(
             json.dumps(
-                {'uuid': event_dict['data']['uuid'], 'text': event_dict['data']['text']},
+                {'uuid': event_dict['data']['public_id'], 'text': event_dict['data']['text']},
             ),
         )
         logger.info('Received websocket notification from nats, text: {0}. Event: {1}'.format(

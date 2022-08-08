@@ -44,7 +44,7 @@ async def create_notification(
     """
     notification = await notification_repository.create(input_data.text)
     await nats_integration.send(
-        {'uuid': str(notification.uuid), 'text': notification.text}, 'Notification.Created', 1,
+        {'public_id': str(notification.uuid), 'text': notification.text}, 'Notification.Created', 1,
     )
 
 
