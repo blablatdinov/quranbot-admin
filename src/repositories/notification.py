@@ -2,10 +2,11 @@ import datetime
 import uuid
 
 from fastapi import Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, parse_obj_as
 from databases import Database
 
 from db import db_connection
+from handlers.v1.schemas.notifications import NotificationResponseSchema
 
 
 class NotificationInsertQueryResult(BaseModel):
@@ -25,6 +26,9 @@ class NotificationRepositoryInterface(object):
         raise NotImplementedError
 
     async def mark_as_readed(self, notification_uuid):
+        raise NotImplementedError
+
+    async def get_notifications(self):
         raise NotImplementedError
 
 
@@ -57,3 +61,11 @@ class NotificationRepository(NotificationRepositoryInterface):
             WHERE uuid = :notification_uuid
         """
         await self._connection.execute(query, {'notification_uuid': notification_uuid})
+
+    async def get_notifications(self):
+        query = """
+            SELECT uuid, text FROM notifications WHERE is_readed = 'f'
+        """
+        rows = await self._connection.fetch_all(query)
+        return parse_obj_as(list[NotificationResponseSchema], rows)
+
