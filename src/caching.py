@@ -9,11 +9,12 @@ Functions:
     redis_connection
 """
 import aioredis
+from aioredis.client import Redis
 
 from settings import settings
 
 
-async def redis_connection():
+async def redis_connection() -> Redis:
     """Получить соеденение к redis.
 
     :return: Redis
