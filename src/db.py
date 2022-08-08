@@ -1,8 +1,18 @@
+"""Модуль, отвечающий за работу с БД приложения.
+
+В кач-ве постоянного хранилища приложения используется БД postgres
+https://www.postgresql.org/
+
+Functions:
+    db_connection
+"""
 from typing import AsyncGenerator
 
-import asyncpg
+from databases import Database
 
 from settings import settings
+
+database = Database(settings.DATABASE_URL)
 
 
 async def db_connection() -> AsyncGenerator:
@@ -10,6 +20,4 @@ async def db_connection() -> AsyncGenerator:
 
     :yields: Connection
     """
-    connection = await asyncpg.connect(settings.DATABASE_URL)
-    yield connection
-    await connection.close()
+    yield database

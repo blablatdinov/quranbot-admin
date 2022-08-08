@@ -1,3 +1,15 @@
+"""Обработчики HTTP запросов для работы с рассылками.
+
+Classes:
+    MailingModel
+    MailingCreateModel
+    MailingCreateResponseModel
+
+Functions:
+    get_mailings
+    delete_mailing_from_telegram
+    create_mailing_from_telegram
+"""
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 

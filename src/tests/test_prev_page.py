@@ -1,5 +1,5 @@
 from app_types.stringable import Stringable
-from repositories.ayat import ElementsCountInterface
+from repositories.paginated_sequence import ElementsCountInterface
 from services.paginating import PrevPage
 
 

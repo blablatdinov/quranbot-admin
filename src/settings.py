@@ -1,7 +1,16 @@
+"""Модуль с настройками приложения.
+
+Classes:
+    LogLevel: перечисление уровней логгирования
+    Settings: конфигурация приложения
+
+Misc variables:
+    settings: объект для использования настроек в коде
+"""
 import enum
 from pathlib import Path
 
-from pydantic import BaseSettings, RedisDsn
+from pydantic import BaseSettings, PostgresDsn, RedisDsn
 
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600
@@ -19,7 +28,7 @@ class Settings(BaseSettings):
     """Класс настроек приложения."""
 
     PORT: int = 8000
-    DATABASE_URL: str
+    DATABASE_URL: PostgresDsn
     REDIS_DSN: RedisDsn
     BASE_DIR: Path = Path(__file__).parent
     LOG_LEVEL: LogLevel = LogLevel.DEBUG

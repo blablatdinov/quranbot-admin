@@ -1,3 +1,11 @@
+"""Конфигурация логирования.
+
+Classes:
+    InterceptHandler
+
+Functions:
+    configure_logging
+"""
 import logging
 import sys
 from typing import Union
@@ -57,5 +65,6 @@ def configure_logging() -> None:
     logger.remove()
     logger.add(
         sys.stdout,
+        diagnose=False,
         level=settings.LOG_LEVEL.value,
     )

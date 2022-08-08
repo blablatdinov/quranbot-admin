@@ -14,6 +14,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: db_user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: qbot
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 55
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -21,7 +32,7 @@ jobs:
       with:
         python-version: "3.10"
     - name: Install Poetry
-      uses: snok/install-poetry@v1.3.0
+      uses: snok/install-poetry@v1.3.1
       with:
         virtualenvs-create: true
         virtualenvs-in-project: true
@@ -42,5 +53,5 @@ jobs:
     - name: Check types with mypy
       run: .venv/bin/mypy src
     - name: Run tests with pytest
-      run: .venv/bin/pytest
+      run: .venv/bin/pytest src
 

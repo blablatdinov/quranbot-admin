@@ -1,3 +1,12 @@
+"""Модуль с обработчиками HTTP запросов для работы с ежедневным контентом.
+
+Functions:
+    create_daily_content
+    get_last_daily_content_day
+
+Misc variables:
+    router
+"""
 from typing import Literal
 
 from fastapi import APIRouter, status

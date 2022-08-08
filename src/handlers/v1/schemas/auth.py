@@ -1,4 +1,12 @@
+"""Схемы для аутентификации.
+
+Classes:
+    AuthInputData
+    TokenResponse
+    UsersCountGithubBadge
+"""
 from pydantic import BaseModel
+from pydantic.fields import Field
 
 
 class AuthInputData(BaseModel):
@@ -13,3 +21,15 @@ class TokenResponse(BaseModel):
 
     access_token: str
     token_type: str = 'bearer'
+
+
+class UsersCountGithubBadge(BaseModel):
+    """Схема бейджика для README.md .
+
+    https://shields.io/endpoint
+    """
+
+    schema_version: int = Field(1, alias='schemaVersion')
+    label: str
+    message: str
+    color: str = 'informational'

@@ -1,14 +1,19 @@
+"""Точка входа в приложение.
+
+Functions:
+    add_process_time_header: TODO move it into middlewares module
+    startup
+"""
 import time
 from typing import Callable
 
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
 from handlers.websockets import websocket_endpoint
 
+from db import database
 from handlers.registration_handlers import router
 from logging_settings import configure_logging
-from settings import settings
 
 app = FastAPI()
 
@@ -33,8 +38,11 @@ async def add_process_time_header(request: Request, call_next: Callable):
 app.websocket('/ws/')(websocket_endpoint)
 
 
+@app.on_event('startup')
+async def startup():
+    """Действия, при запуске приложения."""
+    await database.connect()
+
+
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 configure_logging()
-
-if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True, port=settings.PORT)

@@ -1,7 +1,16 @@
+"""Модуль с функционалом для пагинации.
+
+Classes:
+    PaginatedSequenceInterface
+    PaginatedSequence
+    CachedPaginatedSequence
+    ElementsCountInterface
+    ElementsCount
+"""
 import json
 
 from aioredis.client import Redis
-from asyncpg import Connection
+from databases import Database
 from fastapi import Depends
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as, parse_raw_as
@@ -41,11 +50,15 @@ class PaginatedSequenceInterface(object):
 class PaginatedSequence(PaginatedSequenceInterface):
     """Класс, предоставляющий доступ к списку объектов с пагинацией."""
 
-    _connection: Connection
+    _connection: Database
     _query: QueryInterface
     _model_to_parse: type[BaseModel]
 
-    def __init__(self, connection: Connection = Depends(db_connection)):
+    def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     def update_query(self, query: QueryInterface):
@@ -79,10 +92,14 @@ class PaginatedSequence(PaginatedSequenceInterface):
 
         :return: list[BaseModel]
         """
-        rows = await self._connection.fetch(str(self._query))
+        rows = await self._connection.fetch_all(str(self._query))
         return parse_obj_as(list[self._model_to_parse], rows)  # type: ignore
 
     def __hash__(self):
+        """Хэширование объекта.
+
+        :return: str
+        """
         return hash(self._query)
 
 
@@ -98,6 +115,11 @@ class CachedPaginatedSequence(PaginatedSequenceInterface):
         redis: Redis = Depends(redis_connection),
         paginated_sequence: PaginatedSequenceInterface = Depends(PaginatedSequence),
     ):
+        """Конструктор класса.
+
+        :param redis: Redis
+        :param paginated_sequence: PaginatedSequenceInterface
+        """
         self._origin = paginated_sequence
         self._cache_connection = redis
 
@@ -149,3 +171,53 @@ class CachedPaginatedSequence(PaginatedSequenceInterface):
         )
         logger.info('Data setted to cache')
         return origin_get_result
+
+
+class ElementsCountInterface(object):
+    """Интерфейс для получение кол-ва элементов в хранилище."""
+
+    def update_query(self, query: str) -> 'ElementsCountInterface':
+        """Обновить запрос.
+
+        :param query: str
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+    async def get(self) -> int:
+        """Получить.
+
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+
+class ElementsCount(ElementsCountInterface):
+    """Класс, осуществляющий запрос на кол-во в БД."""
+
+    _connection: Database
+    _query: str
+
+    def __init__(self, connection: Database = Depends(db_connection)):  # noqa: WPS404 Found complex default value
+        """Конструктор класса.
+
+        :param connection: Database
+        """
+        self._connection = connection
+
+    def update_query(self, query: str) -> 'ElementsCount':
+        """Обновить запрос.
+
+        :param query: str
+        :return: ElementsCount
+        """
+        new_instance = ElementsCount(self._connection)
+        new_instance._query = query  # noqa: WPS437 Found protected attribute usage
+        return new_instance
+
+    async def get(self) -> int:
+        """Получить.
+
+        :return: int
+        """
+        return await self._connection.fetch_val(self._query, column='count')

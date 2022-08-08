@@ -1,10 +1,16 @@
+"""Обработчики HTTP запросов для просмотра аятов.
+
+Functions:
+    get_ayats_list
+    get_ayat_detail
+"""
 from fastapi import APIRouter, Depends, Query, Request
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
 from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import AyatPaginatedQuery, AyatRepository, ElementsCount
-from repositories.paginated_sequence import CachedPaginatedSequence
+from repositories.ayat import AyatPaginatedQuery, AyatRepository
+from repositories.paginated_sequence import CachedPaginatedSequence, ElementsCount
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 

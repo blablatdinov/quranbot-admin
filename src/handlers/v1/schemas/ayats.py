@@ -1,6 +1,14 @@
+"""Схемы для аятов.
+
+Classes:
+    FileModel
+    AyatModel
+    AyatModelShort
+    PaginatedAyatResponse
+"""
 from typing import Optional
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 
 class FileModel(BaseModel):

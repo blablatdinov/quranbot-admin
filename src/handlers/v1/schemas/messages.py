@@ -1,3 +1,11 @@
+"""Схемы сообщений в мессенджере.
+
+Classes:
+    Message
+    PaginatedMessagesResponse
+    DeleteMessagesRequest
+    MessageGraphDataItem
+"""
 import datetime
 from typing import Optional
 
@@ -27,3 +35,10 @@ class DeleteMessagesRequest(BaseModel):
     """Модель входных данных для удаления сообщений."""
 
     message_ids: list[int]
+
+
+class MessageGraphDataItem(BaseModel):
+    """Элемент ответа запроса данных для графика кол-ва сообщений."""
+
+    date: datetime.date
+    messages_count: int

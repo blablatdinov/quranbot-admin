@@ -1,3 +1,12 @@
+"""Сервисный слой для аутентификации.
+
+Classes:
+    PasswordInterface
+    Password
+    AuthService
+    Token
+    User
+"""
 import datetime
 
 from fastapi import Depends, status
@@ -7,6 +16,7 @@ from jose import JWTError, jwt
 from passlib.hash import pbkdf2_sha256
 from pydantic import ValidationError
 
+from exceptions import IncorrectCredentialsError, UserNotFoundError
 from handlers.v1.schemas.auth import TokenResponse
 from repositories.auth import UserRepository, UserRepositoryInterface, UserSchema
 from settings import settings
@@ -34,6 +44,10 @@ class Password(PasswordInterface):
     _raw_password: str
 
     def __init__(self, user_repository: UserRepository = Depends()):
+        """Конструктор класса.
+
+        :param user_repository: UserRepositoryInterface
+        """
         self._user_repository = user_repository
 
     async def check(self, username, password) -> bool:
@@ -42,8 +56,12 @@ class Password(PasswordInterface):
         :param username: str
         :param password: str
         :return: bool
+        :raises IncorrectCredentialsError: если пользователь не найден
         """
-        user = await self._user_repository.get_by_username(username)
+        try:
+            user = await self._user_repository.get_by_username(username)
+        except UserNotFoundError as error:
+            raise IncorrectCredentialsError from error
         splitted_password_data = user.password.split('$')
         password_hash_id_storage = splitted_password_data[-1][:-1].replace('+', '.')
         input_password_hash = pbkdf2_sha256.hash(
@@ -58,6 +76,12 @@ class AuthService(object):
     _user_repository: UserRepositoryInterface
 
     def __init__(self, user_repository: UserRepositoryInterface, username: str, password: Password):
+        """Конструктор класса.
+
+        :param user_repository: UserRepositoryInterface
+        :param username: str
+        :param password: Password
+        """
         self._user_repository = user_repository
         self._username = username
         self._password = password
@@ -96,6 +120,10 @@ class Token(object):
     _token: str
 
     def __init__(self, token: str):
+        """Конструктор класса.
+
+        :param token: str
+        """
         self._token = token
 
     def verify_token(self) -> UserSchema:
