@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, status
 from handlers.v1.schemas.notifications import NotificationCreateModel
 from integrations.queue_integration import NatsIntegration
 from services.auth import User
+from repositories.notification import NotificationRepository
 
 router = APIRouter()
 
@@ -16,6 +17,7 @@ router = APIRouter()
 async def create_notification(
     input_data: NotificationCreateModel,
     nats_integration: NatsIntegration = Depends(),
+    notification_repository: NotificationRepository = Depends(),
     _: User = Depends(User.get_from_token),
 ):
     """Создать уведомление.
@@ -23,4 +25,5 @@ async def create_notification(
     :param input_data: NotificationCreateModel
     :param nats_integration: NatsIntegration
     """
-    await nats_integration.send(input_data.dict(), 'Notification.Created', 1)
+    notification = await notification_repository.create(input_data.text)
+    await nats_integration.send({'uuid': str(notification.uuid), 'text': notification.text}, 'Notification.Created', 1)
