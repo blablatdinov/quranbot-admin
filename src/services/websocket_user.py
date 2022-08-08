@@ -38,7 +38,11 @@ class WebsocketUser(object):
         except TypeError as event_validate_error:
             logger.error('Validate {0} failed {1}'.format(event_log_data, str(event_validate_error)))
             return
-        await self._websocket.send_text(event_dict['data']['text'])
+        await self._websocket.send_text(
+            json.dumps(
+                {'uuid': event_dict['data']['public_id'], 'text': event_dict['data']['text']},
+            ),
+        )
         logger.info('Received websocket notification from nats, text: {0}. Event: {1}'.format(
             event_dict['data']['text'], event_dict,
         ))

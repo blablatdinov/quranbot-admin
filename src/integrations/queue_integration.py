@@ -122,6 +122,5 @@ class NotificationCreatedEvent(object):
 
         :param event: dict
         """
-        notification_message = event['text']
         # TODO: saving in database if user has not connection by websocket
-        await self._nats_integration.send({'text': notification_message}, 'Websocket.NotificationCreated', 1)
+        await self._nats_integration.send(event, 'Websocket.NotificationCreated', 1)
