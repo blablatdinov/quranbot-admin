@@ -15,9 +15,9 @@ import json
 import uuid
 
 import nats
+from aioredis.client import Redis
 from loguru import logger
 from quranbot_schema_registry import validate_schema
-from aioredis.client import Redis
 
 
 class QueueIntegrationInterface(object):
@@ -64,15 +64,20 @@ class NatsIntegration(QueueIntegrationInterface):
 
 
 class NatsEvents(object):
+    """События из nats."""
 
     def __init__(self, handlers: list):
+        """Конструктор класса.
+
+        :param handlers: list
+        """
         self._handlers = handlers
 
     async def receive(self) -> None:
         """Прием сообщений."""
         nats_client = await nats.connect('localhost')
         logger.info('Start handling events...')
-        logger.info('Receive evenst list: {0}'.format([handler.event_name for handler in self._handlers]))
+        logger.info('Receive evenst list: {0}'.format([event_handler.event_name for event_handler in self._handlers]))
         await nats_client.subscribe('default', cb=self._message_handler)
         while True:  # noqa: WPS457
             await asyncio.sleep(1)
@@ -88,8 +93,6 @@ class NatsEvents(object):
             return
 
         for event_handler in self._handlers:
-            print(event_handler.event_name, event_dict['event_name'])
-            print(event_handler.event_name == event_dict['event_name'])
             if event_handler.event_name == event_dict['event_name']:
                 logger.info('Handling {0} event...'.format(event_log_data))
                 await event_handler.handle_event(event_dict['data'])
@@ -106,6 +109,11 @@ class NotificationCreatedEvent(object):
     _redis: Redis
 
     def __init__(self, redis: Redis, nats_integration: QueueIntegrationInterface):
+        """Конструктор класса.
+
+        :param redis: Redis
+        :param nats_integration: QueueIntegrationInterface
+        """
         self._redis = redis
         self._nats_integration = nats_integration
 

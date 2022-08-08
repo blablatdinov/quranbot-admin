@@ -24,8 +24,14 @@ router.include_router(ayats_router, tags=['Ayats'])
 router.include_router(daily_content_router, tags=['Daily content'])
 router.include_router(auth_router, tags=['Auth'])
 router.include_router(notification_router, tags=['Notifications'])
+router.include_router(users_router, tags=['Users'])
 
 
 @router.get('/ws-ui/')
 async def get_websocket_page(request: Request):
+    """Страница для проверки websocket'ов.
+
+    :param request: Request
+    :return: templates.TemplateResponse
+    """
     return templates.TemplateResponse('websocket_ui.html', {'request': request})
