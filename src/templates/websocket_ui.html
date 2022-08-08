@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="app">
+  {{ request.url }}
+  <form action="POST" @submit.prevent="auth">
+    <input type="text" v-model="username">
+    <br>
+    <input type="password" v-model="password">
+    <br>
+    <button>Auth</button>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.0/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      username: '',
+      password: '',
+      schema: '{{ request.url }}'.split(':')[0],
+      domain: '{{ request.url }}'.split('/').slice(2, 3).join('/'),
+      ws: null,
+    },
+    methods: {
+      async auth() {
+        let formData = new FormData()
+        formData.append('username', this.username)
+        formData.append('password', this.password)
+        fetch(`${this.schema}://${this.domain}/api/v1/auth/`, {
+          method: 'POST',
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => localStorage.setItem('accessToken', data.access_token))
+        console.log(localStorage.getItem('accessToken'))
+        this.ws = new WebSocket(`ws://${this.domain}/ws/?token=${localStorage.getItem('accessToken')}`)
+        this.ws.onmessage = (message) => console.log(message);
+      },
+    }
+  })
+</script>
+</body>
+</html>

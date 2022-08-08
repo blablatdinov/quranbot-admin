@@ -32,3 +32,21 @@ class IncorrectCredentialsError(HTTPException):
     """Исключение, вызываемое при невалидных данных для доступа."""
 
     status_code = 400
+
+
+class CliError(Exception):
+    """Ошибка, при обработке команды из терминала."""
+
+    def __init__(self, details: str = ''):
+        """Конструктор класса.
+
+        :param details: str
+        """
+        self._details = details
+
+    def __str__(self):
+        """Строковое представление.
+
+        :return: str
+        """
+        return self._details
