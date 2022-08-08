@@ -2,7 +2,10 @@
 
 Functions:
     create_notification
+    mark_notification_readed
 """
+import uuid
+
 from fastapi import APIRouter, Depends, status
 
 from handlers.v1.schemas.notifications import NotificationCreateModel
@@ -13,7 +16,7 @@ from repositories.notification import NotificationRepository
 router = APIRouter()
 
 
-@router.post('/notification/', status_code=status.HTTP_201_CREATED)
+@router.post('/notifications/', status_code=status.HTTP_201_CREATED)
 async def create_notification(
     input_data: NotificationCreateModel,
     nats_integration: NatsIntegration = Depends(),
@@ -27,3 +30,12 @@ async def create_notification(
     """
     notification = await notification_repository.create(input_data.text)
     await nats_integration.send({'uuid': str(notification.uuid), 'text': notification.text}, 'Notification.Created', 1)
+
+
+@router.patch('/notifications/{notification_uuid}/mark-readed/', status_code=status.HTTP_201_CREATED)
+async def mark_notification_readed(
+    notification_uuid: uuid.UUID,
+    notification_repository: NotificationRepository = Depends(),
+    _: User = Depends(User.get_from_token),
+):
+    await notification_repository.mark_as_readed(notification_uuid)

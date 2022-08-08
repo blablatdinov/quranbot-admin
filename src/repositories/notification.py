@@ -24,6 +24,9 @@ class NotificationRepositoryInterface(object):
         """
         raise NotImplementedError
 
+    async def mark_as_readed(self, notification_uuid):
+        raise NotImplementedError
+
 
 class NotificationRepository(NotificationRepositoryInterface):
 
@@ -46,3 +49,11 @@ class NotificationRepository(NotificationRepositoryInterface):
             },
         )
         return NotificationInsertQueryResult(uuid=row[0], text=row[1])
+
+    async def mark_as_readed(self, notification_uuid):
+        query = """
+            UPDATE notifications
+            SET is_readed = 't'
+            WHERE uuid = :notification_uuid
+        """
+        await self._connection.execute(query, {'notification_uuid': notification_uuid})
