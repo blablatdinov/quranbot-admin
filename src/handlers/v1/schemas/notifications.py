@@ -2,6 +2,7 @@
 
 Classes:
     NotificationCreateModel
+    NotificationResponseSchema
 """
 import uuid
 
@@ -15,6 +16,7 @@ class NotificationCreateModel(BaseModel):
 
 
 class NotificationResponseSchema(BaseModel):
+    """Схема ответа для просмотра уведомлений."""
 
     uuid: uuid.UUID
     text: str
