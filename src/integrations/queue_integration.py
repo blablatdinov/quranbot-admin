@@ -39,7 +39,7 @@ class NatsIntegration(QueueIntegrationInterface):
 
     _queue_name = 'default'
 
-    async def send(self, event_data, event_name, version):
+    async def send(self, event_data, event_name, version) -> None:
         """Отправить событие.
 
         :param event_data: dict

@@ -12,7 +12,7 @@ from exceptions import CliError
 from integrations.queue_integration import NatsEvents, NatsIntegration, NotificationCreatedEvent
 
 
-async def start_events_receiver():
+async def start_events_receiver() -> None:
     """Обработка сообщений из очереди."""
     nats_integration = NatsIntegration()
     await NatsEvents([
@@ -23,7 +23,7 @@ async def start_events_receiver():
     ]).receive()
 
 
-def main():
+def main() -> None:
     """Entrypoint.
 
     :raises CliError: cli errors
