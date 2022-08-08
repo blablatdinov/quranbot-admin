@@ -2,13 +2,18 @@ import uuid
 
 import pytest
 
-from main import app
-from repositories.notification import NotificationRepositoryInterface, NotificationRepository, NotificationInsertQueryResult, NotificationResponseSchema
 from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
+from main import app
+from repositories.notification import (
+    NotificationInsertQueryResult,
+    NotificationRepository,
+    NotificationRepositoryInterface,
+    NotificationResponseSchema,
+)
 
 
 class NotificationRepositoryMock(NotificationRepositoryInterface):
-    
+
     async def get_notifications(self):
         return [NotificationResponseSchema(uuid=uuid.uuid4(), text='some text')]
 
@@ -17,7 +22,7 @@ class NotificationRepositoryMock(NotificationRepositoryInterface):
 
 
 class QueueIntegrationMock(QueueIntegrationInterface):
-    
+
     async def send(self, event: dict, event_name: str, version: int):
         pass
 
