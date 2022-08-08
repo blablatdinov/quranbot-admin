@@ -29,6 +29,6 @@ async def websocket_endpoint(
     await websocket.accept()
     nats_client = await nats.connect('localhost')
     await redis.set('websocket_client_{0}'.format(user.username), 'true')
-    await nats_client.subscribe('default', cb=WebsocketUser(websocket, user).__call__)
+    await nats_client.subscribe('default', cb=WebsocketUser(websocket, user).receive)
     while True:  # noqa: WPS457
         await asyncio.sleep(1)
