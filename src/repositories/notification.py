@@ -82,7 +82,7 @@ class NotificationRepository(NotificationRepositoryInterface):
         )
         return NotificationInsertQueryResult(uuid=row[0], text=row[1])
 
-    async def mark_as_readed(self, notification_uuid):
+    async def mark_as_readed(self, notification_uuid) -> None:
         """Пометить уведомление прочитанным.
 
         :param notification_uuid: uuid.UUID
@@ -94,7 +94,7 @@ class NotificationRepository(NotificationRepositoryInterface):
         """
         await self._connection.execute(query, {'notification_uuid': notification_uuid})
 
-    async def get_notifications(self):
+    async def get_notifications(self) -> list[NotificationResponseSchema]:
         """Получить список уведомлений.
 
         :return: list[NotificationResponseSchema]
