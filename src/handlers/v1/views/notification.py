@@ -13,10 +13,10 @@ from integrations.queue_integration import NatsIntegration
 from repositories.notification import NotificationInsertQueryResult, NotificationRepository
 from services.auth import User
 
-router = APIRouter()
+router = APIRouter(prefix='/notifications')
 
 
-@router.get('/notifications/', response_model=list[NotificationResponseSchema])
+@router.get('/', response_model=list[NotificationResponseSchema])
 async def get_notifications(
     notification_repository: NotificationRepository = Depends(),
     _: User = Depends(User.get_from_token),
@@ -29,7 +29,7 @@ async def get_notifications(
     return await notification_repository.get_notifications()
 
 
-@router.post('/notifications/', status_code=status.HTTP_201_CREATED, response_model=NotificationInsertQueryResult)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=NotificationInsertQueryResult)
 async def create_notification(
     input_data: NotificationCreateModel,
     nats_integration: NatsIntegration = Depends(),
@@ -50,7 +50,7 @@ async def create_notification(
     return notification
 
 
-@router.patch('/notifications/{notification_uuid}/mark-readed/', status_code=status.HTTP_201_CREATED)
+@router.patch('/{notification_uuid}/mark-readed/', status_code=status.HTTP_201_CREATED)
 async def mark_notification_readed(
     notification_uuid: uuid.UUID,
     notification_repository: NotificationRepository = Depends(),
