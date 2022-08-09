@@ -64,6 +64,7 @@ class NotificationRepository(NotificationRepositoryInterface):
     async def create(self, notification_uuid: uuid.UUID, text: str):
         """Создание уведомления.
 
+        :param notification_uuid: uuid.UUID
         :param text: str
         :return: NotificationInsertQueryResult
         """

@@ -45,9 +45,9 @@ async def create_notification(
     """
     notification_uuid = uuid.uuid4()
     await nats_integration.send(
-        {'public_id': str(notification_uuid), 'text': notification.text}, 'Notification.Created', 1,
+        {'public_id': str(notification_uuid), 'text': input_data.text}, 'Notification.Created', 1,
     )
-    return NotificationInsertQueryResult(uuid=notification_uuid, text=notification.text)
+    return NotificationInsertQueryResult(uuid=notification_uuid, text=input_data.text)
 
 
 @router.patch('/{notification_uuid}/mark-readed/', status_code=status.HTTP_201_CREATED)

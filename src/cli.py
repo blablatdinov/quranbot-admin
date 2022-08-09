@@ -7,8 +7,8 @@ Functions:
 import asyncio
 import sys
 
-from db import database
 from caching import redis_connection
+from db import database
 from exceptions import CliError
 from integrations.queue_integration import NatsEvents, NatsIntegration, NotificationCreatedEvent
 from repositories.notification import NotificationRepository
