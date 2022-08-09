@@ -7,18 +7,22 @@ Functions:
 import asyncio
 import sys
 
+from db import database
 from caching import redis_connection
 from exceptions import CliError
 from integrations.queue_integration import NatsEvents, NatsIntegration, NotificationCreatedEvent
+from repositories.notification import NotificationRepository
 
 
 async def start_events_receiver() -> None:
     """Обработка сообщений из очереди."""
+    await database.connect()
     nats_integration = NatsIntegration()
     await NatsEvents([
         NotificationCreatedEvent(
             await redis_connection(),
             nats_integration,
+            NotificationRepository(database),
         ),
     ]).receive()
 

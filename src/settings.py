@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     JWT_ALGORITHM: str = 'HS256'
     JWT_EXPIRES_S: int = 3600
+    DEBUG: bool = False
 
     class Config(object):
         env_file = '.env'

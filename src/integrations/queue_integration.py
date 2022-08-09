@@ -19,6 +19,8 @@ from aioredis.client import Redis
 from loguru import logger
 from quranbot_schema_registry import validate_schema
 
+from repositories.notification import NotificationRepositoryInterface
+
 
 class QueueIntegrationInterface(object):
     """Интерфейс интеграции с шиной событий."""
@@ -108,19 +110,27 @@ class NotificationCreatedEvent(object):
     event_name = 'Notification.Created'
     _redis: Redis
 
-    def __init__(self, redis: Redis, nats_integration: QueueIntegrationInterface):
+    def __init__(
+        self,
+        redis: Redis,
+        nats_integration: QueueIntegrationInterface,
+        notification_repository: NotificationRepositoryInterface,
+    ):
         """Конструктор класса.
 
         :param redis: Redis
         :param nats_integration: QueueIntegrationInterface
+        :param notification_repository: NotificationRepositoryInterface
         """
         self._redis = redis
         self._nats_integration = nats_integration
+        self._notification_repository = notification_repository
 
-    async def handle_event(self, event):
+    async def handle_event(self, event_data):
         """Обработка события.
 
-        :param event: dict
+        :param event_data: dict
         """
         # TODO: saving in database if user has not connection by websocket
-        await self._nats_integration.send(event, 'Websocket.NotificationCreated', 1)
+        await self._notification_repository.create(event_data['public_id'], event_data['text'])
+        await self._nats_integration.send(event_data, 'Websocket.NotificationCreated', 1)

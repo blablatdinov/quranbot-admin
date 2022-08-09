@@ -26,10 +26,11 @@ class NotificationInsertQueryResult(BaseModel):
 class NotificationRepositoryInterface(object):
     """Интерфейс репозитория для работы с хранилищем уведомлений."""
 
-    async def create(self, text: str):
+    async def create(self, notification_uuid: uuid.UUID, text: str):
         """Создание уведомления.
 
         :param text: str
+        :param notification_uuid: uuid.UUID
         :raises NotImplementedError: if not implemented
         """
         raise NotImplementedError
@@ -60,7 +61,7 @@ class NotificationRepository(NotificationRepositoryInterface):
         """
         self._connection = connection
 
-    async def create(self, text: str):
+    async def create(self, notification_uuid: uuid.UUID, text: str):
         """Создание уведомления.
 
         :param text: str
