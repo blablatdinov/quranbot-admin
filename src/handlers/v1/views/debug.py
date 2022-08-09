@@ -42,3 +42,4 @@ async def create_event(
         )
     except TypeError as exc:
         return PlainTextResponse(content=str(exc), status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return PlainTextResponse(status_code=status.HTTP_200_OK)
