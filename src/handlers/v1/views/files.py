@@ -2,8 +2,8 @@ from fastapi import APIRouter, Request, Query, Depends
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
-from handlers.v1.schemas.files import FileModel, PaginatedFileResponse
-from repositories.file import FilePaginatedQuery
+from handlers.v1.schemas.files import FileModel, PaginatedFileResponse, OrderingParams
+from repositories.file import FilePaginatedQuery, OrderedFileQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.paginating import PaginatedResponse, NeighborsPageLinks, PrevPage, UrlWithoutQueryParams, NextPage
@@ -17,6 +17,7 @@ async def get_files(
     page_num: int = Query(default=1, ge=1),
     page_size: int = 50,
     elements_count: ElementsCount = Depends(),
+    order_param: OrderingParams = Query('id', alias='ordering'),
     paginated_sequence: PaginatedSequence = Depends(),
 ):
     count = elements_count.update_query(
@@ -27,8 +28,11 @@ async def get_files(
         (
             paginated_sequence
             .update_query(
-                FilePaginatedQuery(
-                    LimitOffsetByPageParams(page_num, page_size),
+                OrderedFileQuery(
+                    FilePaginatedQuery(
+                        LimitOffsetByPageParams(page_num, page_size),
+                    ),
+                    order_param,
                 ),
             )
             .update_model_to_parse(FileModel)
@@ -50,3 +54,8 @@ async def get_files(
             ),
         ),
     ).get()
+
+
+@router.get('/{file_id}/download/')
+async def download_file(file_id: int):
+    return

@@ -1,14 +1,23 @@
+import enum
 from typing import Optional
 
-from pydantic import BaseModel, AnyUrl
+from pydantic import BaseModel
+
+
+class OrderingParams(str, enum.Enum):
+
+    id_asc = 'id'
+    id_desc = '-id'
+    link_asc = 'link_to_file'
+    link_desc = '-link_to_file'
 
 
 class FileModel(BaseModel):
     """Модель файла."""
 
     id: int
-    link: AnyUrl
-    telegram_file_id: str
+    link: Optional[str]  # TODO: must replace to Optional[pydantic.AnyUrl]
+    telegram_file_id: Optional[str]
     name: Optional[str]
 
 

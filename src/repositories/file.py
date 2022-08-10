@@ -1,6 +1,6 @@
 from app_types.query import QueryInterface
 
-from pypika import Query, Table
+from pypika import Query, Table, Order
 
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
@@ -22,7 +22,7 @@ class FilePaginatedQuery(QueryInterface):
         :return: str
         """
         limit, offset = self._limit_offset_calculator.calculate()
-        return str(
+        return (
             Query()
             .from_(self._files_table)
             .select(
@@ -32,5 +32,18 @@ class FilePaginatedQuery(QueryInterface):
                 self._files_table.name,
             )
             .limit(limit)
-            .offset(offset),
+            .offset(offset)
         )
+
+
+class OrderedFileQuery(QueryInterface):
+
+    def __init__(self, origin_query: QueryInterface, order_param: str):
+        self._origin = origin_query
+        self._order_param = order_param
+
+    def query(self):
+        if self._order_param.startswith('-'):
+            return self._origin.query().orderby(self._order_param[1:], order=Order.asc)
+
+        return self._origin.query().orderby(self._order_param, order=Order.desc)
