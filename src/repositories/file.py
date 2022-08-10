@@ -1,11 +1,17 @@
+"""Модуль, содержащий логику для работы с хранилищем файлов.
+
+Classes:
+    FilePaginatedQuery
+    OrderedFileQuery
+"""
+from pypika import Order, Query, Table
+
 from app_types.query import QueryInterface
-
-from pypika import Query, Table, Order
-
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
 class FilePaginatedQuery(QueryInterface):
+    """Запрос для просмотра файлов с пагинацией."""
 
     _files_table = Table('content_file')
 
@@ -37,13 +43,26 @@ class FilePaginatedQuery(QueryInterface):
 
 
 class OrderedFileQuery(QueryInterface):
+    """Отсортированный список файлов."""
 
     def __init__(self, origin_query: QueryInterface, order_param: str):
+        """Конструктор класса.
+
+        :param origin_query: QueryInterface
+        :param order_param: str
+        """
         self._origin = origin_query
         self._order_param = order_param
 
     def query(self):
+        """Возвращает запрос.
+
+        :return: pypika.QueryBuilder
+        """
         if self._order_param.startswith('-'):
-            return self._origin.query().orderby(self._order_param[1:], order=Order.asc)
+            return (
+                self._origin.query()
+                .orderby(self._order_param[1:], order=Order.asc)
+            )
 
         return self._origin.query().orderby(self._order_param, order=Order.desc)

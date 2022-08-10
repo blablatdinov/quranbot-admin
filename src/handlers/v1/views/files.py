@@ -1,12 +1,17 @@
-from fastapi import APIRouter, Request, Query, Depends
+"""Обработчики HTTP запросов для работы с файлами.
+
+Functions:
+    get_files
+"""
+from fastapi import APIRouter, Depends, Query, Request
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
-from handlers.v1.schemas.files import FileModel, PaginatedFileResponse, OrderingParams
+from handlers.v1.schemas.files import FileModel, OrderingParams, PaginatedFileResponse
 from repositories.file import FilePaginatedQuery, OrderedFileQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
-from services.paginating import PaginatedResponse, NeighborsPageLinks, PrevPage, UrlWithoutQueryParams, NextPage
+from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/files')
 
@@ -20,6 +25,16 @@ async def get_files(
     order_param: OrderingParams = Query('id', alias='ordering'),
     paginated_sequence: PaginatedSequence = Depends(),
 ):
+    """Получить список файлов с пагинацией.
+
+    :param request: Request
+    :param page_num: int
+    :param page_size: int
+    :param elements_count: ElementsCount
+    :param order_param: OrderingParams
+    :param paginated_sequence: PaginatedSequence
+    :return: PaginatedResponse
+    """
     count = elements_count.update_query(
         str(SqlQuery().from_('content_file').select(Count('*'))),
     )
@@ -54,8 +69,3 @@ async def get_files(
             ),
         ),
     ).get()
-
-
-@router.get('/{file_id}/download/')
-async def download_file(file_id: int):
-    return

@@ -1,10 +1,18 @@
+"""Модуль схем для работы с файлами.
+
+Classes:
+    OrderingParams
+    FileModel
+    PaginatedFileResponse
+"""
 import enum
 from typing import Optional
 
 from pydantic import BaseModel
 
 
-class OrderingParams(str, enum.Enum):
+class OrderingParams(str, enum.Enum):  # noqa: WPS600
+    """Параметры для сортировки."""
 
     id_asc = 'id'
     id_desc = '-id'
