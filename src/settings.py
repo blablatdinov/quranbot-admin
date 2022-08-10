@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     PORT: int = 8000
     DATABASE_URL: PostgresDsn
     REDIS_DSN: RedisDsn
-    BASE_DIR: Path = Path(__file__).parent
+    BASE_DIR: Path = Path(__file__).parent.parent
     LOG_LEVEL: LogLevel = LogLevel.DEBUG
     JWT_SECRET: str
     JWT_ALGORITHM: str = 'HS256'

@@ -5,9 +5,12 @@ Classes:
     OrderedFileQuery
 """
 from pypika import Order, Query, Table
+from databases import Database
+from fastapi import Depends
 
 from app_types.query import QueryInterface
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from db import db_connection
 
 
 class FilePaginatedQuery(QueryInterface):
@@ -66,3 +69,20 @@ class OrderedFileQuery(QueryInterface):
             )
 
         return self._origin.query().orderby(self._order_param, order=Order.desc)
+
+
+class FileRepositoryInterface(object):
+
+    async def create(self, filename: str):
+        raise NotImplementedError
+
+
+class FileRepository(FileRepositoryInterface):
+
+    def __init__(self, connection: Database = Depends(db_connection)):
+        self._connection = connection
+
+    async def create(self, filename: str):
+        query = """INSERT INTO content_file (name) VALUES (:filename) RETURNING id"""
+        file_id = await self._connection.execute(query, {'filename': filename})
+        return file_id

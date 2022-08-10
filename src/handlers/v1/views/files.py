@@ -3,15 +3,20 @@
 Functions:
     get_files
 """
+import aiofiles
 from fastapi import APIRouter, Depends, Query, Request, UploadFile
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
 from handlers.v1.schemas.files import FileModel, OrderingParams, PaginatedFileResponse
-from repositories.file import FilePaginatedQuery, OrderedFileQuery
+from repositories.file import FilePaginatedQuery, OrderedFileQuery, FileRepository
+from repositories.storage import FileSystemStorage
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
+from services.file import DiskFile, FileTriggeredToDownload
+from settings import settings
+from integrations.queue_integration import NatsIntegration
 
 router = APIRouter(prefix='/files')
 
@@ -72,5 +77,9 @@ async def get_files(
 
 
 @router.post('/', status_code=201)
-def post_file(file: UploadFile):
-    return
+async def post_file(
+    file: UploadFile,
+    disk_file: DiskFile = Depends(),
+    nats_integration: NatsIntegration = Depends(),
+):
+    await FileTriggeredToDownload(disk_file, nats_integration).save(file.filename, await file.read())
