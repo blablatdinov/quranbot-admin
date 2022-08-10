@@ -10,14 +10,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-
-class FileModel(BaseModel):
-    """Модель файла."""
-
-    id: int
-    link: str
-    telegram_file_id: str
-    name: Optional[str]
+from handlers.v1.schemas.files import FileModel
 
 
 class AyatModel(BaseModel):
