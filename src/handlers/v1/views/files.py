@@ -3,7 +3,7 @@
 Functions:
     get_files
 """
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, UploadFile
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
@@ -69,3 +69,8 @@ async def get_files(
             ),
         ),
     ).get()
+
+
+@router.post('/', status_code=201)
+def post_file(file: UploadFile):
+    return
