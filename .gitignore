@@ -26,8 +26,9 @@ venv/
 .venv/
 .env
 
-# static 
+# static and media
 static/
+media/
 
 # logs
 logs/
