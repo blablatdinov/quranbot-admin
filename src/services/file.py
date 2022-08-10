@@ -27,7 +27,7 @@ class DiskFile(object):
         self._storage = storage
         self._file_repository = file_repository
 
-    async def save(self, filename, bytes_list):
+    async def save(self, filename, bytes_list) -> None:
         """Сохранить файл.
 
         :param filename: str
@@ -36,21 +36,21 @@ class DiskFile(object):
         self._path = await self._storage.write(filename, bytes_list)
         self._file_id = await self._file_repository.create(filename)
 
-    def get_id(self):
+    def get_id(self) -> int:
         """Получить идентификатор.
 
         :return: int
         """
         return self._file_id
 
-    def path(self):
+    def path(self) -> str:
         """Получить путь до файла.
 
         :return: int
         """
         return self._path
 
-    def get_source(self):
+    def get_source(self) -> str:
         """Получить источник байтов.
 
         :return: int
@@ -73,7 +73,7 @@ class FileTriggeredToDownload(object):
         self._origin = file_service
         self._queue_integration = queue_integration
 
-    async def save(self, filename, bytes_list):
+    async def save(self, filename, bytes_list) -> None:
         """Сохранить файл.
 
         :param filename: str
