@@ -3,14 +3,16 @@
 Classes:
     FilePaginatedQuery
     OrderedFileQuery
+    FileRepositoryInterface
+    FileRepository
 """
-from pypika import Order, Query, Table
 from databases import Database
 from fastapi import Depends
+from pypika import Order, Query, Table
 
 from app_types.query import QueryInterface
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from db import db_connection
+from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 
 class FilePaginatedQuery(QueryInterface):
@@ -72,17 +74,32 @@ class OrderedFileQuery(QueryInterface):
 
 
 class FileRepositoryInterface(object):
+    """Интерфейс для работы с хранилищем файлов."""
 
     async def create(self, filename: str):
+        """Создать запись о файле.
+
+        :param filename: str
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
 
 class FileRepository(FileRepositoryInterface):
+    """Класс для работы с хранилищем файлов."""
 
     def __init__(self, connection: Database = Depends(db_connection)):
+        """Конструктор класса.
+
+        :param connection: Database
+        """
         self._connection = connection
 
     async def create(self, filename: str):
-        query = """INSERT INTO content_file (name) VALUES (:filename) RETURNING id"""
-        file_id = await self._connection.execute(query, {'filename': filename})
-        return file_id
+        """Создать запись о файле.
+
+        :param filename: str
+        :return: int
+        """
+        query = 'INSERT INTO content_file (name) VALUES (:filename) RETURNING id'
+        return await self._connection.execute(query, {'filename': filename})

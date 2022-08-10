@@ -2,21 +2,19 @@
 
 Functions:
     get_files
+    post_file
 """
-import aiofiles
-from fastapi import APIRouter, Depends, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
 from handlers.v1.schemas.files import FileModel, OrderingParams, PaginatedFileResponse
-from repositories.file import FilePaginatedQuery, OrderedFileQuery, FileRepository
-from repositories.storage import FileSystemStorage
+from integrations.queue_integration import NatsIntegration
+from repositories.file import FilePaginatedQuery, OrderedFileQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
+from services.file import DiskFile, FileTriggeredToDownload
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
-from services.file import DiskFile, FileTriggeredToDownload
-from settings import settings
-from integrations.queue_integration import NatsIntegration
 
 router = APIRouter(prefix='/files')
 
@@ -76,10 +74,16 @@ async def get_files(
     ).get()
 
 
-@router.post('/', status_code=201)
+@router.post('/', status_code=status.HTTP_201_CREATED)
 async def post_file(
-    file: UploadFile,
+    uploaded_file: UploadFile,
     disk_file: DiskFile = Depends(),
     nats_integration: NatsIntegration = Depends(),
 ):
-    await FileTriggeredToDownload(disk_file, nats_integration).save(file.filename, await file.read())
+    """Метод для создания файла.
+
+    :param uploaded_file: UploadFile
+    :param disk_file: DiskFile
+    :param nats_integration: NatsIntegration
+    """
+    await FileTriggeredToDownload(disk_file, nats_integration).save(uploaded_file.filename, await uploaded_file.read())

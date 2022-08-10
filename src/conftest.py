@@ -2,10 +2,10 @@ import pytest
 from fastapi import Header
 from fastapi.testclient import TestClient
 
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from main import app
 from repositories.auth import UserSchema
 from services.auth import User
-from integrations.queue_integration import QueueIntegrationInterface, NatsIntegration
 
 pytest_plugins = [
     'tests.plugins.db',

@@ -1,7 +1,7 @@
 import pytest
 
 from main import app
-from repositories.file import FileRepositoryInterface, FileRepository
+from repositories.file import FileRepository, FileRepositoryInterface
 
 
 @pytest.fixture()
