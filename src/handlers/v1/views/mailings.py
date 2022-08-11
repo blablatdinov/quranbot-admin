@@ -13,10 +13,10 @@ Functions:
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from repositories.auth import UserSchema
 from services.auth import User
 from services.mailing import Mailing
-from integrations.queue_integration import QueueIntegrationInterface, NatsIntegration
 
 router = APIRouter(prefix='/mailings')
 
