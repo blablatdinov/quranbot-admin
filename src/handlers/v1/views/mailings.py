@@ -13,6 +13,7 @@ Functions:
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 
+from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from repositories.auth import UserSchema
 from services.auth import User
 from services.mailing import Mailing
@@ -48,14 +49,23 @@ def get_mailings(user: UserSchema = Depends(User.get_from_token)):
     return [MailingModel(id=1)]
 
 
-@router.delete('/{mailing_id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_mailing_from_telegram(mailing_id: int, user: UserSchema = Depends(User.get_from_token)):
+@router.delete('/{mailing_id}', status_code=status.HTTP_201_CREATED)
+async def delete_mailing_from_telegram(
+    mailing_id: int,
+    user: UserSchema = Depends(User.get_from_token),
+    nats_integration: QueueIntegrationInterface = Depends(NatsIntegration),
+):
     """Удаление сообщений, входящих в рассылку.
 
     :param user: UserSchema
     :param mailing_id: int
+    :param nats_integration: QueueIntegrationInterface
     """
-    return  # noqa: WPS324
+    await nats_integration.send(
+        {'mailing_id': mailing_id},
+        'Mailing.Deleted',
+        1,
+    )
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=MailingCreateResponseModel)

@@ -76,14 +76,14 @@ async def get_files(
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def post_file(
-    uploaded_file: UploadFile,
+    file: UploadFile,  # noqa: WPS110 name used in api schema
     disk_file: DiskFile = Depends(),
     nats_integration: NatsIntegration = Depends(),
 ):
     """Метод для создания файла.
 
-    :param uploaded_file: UploadFile
+    :param file: UploadFile
     :param disk_file: DiskFile
     :param nats_integration: NatsIntegration
     """
-    await FileTriggeredToDownload(disk_file, nats_integration).save(uploaded_file.filename, await uploaded_file.read())
+    await FileTriggeredToDownload(disk_file, nats_integration).save(file.filename, await file.read())
