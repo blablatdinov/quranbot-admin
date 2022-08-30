@@ -18,7 +18,7 @@ from pypika import Table
 
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
-from db import db_connection
+from db.connection import db_connection
 from handlers.v1.schemas.messages import MessageGraphDataItem
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 

@@ -11,7 +11,7 @@ from fastapi import Depends
 from pypika import Order, Query, Table
 
 from app_types.query import QueryInterface
-from db import db_connection
+from db.connection import db_connection
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 
 

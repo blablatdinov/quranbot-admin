@@ -17,7 +17,7 @@ from pydantic import BaseModel, parse_obj_as, parse_raw_as
 
 from app_types.query import QueryInterface
 from caching import redis_connection
-from db import db_connection
+from db.connection import db_connection
 
 
 class PaginatedSequenceInterface(object):

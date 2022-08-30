@@ -40,5 +40,16 @@ class Settings(BaseSettings):
     class Config(object):
         env_file = '.env'
 
+    @property
+    def alembic_db_url(self) -> str:
+        """Формирование адреса подключения к БД для алембика.
+
+        :return: str
+        """
+        uri = str(self.DATABASE_URL)
+        if self.DATABASE_URL and self.DATABASE_URL.startswith('postgres://'):
+            uri = self.DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+        return uri.replace('postgresql', 'postgresql+asyncpg')
+
 
 settings = Settings()
