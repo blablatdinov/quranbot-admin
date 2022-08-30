@@ -10,7 +10,7 @@ from typing import Callable
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
 
-from db import database
+from db.connection import database
 from handlers.registration_handlers import router
 from handlers.websockets import websocket_endpoint
 from logging_settings import configure_logging

@@ -15,7 +15,7 @@ from pypika import Table
 from pypika.queries import QueryBuilder
 
 from app_types.query import QueryInterface
-from db import db_connection
+from db.connection import db_connection
 from handlers.v1.schemas.ayats import AyatModel, FileModel
 from services.limit_offset_by_page_params import LimitOffsetByPageParams
 

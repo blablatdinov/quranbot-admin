@@ -12,7 +12,7 @@ from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel, parse_obj_as
 
-from db import db_connection
+from db.connection import db_connection
 from handlers.v1.schemas.notifications import NotificationResponseSchema
 
 
