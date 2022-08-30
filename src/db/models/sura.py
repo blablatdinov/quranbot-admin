@@ -1,3 +1,8 @@
+"""Модуль содержащий модель суры.
+
+Classes:
+    Sura
+"""
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Integer, String
 

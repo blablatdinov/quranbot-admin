@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     @property
     def alembic_db_url(self) -> str:
         """Формирование адреса подключения к БД для алембика.
+
         :return: str
         """
         uri = self.DATABASE_URL

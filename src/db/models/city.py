@@ -1,3 +1,8 @@
+"""Модуль содержащий модель города.
+
+Classes:
+    City
+"""
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String
 

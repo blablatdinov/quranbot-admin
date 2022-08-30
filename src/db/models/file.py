@@ -1,3 +1,8 @@
+"""Модуль содержащий модель файла.
+
+Classes:
+    File
+"""
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import DateTime, String
 

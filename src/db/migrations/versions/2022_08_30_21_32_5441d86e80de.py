@@ -1,13 +1,12 @@
 """Init.
 
 Revision ID: 5441d86e80de
-Revises: 
+Revises:
 Create Date: 2022-08-30 21:32:20.137312
 
 """
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = '5441d86e80de'
@@ -63,7 +62,7 @@ def upgrade() -> None:
         'users',
         sa.Column('chat_id', sa.BigInteger(), autoincrement=False, nullable=False),
         sa.Column(
-            'is_active', sa.Boolean(), server_default=sa.text('true'), nullable=False
+            'is_active', sa.Boolean(), server_default=sa.text('true'), nullable=False,
         ),
         sa.Column('comment', sa.String(), nullable=True),
         sa.Column('day', sa.Integer(), nullable=True),

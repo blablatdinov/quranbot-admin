@@ -17,6 +17,7 @@ database = Database(settings.DATABASE_URL)
 
 async def db_connection() -> AsyncGenerator:
     """Зависимость для указания в контроллерах Fastapi.
+
     :yields: Connection
     """
     yield database

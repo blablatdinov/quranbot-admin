@@ -1,3 +1,8 @@
+"""Модуль содержащий модель пользователя.
+
+Classes:
+    User
+"""
 from sqlalchemy.sql import expression
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import BigInteger, Boolean, Integer, String

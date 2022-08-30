@@ -1,3 +1,8 @@
+"""Модуль содержащий модель аята.
+
+Classes:
+    Ayat
+"""
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String
 

@@ -1,3 +1,16 @@
+"""Конфигурация для alembic.
+
+Functions:
+    run_migrations_offline
+    do_run_migrations
+    run_migrations_online
+
+Misc variables:
+    config
+    target_metadata
+    loop
+    task
+"""
 import asyncio
 from logging.config import fileConfig
 
