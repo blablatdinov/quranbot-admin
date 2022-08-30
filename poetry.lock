@@ -22,6 +22,21 @@ typing-extensions = "*"
 hiredis = ["hiredis (>=1.0)"]
 
 [[package]]
+name = "alembic"
+version = "1.8.1"
+description = "A database migration tool for SQLAlchemy."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+Mako = "*"
+SQLAlchemy = ">=1.3.0"
+
+[package.extras]
+tz = ["python-dateutil"]
+
+[[package]]
 name = "anyio"
 version = "3.6.1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -216,7 +231,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "coverage"
-version = "6.4.3"
+version = "6.4.4"
 description = "Code coverage measurement for Python"
 category = "dev"
 optional = false
@@ -672,6 +687,22 @@ win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 dev = ["colorama (>=0.3.4)", "docutils (==0.16)", "flake8 (>=3.7.7)", "tox (>=3.9.0)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "black (>=19.10b0)", "isort (>=5.1.1)", "Sphinx (>=4.1.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)"]
+
+[[package]]
+name = "mako"
+version = "1.2.2"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+MarkupSafe = ">=0.9.2"
+
+[package.extras]
+babel = ["babel"]
+lingua = ["lingua"]
+testing = ["pytest"]
 
 [[package]]
 name = "markupsafe"
@@ -1155,7 +1186,7 @@ python-versions = "*"
 
 [[package]]
 name = "sqlalchemy"
-version = "1.4.39"
+version = "1.4.40"
 description = "Database Abstraction Library"
 category = "main"
 optional = false
@@ -1169,7 +1200,7 @@ aiomysql = ["greenlet (!=0.4.17)", "aiomysql"]
 aiosqlite = ["typing_extensions (!=3.10.0.1)", "greenlet (!=0.4.17)", "aiosqlite"]
 asyncio = ["greenlet (!=0.4.17)"]
 asyncmy = ["greenlet (!=0.4.17)", "asyncmy (>=0.2.3,!=0.2.4)"]
-mariadb_connector = ["mariadb (>=1.0.1)"]
+mariadb_connector = ["mariadb (>=1.0.1,!=1.1.2)"]
 mssql = ["pyodbc"]
 mssql_pymssql = ["pymssql"]
 mssql_pyodbc = ["pyodbc"]
@@ -1349,7 +1380,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "6b815c156b744bd8dab2b62fe8a010cc9971c2f2c52b810b5f826cdcc9768d50"
+content-hash = "138ffb2037eff87220a6ea9063ff5d7f97896e285c4f62230ddaf4fe4941991a"
 
 [metadata.files]
 aiofiles = [
@@ -1360,6 +1391,7 @@ aioredis = [
     {file = "aioredis-2.0.1-py3-none-any.whl", hash = "sha256:9ac0d0b3b485d293b8ca1987e6de8658d7dafcca1cddfcd1d506cae8cdebfdd6"},
     {file = "aioredis-2.0.1.tar.gz", hash = "sha256:eaa51aaf993f2d71f54b70527c440437ba65340588afeb786cd87c55c89cd98e"},
 ]
+alembic = []
 anyio = [
     {file = "anyio-3.6.1-py3-none-any.whl", hash = "sha256:cb29b9c70620506a9a8f87a309591713446953302d7d995344d0d7c6c0c9a7be"},
     {file = "anyio-3.6.1.tar.gz", hash = "sha256:413adf95f93886e442aea925f3ee43baa5a765a64a0f52c6081894f9992fdd0b"},
@@ -1588,6 +1620,7 @@ loguru = [
     {file = "loguru-0.6.0-py3-none-any.whl", hash = "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"},
     {file = "loguru-0.6.0.tar.gz", hash = "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c"},
 ]
+mako = []
 markupsafe = [
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812"},
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f121a1420d4e173a5d96e47e9a0c0dcff965afdf1626d28de1460815f7c4ee7a"},
