@@ -5,6 +5,8 @@ Classes:
     UserRepositoryInterface
     UserRepository
 """
+from typing import Optional
+
 from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel
@@ -22,6 +24,14 @@ class UserSchema(BaseModel):
     password: str
 
 
+class UserInsertSchema(BaseModel):
+    """Модель пользователя."""
+
+    chat_id: int
+    day: int
+    referrer_id: Optional[int]
+
+
 class UserRepositoryInterface(object):
     """Интерфейс для работы с хранилищем пользователей."""
 
@@ -29,6 +39,23 @@ class UserRepositoryInterface(object):
         """Получить пользователя.
 
         :param username: str
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+    async def create(self, user: UserInsertSchema):
+        """Создание пользователя.
+
+        :param user: UserInsertSchema
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+    async def update_status(self, chat_id: int, to: bool):
+        """обновление статуса пользователя.
+
+        :param chat_id: int
+        :param to: bool
         :raises NotImplementedError: if not implemented
         """
         raise NotImplementedError
@@ -53,10 +80,10 @@ class UserRepository(UserRepositoryInterface):
         :return: UserSchema
         :raises UserNotFoundError: если пользователь не найден
         """
-        user_table = Table('auth_user')
+        user_table = Table('users')
         query = str(
             Query
-            .select(user_table.id, user_table.username, user_table.password)
+            .select(user_table.chat_id.as_('id'), user_table.username, user_table.password_hash.as_('password'))
             .from_(user_table).where(user_table.username == username),
         )
         row = await self._connection.fetch_one(query)
@@ -64,3 +91,29 @@ class UserRepository(UserRepositoryInterface):
             raise UserNotFoundError
         # https://github.com/encode/databases/pull/447
         return UserSchema.parse_obj(row._mapping)  # noqa: WPS437
+
+    async def create(self, user: UserInsertSchema):
+        """Создание пользователя.
+
+        :param user: UserInsertSchema
+        """
+        query = """
+            INSERT INTO users
+            (chat_id, is_active, day, referrer_id)
+            VALUES
+            (:chat_id, 't', :day, :referrer_id)
+        """
+        await self._connection.execute(query, user.dict())
+
+    async def update_status(self, chat_id: int, to: bool):
+        """обновление статуса пользователя.
+
+        :param chat_id: int
+        :param to: bool
+        """
+        query = """
+            UPDATE users
+            SET is_active = :is_active
+            WHERE chat_id = :chat_id
+        """
+        await self._connection.execute(query, {'is_active': to, 'chat_id': chat_id})

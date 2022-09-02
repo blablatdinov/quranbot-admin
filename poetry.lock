@@ -1144,7 +1144,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "quranbot-schema-registry"
-version = "0.0.10"
+version = "0.0.13"
 description = "quranbot-schema-registry"
 category = "main"
 optional = false
@@ -1422,7 +1422,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "bb4ca395c4242bd77547052e770f6575c24d38a4068207e068f01698513a9670"
+content-hash = "30a8cc725f9c8b21fd240a88d711e9e503a406d558d493e7accbceb12e11557e"
 
 [metadata.files]
 aiofiles = [

@@ -22,6 +22,6 @@ def override_deps():
 
 @pytest.mark.usefixtures('override_queue_dep')
 def test(client, file):
-    got = client.post('/api/v1/files/', files={'uploaded_file': file})
+    got = client.post('/api/v1/files/', files={'file': file})
 
     assert got.status_code == 201

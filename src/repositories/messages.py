@@ -1,6 +1,7 @@
 """Модуль для работы с хранилищем сообщений.
 
 Classes:
+    Message
     MessagesCountQuery
     MessagesQuery
     FilteredMessageQuery
@@ -9,12 +10,12 @@ Classes:
     ShortMessageQuery
 """
 import datetime
+import json
 
 from databases import Database
 from fastapi import Depends
 from pydantic import parse_obj_as
-from pypika import Query as SqlQuery
-from pypika import Table
+from pypika import Query, Table
 
 from app_types.query import QueryInterface
 from app_types.stringable import Stringable
@@ -31,6 +32,14 @@ class MessageRepositoryInterface(object):
 
         :param start_date: datetime.date
         :param finish_date: datetime.date
+        :raises NotImplementedError: if not implemented
+        """
+        raise NotImplementedError
+
+    async def save_messages(self, messages: list[dict]):
+        """Сохранить сообщения.
+
+        :param messages: list[dict]
         :raises NotImplementedError: if not implemented
         """
         raise NotImplementedError
@@ -74,6 +83,27 @@ class MessageRepository(MessageRepositoryInterface):
             for message_graph_data_item in parse_obj_as(list[MessageGraphDataItem], rows)
         }
 
+    async def save_messages(self, messages: list[dict]):
+        """Сохранить сообщения.
+
+        :param messages: list[dict]
+        """
+        query = """
+            INSERT INTO messages
+            (message_id, message_json, is_unknown, trigger_message_id)
+            VALUES
+            (:message_id, :message_json, :is_unknown, :trigger_message_id)
+        """
+        await self._connection.execute_many(query, [
+            {
+                'is_unknown': message['is_unknown'],
+                'message_json': json.dumps(message['message_json']),
+                'trigger_message_id': message['trigger_message_id'],
+                'message_id': message['message_json']['message_id'],
+            }
+            for message in messages
+        ])
+
 
 class MessagesCountQuery(Stringable):
     """Запрос для получению кол-ва сообщений."""
@@ -107,7 +137,7 @@ class MessagesQuery(QueryInterface):
         :return: pypika.QueryBuilder
         """
         return (
-            SqlQuery()
+            Query()
             .from_(self._messages_table)
             .select(
                 self._messages_table.id,

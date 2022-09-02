@@ -3,6 +3,7 @@
 Classes:
     City
 """
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String
 
@@ -14,5 +15,5 @@ class City(Base):
 
     __tablename__ = 'cities'
 
-    city_id = Column(String(), primary_key=True)
+    city_id = Column(UUID(), primary_key=True)
     name = Column(String())
