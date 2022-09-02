@@ -27,7 +27,7 @@ async def websocket_endpoint(
     """
     user = User.get_from_token(token)
     await websocket.accept()
-    nats_client = await nats.connect('localhost')
+    nats_client = await nats_tmp.connect('localhost')
     await redis.set('websocket_client_{0}'.format(user.username), 'true')
     await nats_client.subscribe('default', cb=WebsocketUser(websocket, user).receive)
     while True:  # noqa: WPS457

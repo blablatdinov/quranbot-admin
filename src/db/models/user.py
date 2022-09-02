@@ -3,7 +3,6 @@
 Classes:
     User
 """
-from sqlalchemy.sql import expression
 from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import BigInteger, Boolean, Integer, String
 
@@ -16,9 +15,11 @@ class User(Base):
     __tablename__ = 'users'
 
     chat_id = Column(BigInteger(), primary_key=True, autoincrement=False)
-    is_active = Column(Boolean(), server_default=expression.true(), nullable=False)
+    username = Column(String())
+    password_hash = Column(String())
+    is_active = Column(Boolean(), nullable=False)
     comment = Column(String())
-    day = Column(Integer(), default=2)
+    day = Column(Integer())
     city_id = Column(String(), ForeignKey('cities.city_id'))
     referrer_id = Column(Integer(), ForeignKey('users.chat_id'))
     legacy_id = Column(Integer(), nullable=True)

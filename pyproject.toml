@@ -17,7 +17,7 @@ bcrypt = "^3.2.2"
 passlib = "^1.7.4"
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
-quranbot-schema-registry = "0.0.10"
+quranbot-schema-registry = {path = "../quranbot-schema-registry/dist/quranbot-schema-registry-0.0.15.tar.gz"}
 aioredis = "^2.0.1"
 websockets = "^10.3"
 Jinja2 = "^3.1.2"  # remove after writing ui

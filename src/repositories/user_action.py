@@ -6,6 +6,8 @@ Classes:
     UserActionRepositoryInterface
     UserActionRepository
 """
+import enum
+import uuid
 import datetime
 
 from databases import Database
@@ -31,6 +33,21 @@ class ActionCountMapQueryResult(BaseModel):
     reactivated: int = 0
 
 
+class UserActionEnum(str, enum.Enum):
+
+    subscribed = 'subscribed'
+    unsubscribed = 'unsubscribed'
+    reactivated = 'reactivated'
+
+
+class UserActionSchema(BaseModel):
+
+    user_action_id: uuid.UUID
+    date_time: datetime.datetime
+    action: UserActionEnum
+    user_id: int
+
+
 class UserActionRepositoryInterface(object):
     """Интерфейс для работы с хранилищем действий пользователей."""
 
@@ -49,6 +66,9 @@ class UserActionRepositoryInterface(object):
         :param finish_date: datetime.date
         :raises NotImplementedError: if not implemented
         """
+        raise NotImplementedError
+
+    async def save(self, user_action: UserActionSchema):
         raise NotImplementedError
 
 
@@ -103,3 +123,12 @@ class UserActionRepository(UserActionRepositoryInterface):
         """
         rows = await self._connection.fetch_all(query, {'start_date': start_date, 'finish_date': finish_date})
         return parse_obj_as(list[ActionsByDateRangeQueryResult], rows)
+
+    async def save(self, user_action: UserActionSchema):
+        query = """
+            INSERT INTO user_actions
+            (user_action_id, date_time, action, user_id)
+            VALUES
+            (:user_action_id, :date_time, :action, :user_id)
+        """
+        await self._connection.execute(query, user_action.dict())

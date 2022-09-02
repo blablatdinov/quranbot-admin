@@ -5,6 +5,7 @@ Classes:
     UserRepositoryInterface
     UserRepository
 """
+
 from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel
@@ -22,6 +23,13 @@ class UserSchema(BaseModel):
     password: str
 
 
+class UserInsertSchema(BaseModel):
+    """Модель пользователя."""
+
+    chat_id: int
+    day: int
+
+
 class UserRepositoryInterface(object):
     """Интерфейс для работы с хранилищем пользователей."""
 
@@ -31,6 +39,9 @@ class UserRepositoryInterface(object):
         :param username: str
         :raises NotImplementedError: if not implemented
         """
+        raise NotImplementedError
+
+    async def create(self, user: UserInsertSchema):
         raise NotImplementedError
 
 
@@ -64,3 +75,12 @@ class UserRepository(UserRepositoryInterface):
             raise UserNotFoundError
         # https://github.com/encode/databases/pull/447
         return UserSchema.parse_obj(row._mapping)  # noqa: WPS437
+
+    async def create(self, user: UserInsertSchema):
+        query = """
+            INSERT INTO users
+            (chat_id, is_active, day)
+            VALUES
+            (:chat_id, 't', :day)
+        """
+        await self._connection.execute(query, user.dict())

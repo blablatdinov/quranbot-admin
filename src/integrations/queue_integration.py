@@ -19,7 +19,10 @@ from aioredis.client import Redis
 from loguru import logger
 from quranbot_schema_registry import validate_schema
 
+from repositories.auth import UserRepositoryInterface, UserSchema, UserInsertSchema
+from repositories.messages import MessageRepositoryInterface
 from repositories.notification import NotificationRepositoryInterface
+from repositories.user_action import UserActionRepositoryInterface, UserActionSchema, UserActionEnum
 
 
 class QueueIntegrationInterface(object):
@@ -58,9 +61,10 @@ class NatsIntegration(QueueIntegrationInterface):
         }
         validate_schema(event, event_name, version)
         nats_client = await nats.connect('localhost')
+        js = nats_client.jetstream()
 
         logger.info('Publishing to queue: {0}, event_id: {1}'.format(self._queue_name, event['event_id']))
-        await nats_client.publish(self._queue_name, json.dumps(event).encode('utf-8'))
+        await js.publish(self._queue_name, json.dumps(event).encode('utf-8'))
         logger.info('Event: {0} to queue: {1} successful published'.format(event['event_id'], self._queue_name))
         await nats_client.close()
 
@@ -80,12 +84,14 @@ class NatsEvents(object):
         nats_client = await nats.connect('localhost')
         logger.info('Start handling events...')
         logger.info('Receive evenst list: {0}'.format([event_handler.event_name for event_handler in self._handlers]))
-        await nats_client.subscribe('default', cb=self._message_handler)
+        js = nats_client.jetstream()
+        await js.subscribe('default', durable='quranbot_admin', cb=self._message_handler)
         while True:  # noqa: WPS457
             await asyncio.sleep(1)
 
-    async def _message_handler(self, event):
-        event_dict = json.loads(event.data.decode())
+    async def _message_handler(self, msg):
+        await msg.ack()
+        event_dict = json.loads(msg.data.decode())
         event_log_data = 'event_id={0} event_name={1}'.format(event_dict['event_id'], event_dict['event_name'])
         logger.info('Event {0} received'.format(event_log_data))
         try:
@@ -134,3 +140,66 @@ class NotificationCreatedEvent(object):
         # TODO: saving in database if user has not connection by websocket
         await self._notification_repository.create(event_data['public_id'], event_data['text'])
         await self._nats_integration.send(event_data, 'Websocket.NotificationCreated', 1)
+
+
+class MessageCreatedEvent(object):
+    """Событие создания сообщений."""
+
+    event_name = 'Messages.Created'
+
+    def __init__(
+        self,
+        nats_integration: QueueIntegrationInterface,
+        messages_repository: MessageRepositoryInterface,
+    ):
+        """Конструктор класса.
+
+        :param nats_integration: QueueIntegrationInterface
+        :param messages_repository: NotificationRepositoryInterface
+        """
+        self._nats_integration = nats_integration
+        self._messages_repository = messages_repository
+
+    async def handle_event(self, event_data):
+        """Обработка события.
+
+        :param event_data: dict
+        """
+        await self._messages_repository.save_messages(event_data['messages'])
+
+
+class UserSubscribedEvent(object):
+    """Событие создания действия пользователя."""
+
+    event_name = 'User.Subscribed'
+
+    def __init__(
+        self,
+        nats_integration: QueueIntegrationInterface,
+        user_repository: UserRepositoryInterface,
+        user_action_repository: UserActionRepositoryInterface,
+    ):
+        """Конструктор класса.
+
+        :param nats_integration: QueueIntegrationInterface
+        :param user_action_repository: NotificationRepositoryInterface
+        """
+        self._nats_integration = nats_integration
+        self._user_action_repository = user_action_repository
+        self._user_repository = user_repository
+
+    async def handle_event(self, event_data):
+        """Обработка события.
+
+        :param event_data: dict
+        """
+        await self._user_repository.create(UserInsertSchema(
+            chat_id=event_data['user_id'],
+            day=2,
+        ))
+        await self._user_action_repository.save(UserActionSchema(
+            user_action_id=uuid.uuid4(),
+            date_time=event_data['date_time'],
+            action=UserActionEnum.subscribed,
+            user_id=event_data['user_id']
+        ))
