@@ -10,7 +10,10 @@ import sys
 from caching import redis_connection
 from db.connection import database
 from exceptions import CliError
-from integrations.queue_integration import NatsEvents, NatsIntegration, NotificationCreatedEvent, MessageCreatedEvent, UserSubscribedEvent
+from integrations.event_handlers.message_created import MessageCreatedEvent
+from integrations.event_handlers.notification_created import NotificationCreatedEvent
+from integrations.event_handlers.user_subscribed import UserSubscribedEvent
+from integrations.queue_integration import NatsEvents, NatsIntegration
 from repositories.auth import UserRepository
 from repositories.messages import MessageRepository
 from repositories.notification import NotificationRepository
@@ -28,11 +31,9 @@ async def start_events_receiver() -> None:
             NotificationRepository(database),
         ),
         MessageCreatedEvent(
-            nats_integration,
             MessageRepository(database),
         ),
         UserSubscribedEvent(
-            nats_integration,
             UserRepository(database),
             UserActionRepository(database),
         ),

@@ -44,9 +44,20 @@ class UserRepositoryInterface(object):
         raise NotImplementedError
 
     async def create(self, user: UserInsertSchema):
+        """Создание пользователя.
+
+        :param user: UserInsertSchema
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
     async def update_status(self, chat_id: int, to: bool):
+        """обновление статуса пользователя.
+
+        :param chat_id: int
+        :param to: bool
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
 
@@ -82,6 +93,10 @@ class UserRepository(UserRepositoryInterface):
         return UserSchema.parse_obj(row._mapping)  # noqa: WPS437
 
     async def create(self, user: UserInsertSchema):
+        """Создание пользователя.
+
+        :param user: UserInsertSchema
+        """
         query = """
             INSERT INTO users
             (chat_id, is_active, day, referrer_id)
@@ -91,6 +106,11 @@ class UserRepository(UserRepositoryInterface):
         await self._connection.execute(query, user.dict())
 
     async def update_status(self, chat_id: int, to: bool):
+        """обновление статуса пользователя.
+
+        :param chat_id: int
+        :param to: bool
+        """
         query = """
             UPDATE users
             SET is_active = :is_active

@@ -1,8 +1,8 @@
 import datetime
 
-from integrations.queue_integration import UserUnsubscribedEvent
+from integrations.event_handlers.user_unsubscribed import UserUnsubscribedEvent
 from repositories.auth import UserRepositoryInterface
-from repositories.user_action import UserActionRepositoryInterface, UserActionSchema, UserActionEnum
+from repositories.user_action import UserActionEnum, UserActionRepositoryInterface, UserActionSchema
 
 
 class UserRepositoryMock(UserRepositoryInterface):
@@ -10,12 +10,12 @@ class UserRepositoryMock(UserRepositoryInterface):
     is_active = True
 
     async def update_status(self, chat_id: int, to: bool):
-        self.is_active = to
+        self.is_active = to  # noqa: WPS601
 
 
 class UserActionRepositoryMock(UserActionRepositoryInterface):
 
-    storage = []
+    storage: list[UserActionSchema] = []
 
     async def save(self, user_action: UserActionSchema):
         self.storage.append(user_action)

@@ -4,7 +4,7 @@ Classes:
     MessageModel
 """
 from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import BigInteger, JSON, Boolean
+from sqlalchemy.sql.sqltypes import JSON, BigInteger, Boolean
 
 from db.base import Base
 

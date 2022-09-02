@@ -3,9 +3,9 @@
 Classes:
     UserAction
 """
-from sqlalchemy.sql.schema import Column, ForeignKey
-from sqlalchemy.sql.sqltypes import Integer, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql.schema import Column, ForeignKey
+from sqlalchemy.sql.sqltypes import DateTime, Integer, String
 
 from db.base import Base
 

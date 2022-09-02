@@ -6,9 +6,9 @@ Classes:
     UserActionRepositoryInterface
     UserActionRepository
 """
+import datetime
 import enum
 import uuid
-import datetime
 
 from databases import Database
 from fastapi import Depends
@@ -33,7 +33,8 @@ class ActionCountMapQueryResult(BaseModel):
     reactivated: int = 0
 
 
-class UserActionEnum(str, enum.Enum):
+class UserActionEnum(str, enum.Enum):  # noqa: WPS600
+    """Список действий пользователя."""
 
     subscribed = 'subscribed'
     unsubscribed = 'unsubscribed'
@@ -41,6 +42,7 @@ class UserActionEnum(str, enum.Enum):
 
 
 class UserActionSchema(BaseModel):
+    """Схема действия пользователя для вставки в БД."""
 
     user_action_id: uuid.UUID
     date_time: datetime.datetime
@@ -69,6 +71,11 @@ class UserActionRepositoryInterface(object):
         raise NotImplementedError
 
     async def save(self, user_action: UserActionSchema):
+        """Сохранить действие пользователя.
+
+        :param user_action: UserActionSchema
+        :raises NotImplementedError: if not implemented
+        """
         raise NotImplementedError
 
 
@@ -125,6 +132,10 @@ class UserActionRepository(UserActionRepositoryInterface):
         return parse_obj_as(list[ActionsByDateRangeQueryResult], rows)
 
     async def save(self, user_action: UserActionSchema):
+        """Сохранить действие пользователя.
+
+        :param user_action: UserActionSchema
+        """
         query = """
             INSERT INTO user_actions
             (user_action_id, date_time, action, user_id)
