@@ -149,12 +149,10 @@ class MessageCreatedEvent(object):
 
     def __init__(
         self,
-        nats_integration: QueueIntegrationInterface,
         messages_repository: MessageRepositoryInterface,
     ):
         """Конструктор класса.
 
-        :param nats_integration: QueueIntegrationInterface
         :param messages_repository: NotificationRepositoryInterface
         """
         self._nats_integration = nats_integration
@@ -169,19 +167,17 @@ class MessageCreatedEvent(object):
 
 
 class UserSubscribedEvent(object):
-    """Событие создания действия пользователя."""
+    """Событие подписки нового пользователя."""
 
     event_name = 'User.Subscribed'
 
     def __init__(
         self,
-        nats_integration: QueueIntegrationInterface,
         user_repository: UserRepositoryInterface,
         user_action_repository: UserActionRepositoryInterface,
     ):
         """Конструктор класса.
 
-        :param nats_integration: QueueIntegrationInterface
         :param user_action_repository: NotificationRepositoryInterface
         """
         self._nats_integration = nats_integration
@@ -201,5 +197,36 @@ class UserSubscribedEvent(object):
             user_action_id=uuid.uuid4(),
             date_time=event_data['date_time'],
             action=UserActionEnum.subscribed,
+            user_id=event_data['user_id']
+        ))
+
+
+class UserUnsubscribedEvent(object):
+    """Событие создания действия пользователя."""
+
+    event_name = 'User.Unsubscribed'
+
+    def __init__(
+        self,
+        user_repository: UserRepositoryInterface,
+        user_action_repository: UserActionRepositoryInterface,
+    ):
+        """Конструктор класса.
+
+        :param user_action_repository: NotificationRepositoryInterface
+        """
+        self._user_action_repository = user_action_repository
+        self._user_repository = user_repository
+
+    async def handle_event(self, event_data):
+        """Обработка события.
+
+        :param event_data: dict
+        """
+        await self._user_repository.update_status(event_data['user_id'], to=False)
+        await self._user_action_repository.save(UserActionSchema(
+            user_action_id=uuid.uuid4(),
+            date_time=event_data['date_time'],
+            action=UserActionEnum.unsubscribed,
             user_id=event_data['user_id']
         ))

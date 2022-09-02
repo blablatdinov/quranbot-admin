@@ -44,6 +44,9 @@ class UserRepositoryInterface(object):
     async def create(self, user: UserInsertSchema):
         raise NotImplementedError
 
+    async def update_status(self, chat_id: int, to: bool):
+        raise NotImplementedError
+
 
 class UserRepository(UserRepositoryInterface):
     """Класс для работы с хранилищем пользователей."""
@@ -84,3 +87,11 @@ class UserRepository(UserRepositoryInterface):
             (:chat_id, 't', :day)
         """
         await self._connection.execute(query, user.dict())
+
+    async def update_status(self, chat_id: int, to: bool):
+        query = """
+            UPDATE users
+            SET is_active = :is_active
+            WHERE chat_id = :chat_id
+        """
+        await self._connection.execute(query, {'is_active': to, 'chat_id': chat_id})
