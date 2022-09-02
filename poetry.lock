@@ -1144,7 +1144,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "quranbot-schema-registry"
-version = "0.0.15"
+version = "0.0.13"
 description = "quranbot-schema-registry"
 category = "main"
 optional = false
@@ -1153,10 +1153,6 @@ python-versions = ">=3.9,<4.0"
 [package.dependencies]
 jsonschema = ">=4.7.2,<5.0.0"
 pydantic = ">=1.9.0,<2.0.0"
-
-[package.source]
-type = "file"
-url = "../quranbot-schema-registry/dist/quranbot-schema-registry-0.0.15.tar.gz"
 
 [[package]]
 name = "requests"
@@ -1426,7 +1422,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0f9b68d1b38fc4697aa677fb98fd1befba65d9518377df058c80d01da14863bb"
+content-hash = "30a8cc725f9c8b21fd240a88d711e9e503a406d558d493e7accbceb12e11557e"
 
 [metadata.files]
 aiofiles = [
@@ -1917,9 +1913,7 @@ pyyaml = [
     {file = "PyYAML-6.0-cp39-cp39-win_amd64.whl", hash = "sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c"},
     {file = "PyYAML-6.0.tar.gz", hash = "sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2"},
 ]
-quranbot-schema-registry = [
-    {file = "quranbot-schema-registry-0.0.15.tar.gz", hash = "sha256:108c5177f59535469908f19b94e8b493167432d608994680f84a6159e8d119b7"},
-]
+quranbot-schema-registry = []
 requests = []
 restructuredtext-lint = [
     {file = "restructuredtext_lint-1.4.0.tar.gz", hash = "sha256:1b235c0c922341ab6c530390892eb9e92f90b9b75046063e047cacfb0f050c45"},
