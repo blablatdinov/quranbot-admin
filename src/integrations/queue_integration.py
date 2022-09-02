@@ -155,7 +155,6 @@ class MessageCreatedEvent(object):
 
         :param messages_repository: NotificationRepositoryInterface
         """
-        self._nats_integration = nats_integration
         self._messages_repository = messages_repository
 
     async def handle_event(self, event_data):
@@ -180,7 +179,6 @@ class UserSubscribedEvent(object):
 
         :param user_action_repository: NotificationRepositoryInterface
         """
-        self._nats_integration = nats_integration
         self._user_action_repository = user_action_repository
         self._user_repository = user_repository
 
@@ -224,6 +222,71 @@ class UserUnsubscribedEvent(object):
         :param event_data: dict
         """
         await self._user_repository.update_status(event_data['user_id'], to=False)
+        await self._user_action_repository.save(UserActionSchema(
+            user_action_id=uuid.uuid4(),
+            date_time=event_data['date_time'],
+            action=UserActionEnum.unsubscribed,
+            user_id=event_data['user_id']
+        ))
+
+
+class UserReactivatedEvent(object):
+    """Событие создания действия пользователя."""
+
+    event_name = 'User.Reactivated'
+
+    def __init__(
+        self,
+        user_repository: UserRepositoryInterface,
+        user_action_repository: UserActionRepositoryInterface,
+    ):
+        """Конструктор класса.
+
+        :param user_action_repository: NotificationRepositoryInterface
+        """
+        self._user_action_repository = user_action_repository
+        self._user_repository = user_repository
+
+    async def handle_event(self, event_data):
+        """Обработка события.
+
+        :param event_data: dict
+        """
+        await self._user_repository.update_status(event_data['user_id'], to=True)
+        await self._user_action_repository.save(UserActionSchema(
+            user_action_id=uuid.uuid4(),
+            date_time=event_data['date_time'],
+            action=UserActionEnum.unsubscribed,
+            user_id=event_data['user_id']
+        ))
+
+
+class UserSubscribeWithReferrerEvent(object):
+    """Событие создания действия пользователя."""
+
+    event_name = 'User.Reactivated'
+
+    def __init__(
+        self,
+        user_repository: UserRepositoryInterface,
+        user_action_repository: UserActionRepositoryInterface,
+    ):
+        """Конструктор класса.
+
+        :param user_action_repository: NotificationRepositoryInterface
+        """
+        self._user_action_repository = user_action_repository
+        self._user_repository = user_repository
+
+    async def handle_event(self, event_data):
+        """Обработка события.
+
+        :param event_data: dict
+        """
+        await self._user_repository.create(UserInsertSchema(
+            chat_id=event_data['user_id'],
+            day=2,
+        ))
         await self._user_action_repository.save(UserActionSchema(
             user_action_id=uuid.uuid4(),
             date_time=event_data['date_time'],

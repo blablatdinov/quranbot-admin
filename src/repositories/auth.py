@@ -5,6 +5,7 @@ Classes:
     UserRepositoryInterface
     UserRepository
 """
+from typing import Optional
 
 from databases import Database
 from fastapi import Depends
@@ -28,6 +29,7 @@ class UserInsertSchema(BaseModel):
 
     chat_id: int
     day: int
+    referrer_id: Optional[int]
 
 
 class UserRepositoryInterface(object):
@@ -82,9 +84,9 @@ class UserRepository(UserRepositoryInterface):
     async def create(self, user: UserInsertSchema):
         query = """
             INSERT INTO users
-            (chat_id, is_active, day)
+            (chat_id, is_active, day, referrer_id)
             VALUES
-            (:chat_id, 't', :day)
+            (:chat_id, 't', :day, :referrer_id)
         """
         await self._connection.execute(query, user.dict())
 
