@@ -80,10 +80,10 @@ class UserRepository(UserRepositoryInterface):
         :return: UserSchema
         :raises UserNotFoundError: если пользователь не найден
         """
-        user_table = Table('auth_user')
+        user_table = Table('users')
         query = str(
             Query
-            .select(user_table.id, user_table.username, user_table.password)
+            .select(user_table.chat_id.as_('id'), user_table.username, user_table.password_hash.as_('password'))
             .from_(user_table).where(user_table.username == username),
         )
         row = await self._connection.fetch_one(query)

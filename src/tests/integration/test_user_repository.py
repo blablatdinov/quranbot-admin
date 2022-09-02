@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 from pypika import Parameter, Query, Table
 
@@ -9,36 +7,26 @@ from repositories.auth import UserRepository
 
 @pytest.fixture
 async def user(db_session):
-    user_table = Table('auth_user')
+    user_table = Table('users')
     columns = (
+        'chat_id',
         'username',
-        'password',
-        'is_superuser',
-        'first_name',
-        'last_name',
-        'email',
-        'is_staff',
+        'password_hash',
         'is_active',
-        'date_joined',
     )
     parameters = [Parameter(':{0}'.format(field)) for field in columns]
     await db_session.execute(
-        query=str(
+        str(
             Query()
             .into(user_table)
             .columns(*columns)
             .insert(*parameters),
         ),
-        values={
+        {
+            'chat_id': 123,
             'username': 'asdf',
-            'password': 'awef',
-            'is_superuser': False,
-            'first_name': 'guireoj',
-            'last_name': 'eoirjg',
-            'email': 'awef',
-            'is_staff': False,
+            'password_hash': 'awef',
             'is_active': True,
-            'date_joined': datetime.datetime(2020, 1, 1),
         },
     )
 
