@@ -1,17 +1,24 @@
-import json
+from typing import AsyncGenerator
 
-import aiohttp
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
 
-from integrations.client import ClientRequest
+from integrations.html_page import HtmlPage, HtmlPageInterface
 
 
 class Ayat(BaseModel):
-    sura_number: str
+    sura_number: int
     ajat_caption: str
-    text_original: str
+    arab_text: str = Field(..., alias='text_original')
     text_translate: str
+
+    @property
+    def ayat_number(self):
+        return self.ajat_caption.split(':')[1]
+
+    @property
+    def content(self):
+        return BeautifulSoup(self.text_translate, 'lxml').text.split('***')[0].strip()
 
 
 class SuraData(BaseModel):
@@ -26,20 +33,24 @@ class PagePreloadData(BaseModel):
 class UmmaRuState(BaseModel):
     page_preload_data: PagePreloadData = Field(..., alias='pagePreloadedData')
 
+    @property
+    def ayats(self):
+        return self.page_preload_data.sura_data.ayats
 
-class SuraPagesInterface(object):
 
-    async def get_links(self):
+class SuraLinksInterface(object):
+
+    async def get_links(self) -> list[str]:
         raise NotImplementedError
 
 
-class SuraPages(SuraPagesInterface):
+class SuraPages(SuraLinksInterface):
 
-    def __init__(self, http_client):
-        self._http_client = http_client
+    def __init__(self, html_page: HtmlPageInterface):
+        self._html_page = html_page
 
     async def get_links(self):
-        html = await self._http_client.act()
+        html = await self._html_page.read()
         soup = BeautifulSoup(html, 'lxml')
         item_list = soup.find('ol', class_="items-list")
         items = item_list.find_all('li')
@@ -49,18 +60,18 @@ class SuraPages(SuraPagesInterface):
         ]
 
 
-class FilteredSuraPages(SuraPagesInterface):
+class FilteredSuraPages(SuraLinksInterface):
 
-    def __init__(self, sura_pages: SuraPagesInterface):
+    def __init__(self, sura_pages: SuraLinksInterface):
         self._origin = sura_pages
 
-    async def get_links(self):
+    async def get_links(self) -> list[str]:
         return (await self._origin.get_links())[4:]
 
 
-class AbsolutedSuraPages(SuraPagesInterface):
+class AbsolutedSuraPages(SuraLinksInterface):
 
-    def __init__(self, sura_pages: SuraPagesInterface):
+    def __init__(self, sura_pages: SuraLinksInterface):
         self._origin = sura_pages
 
     async def get_links(self):
@@ -70,71 +81,63 @@ class AbsolutedSuraPages(SuraPagesInterface):
         ]
 
 
-class SuraPagesIterator(object):
+class HtmlPagesFromLinks(object):
 
-    def __init__(self, sura_pages: SuraPagesInterface, sura_parser):
-        self._sura_pages = sura_pages
-        self._sura_parser = sura_parser
+    def __init__(self, links: SuraLinksInterface):
+        self._links = links
 
-    async def run(self):
-        sura_links = await self._sura_pages.get_links()
-        for sura_link in sura_links:
-            await self._sura_parser.parse(ClientRequest.new().url(sura_link))
-            break
-
-
-class SuraScriptTagParser(object):
-
-    async def parse(self, soup: BeautifulSoup):
-        pass
-
-
-class RequestListFromUrls(object):
-
-    def __init__(self, sura_pages_links: AbsolutedSuraPages):
-        self._sura_pages_links = sura_pages_links
-
-    async def transform(self) -> list[ClientRequest]:
+    async def pages(self) -> list[HtmlPageInterface]:
         return [
-            ClientRequest.new().url(link)
-            for link in await self._sura_pages_links.get_links()
+            HtmlPage(link)
+            for link in await self._links.get_links()
         ]
 
 
 class SuraPagesHTML(object):
 
-    def __init__(self, request_list: RequestListFromUrls):
-        self._request_list = request_list
+    def __init__(self, html_pages: HtmlPagesFromLinks):
+        self._html_pages = html_pages
 
     async def download(self):
-        for request in await self._request_list.transform():
-            yield await request.act()
+        for sura_page in await self._html_pages.pages():
+            yield sura_page
 
 
-class JsonStrings():
+class Substring(object):
+
+    async def find(self) -> AsyncGenerator:
+        raise NotImplementedError
 
 
-class PreloadedStateStrings(object):
+class PreloadedStateStrings(Substring):
 
     def __init__(self, sura_pages_html: SuraPagesHTML):
         self._sura_pages_html = sura_pages_html
 
-    async def find(self):
+    async def find(self) -> AsyncGenerator:
         sura_pages_generator = self._sura_pages_html.download()
         async for sura_page in sura_pages_generator:
-            for line in sura_page.split('\n'):
+            page = await sura_page.read()
+            for line in page.split('\n'):
                 if '__PRELOADED_STATE__' in line:
                     yield line
 
 
-class TrimmedPreloadedStateString(object):
+class TrimmedPreloadedStateString(Substring):
 
-    def __init__(self, preloaded_state_string: PreloadedStateStrings):
+    def __init__(self, preloaded_state_string: Substring):
+        self._preloaded_state_string = preloaded_state_string
+
+    async def find(self) -> AsyncGenerator:
+        async for preloaded_state_string in self._preloaded_state_string.find():
+            yield preloaded_state_string[preloaded_state_string.find('{'):]
+
+
+class ParsedPreloadedStateString(Substring):
+
+    def __init__(self, preloaded_state_string: Substring):
         self._preloaded_state_string = preloaded_state_string
 
     async def find(self):
         async for preloaded_state_string in self._preloaded_state_string.find():
-            yield UmmaRuState.parse_raw(preloaded_state_string[preloaded_state_string.find('{'):])
-
-
-class TrimmedPreloadedStateString(object):
+            yield UmmaRuState.parse_raw(preloaded_state_string)

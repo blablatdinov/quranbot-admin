@@ -10,26 +10,25 @@ import sys
 from caching import redis_connection
 from db.connection import database
 from exceptions import CliError
-from integrations.client import HttpClient
 from integrations.event_handlers.message_created import MessageCreatedEvent
 from integrations.event_handlers.notification_created import NotificationCreatedEvent
 from integrations.event_handlers.user_subscribed import UserSubscribedEvent
+from integrations.html_page import HtmlPage, LoggedHtmlPage
 from integrations.queue_integration import NatsEvents, NatsIntegration
-from integrations.umma import AbsolutedSuraPages, FilteredSuraPages, SuraPages
+from integrations.umma import (
+    AbsolutedSuraPages,
+    FilteredSuraPages,
+    HtmlPagesFromLinks,
+    ParsedPreloadedStateString,
+    PreloadedStateStrings,
+    SuraPages,
+    SuraPagesHTML,
+    TrimmedPreloadedStateString,
+)
 from repositories.auth import UserRepository
 from repositories.messages import MessageRepository
 from repositories.notification import NotificationRepository
 from repositories.user_action import UserActionRepository
-from integrations.client import HttpClient
-from integrations.umma import SuraPages, FilteredSuraPages, SuraPagesInterface, AbsolutedSuraPages
-from integrations.client import ClientRequest
-from integrations.umma import (
-    AbsolutedSuraPages,
-    FilteredSuraPages,
-    RequestListFromUrls,
-    SuraPages,
-    SuraPagesHTML, PreloadedStateStrings, TrimmedPreloadedStateString,
-)
 
 
 async def start_events_receiver() -> None:
@@ -52,38 +51,29 @@ async def start_events_receiver() -> None:
     ]).receive()
 
 
-class QuranParser(object):
-
-    def __init__(self, data):
-        self._data = data
-
-    async def run(self):
-        res = self._data.find()
-        async for x in res:
-            print(x)
-
-
-class Main(object):
-
-    def main(self):
-        parser = QuranParser(
-            TrimmedPreloadedStateString(
-                PreloadedStateStrings(
-                    SuraPagesHTML(
-                        RequestListFromUrls(
-                            AbsolutedSuraPages(
-                                FilteredSuraPages(
-                                    SuraPages(
-                                        ClientRequest.new().url('https://umma.ru/perevod-korana/'),
+async def quran_parser():
+    g = ParsedPreloadedStateString(
+        TrimmedPreloadedStateString(
+            PreloadedStateStrings(
+                SuraPagesHTML(
+                    HtmlPagesFromLinks(
+                        AbsolutedSuraPages(
+                            FilteredSuraPages(
+                                SuraPages(
+                                    LoggedHtmlPage(
+                                        HtmlPage('https://umma.ru/perevod-korana/'),
                                     ),
                                 ),
                             ),
-                        )
-                    )
-                )
-            )
-        ).run()
-        asyncio.run(parser)
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ).find()
+    async for x in g:
+        for ayat in x.ayats:
+            print(ayat.sura_number, ayat.ayat_number)
 
 
 def main() -> None:
@@ -96,9 +86,14 @@ def main() -> None:
 
     func = {
         'queue': start_events_receiver,
+        'quran_parser': quran_parser,
     }.get(sys.argv[1])
 
     if not func:
         raise CliError
 
     asyncio.run(func())
+
+
+if __name__ == '__main__':
+    main()
