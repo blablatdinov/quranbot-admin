@@ -13,7 +13,18 @@ from exceptions import CliError
 from integrations.event_handlers.message_created import MessageCreatedEvent
 from integrations.event_handlers.notification_created import NotificationCreatedEvent
 from integrations.event_handlers.user_subscribed import UserSubscribedEvent
+from integrations.html_page import HtmlPage, LoggedHtmlPage
 from integrations.queue_integration import NatsEvents, NatsIntegration
+from integrations.umma import (
+    AbsolutedSuraPages,
+    FilteredSuraPages,
+    HtmlPagesFromLinks,
+    ParsedPreloadedStateString,
+    PreloadedStateStrings,
+    SuraPages,
+    SuraPagesHTML,
+    TrimmedPreloadedStateString,
+)
 from repositories.auth import UserRepository
 from repositories.messages import MessageRepository
 from repositories.notification import NotificationRepository
@@ -40,6 +51,31 @@ async def start_events_receiver() -> None:
     ]).receive()
 
 
+async def quran_parser():
+    g = ParsedPreloadedStateString(
+        TrimmedPreloadedStateString(
+            PreloadedStateStrings(
+                SuraPagesHTML(
+                    HtmlPagesFromLinks(
+                        AbsolutedSuraPages(
+                            FilteredSuraPages(
+                                SuraPages(
+                                    LoggedHtmlPage(
+                                        HtmlPage('https://umma.ru/perevod-korana/'),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ).find()
+    async for x in g:
+        for ayat in x.ayats:
+            print(ayat.sura_number, ayat.ayat_number)
+
+
 def main() -> None:
     """Entrypoint.
 
@@ -50,6 +86,7 @@ def main() -> None:
 
     func = {
         'queue': start_events_receiver,
+        'quran_parser': quran_parser,
     }.get(sys.argv[1])
 
     if not func:
