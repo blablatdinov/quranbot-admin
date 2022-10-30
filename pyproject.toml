@@ -17,7 +17,7 @@ bcrypt = "^3.2.2"
 passlib = "^1.7.4"
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
-quranbot-schema-registry = "0.0.13"
+quranbot-schema-registry = { git= "https://github.com/blablatdinov/quranbot-schema-registry", branch = "master" }
 aioredis = "^2.0.1"
 websockets = "^10.3"
 Jinja2 = "^3.1.2"  # remove after writing ui
@@ -27,7 +27,7 @@ alembic = "^1.8.1"
 SQLAlchemy = "^1.4.40"
 
 [tool.poetry.dev-dependencies]
-wemake-python-styleguide = "^0.16.1"
+wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
 ipython = "^8.4.0"
 mypy = "^0.971"
 asyncpg-stubs = "^0.26.0"

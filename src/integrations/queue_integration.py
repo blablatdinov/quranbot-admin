@@ -36,7 +36,7 @@ class QueueIntegrationInterface(object):
 class NatsIntegration(QueueIntegrationInterface):
     """Интеграция с nats."""
 
-    _queue_name = 'default'
+    _queue_name = 'quranbot'
 
     async def send(self, event_data, event_name, version) -> None:
         """Отправить событие.
@@ -56,7 +56,7 @@ class NatsIntegration(QueueIntegrationInterface):
         validate_schema(event, event_name, version)
         nats_client = await nats.connect('localhost')
         js = nats_client.jetstream()
-
+        await js.add_stream(name=self._queue_name)
         logger.info('Publishing to queue: {0}, event_id: {1}'.format(self._queue_name, event['event_id']))
         await js.publish(self._queue_name, json.dumps(event).encode('utf-8'))
         logger.info('Event: {0} to queue: {1} successful published'.format(event['event_id'], self._queue_name))
