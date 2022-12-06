@@ -6,14 +6,13 @@ authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
-fastapi = "^0.86.0"
+fastapi = "^0.88.0"
 uvicorn = "^0.20.0"
-requests = "^2.28.1"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 loguru = "^0.6.0"
 PyPika = "^0.48.9"
 nats-py = "^2.1.4"
-bcrypt = "^3.2.2"
+bcrypt = "^4.0.0"
 passlib = "^1.7.4"
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
@@ -22,20 +21,22 @@ aioredis = "^2.0.1"
 websockets = "^10.3"
 Jinja2 = "^3.1.2"  # remove after writing ui
 databases = {extras = ["asyncpg"], version = "^0.6.0"}
-aiofiles = "^0.8.0"
+aiofiles = "^22.0.0"
 alembic = "^1.8.1"
 SQLAlchemy = "^1.4.40"
+httpx = "0.23.1"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
 ipython = "^8.4.0"
 mypy = "^0.991"
 asyncpg-stubs = "^0.27.0"
-Faker = "^15.0.0"
-pytest-cov = "^3.0.0"
+Faker = "15.0.0"
+Faker = "^13.14.0"
+pytest-cov = "4.0.0"
 pytest = "7.2.0"
 pytest-asyncio = "^0.20.0"
-types-aiofiles = "^0.8.10"
+types-aiofiles = "^22.0.0"
 black = "^22.6.0"
 requests = "^2.28.1"
 

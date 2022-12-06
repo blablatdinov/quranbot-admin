@@ -109,7 +109,7 @@ def get_message(message_id: int, user: UserSchema = Depends(User.get_from_token)
     )
 
 
-@router.delete('/', status_code=status.HTTP_201_CREATED)
+@router.post('/delete', status_code=status.HTTP_201_CREATED)
 async def delete_message_from_telegram(
     input_data: DeleteMessagesRequest,
     messages_service: Messages = Depends(),
