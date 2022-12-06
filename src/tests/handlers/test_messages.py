@@ -85,7 +85,7 @@ def test_get_message(client):
 
 
 def test_delete_message_from_telegram(client):
-    got = client.delete('/api/v1/messages/', json={
+    got = client.post('/api/v1/messages/delete/', json={
         'message_ids': [1, 2, 3],
     })
 

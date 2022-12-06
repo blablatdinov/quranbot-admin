@@ -1,6 +1,7 @@
 import pytest
 from fastapi import Header
 from fastapi.testclient import TestClient
+from httpx._models import Headers  # noqa: WPS436
 
 from integrations.queue_integration import NatsIntegration, QueueIntegrationInterface
 from main import app
@@ -11,7 +12,7 @@ from services.auth import User
 @pytest.fixture()
 def client():
     http_client = TestClient(app)
-    http_client.headers = {'Authorization': ''}
+    http_client.headers = Headers({'Authorization': ''})
     return http_client
 
 
