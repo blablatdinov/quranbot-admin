@@ -1349,7 +1349,7 @@ test = ["pre-commit", "pytest"]
 
 [[package]]
 name = "types-aiofiles"
-version = "0.8.11"
+version = "22.1.0.4"
 description = "Typing stubs for aiofiles"
 category = "dev"
 optional = false
@@ -2264,8 +2264,8 @@ traitlets = [
     {file = "traitlets-5.6.0.tar.gz", hash = "sha256:10b6ed1c9cedee83e795db70a8b9c2db157bb3778ec4587a349ecb7ef3b1033b"},
 ]
 types-aiofiles = [
-    {file = "types-aiofiles-0.8.11.tar.gz", hash = "sha256:1f93aa68e47de1379f45eef9acd34faa0f9341628921cd6aede666e6e559a5a8"},
-    {file = "types_aiofiles-0.8.11-py3-none-any.whl", hash = "sha256:be6715fffd1c7f84c9316000ba8bbc66a884246dbd2902c163ebc2d67315206b"},
+    {file = "types-aiofiles-22.1.0.4.tar.gz", hash = "sha256:54465417fdfafc723e6f0fca66de5498866f1cf2595b72c9da35c96d1c3e9fce"},
+    {file = "types_aiofiles-22.1.0.4-py3-none-any.whl", hash = "sha256:3c3d389ceec04c78bd33d13304332dcc46856a418d7d4ebf95e398f1efa3a3b7"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
