@@ -12,7 +12,7 @@ pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 loguru = "^0.6.0"
 PyPika = "^0.48.9"
 nats-py = "^2.1.4"
-bcrypt = "^3.2.2"
+bcrypt = "^4.0.0"
 passlib = "^1.7.4"
 python-jose = "^3.3.0"
 python-multipart = "^0.0.5"
