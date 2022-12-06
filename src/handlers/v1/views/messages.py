@@ -128,7 +128,7 @@ async def delete_message_from_telegram(
 
 @router.get('/count-graph/')
 async def get_count_graph(
-    finish_date: datetime.date = None,
+    finish_date: datetime.date | None = None,
     start_date: datetime.date = Depends(start_date_dependency),
     messages_repository: MessageRepository = Depends(),
 ) -> list[MessageGraphDataItem]:

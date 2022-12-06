@@ -12,7 +12,7 @@ from constants import FIRST_USER_ACTION_LOG_DATE
 from exceptions import DateTimeError
 
 
-def start_date_dependency(start_date: datetime.date = None):
+def start_date_dependency(start_date: datetime.date | None = None):
     """Dependency для контроллеров fastapi, для определения стартовой даты.
 
     :param start_date: datetime.date

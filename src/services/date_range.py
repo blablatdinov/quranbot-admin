@@ -9,7 +9,11 @@ import datetime
 class DateRange(object):
     """Depend для использования start_date, finish_date в query параметрах."""
 
-    def __init__(self, start_date: datetime.date = None, finish_date: datetime.date = None):
+    def __init__(
+        self,
+        start_date: datetime.date | None = None,
+        finish_date: datetime.date | None = None,
+    ):
         """Конструктор класса.
 
         :param start_date: datetime.date

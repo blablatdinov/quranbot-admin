@@ -7,10 +7,6 @@ from main import app
 from repositories.auth import UserSchema
 from services.auth import User
 
-pytest_plugins = [
-    'tests.plugins.db',
-]
-
 
 @pytest.fixture()
 def client():
