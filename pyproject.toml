@@ -5,7 +5,7 @@ description = ""
 authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 fastapi = "^0.86.0"
 uvicorn = "^0.18.2"
 requests = "^2.28.1"

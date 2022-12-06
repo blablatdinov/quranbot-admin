@@ -25,7 +25,7 @@ router = APIRouter(prefix='/users')
 async def get_users_count_graph_data(
     user_action_repository: UserActionRepository = Depends(),
     start_date: datetime.date = Depends(start_date_dependency),
-    finish_date: datetime.date = None,
+    finish_date: datetime.date | None = None,
     _: User = Depends(User.get_from_token),
 ):
     """Получить данные для графика по кол-ву пользователей.
