@@ -20,7 +20,7 @@ quranbot-schema-registry = { git= "https://github.com/blablatdinov/quranbot-sche
 aioredis = "2.0.1"
 websockets = "10.4"
 Jinja2 = "3.1.2"  # remove after writing ui
-databases = {extras = ["asyncpg"], version = "^0.6.0"}
+databases = {extras = ["asyncpg"], version = "^0.7.0"}
 aiofiles = "22.1.0"
 alembic = "1.9.0"
 SQLAlchemy = "1.4.45"
