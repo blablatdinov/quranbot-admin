@@ -1,11 +1,13 @@
 run:
-	uvicorn main:app --reload --app-dir src --port 8010
+	poetry run uvicorn main:app --reload --app-dir src --port 8010
 
 lint:
-	isort src && flake8 src
+	poetry run isort src
+	poetry run flake8 src
+	poetry run mypy src
 
 test:
-	pytest src --ignore=src/tests/integration/
+	poetry run pytest src --ignore=src/tests/integration/
 
 cov:
-	pytest src --cov=src
+	poetry run pytest src --cov=src

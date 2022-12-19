@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from integrations.queue_integration import NatsIntegration
 
-router = APIRouter()
+router = APIRouter(prefix='/debug')
 
 
 class EventInputData(BaseModel):
@@ -23,7 +23,7 @@ class EventInputData(BaseModel):
     event_data: dict
 
 
-@router.post('/')
+@router.post('/create-event/')
 async def create_event(
     event_input_data: EventInputData,
     nats_integration: NatsIntegration = Depends(),
