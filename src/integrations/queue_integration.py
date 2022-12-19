@@ -13,7 +13,6 @@ import asyncio
 import datetime
 import json
 import uuid
-from typing import Protocol
 
 import nats
 from loguru import logger
@@ -22,7 +21,7 @@ from quranbot_schema_registry import validate_schema
 from settings import settings
 
 
-class QueueIntegrationInterface(Protocol):
+class QueueIntegrationInterface(object):
     """Интерфейс интеграции с шиной событий."""
 
     async def send(self, event: dict, event_name: str, version: int):
@@ -31,7 +30,9 @@ class QueueIntegrationInterface(Protocol):
         :param event: dict
         :param event_name: str
         :param version: int
+        :raises NotImplementedError: if not implemented
         """
+        raise NotImplementedError
 
 
 class NatsIntegration(QueueIntegrationInterface):
