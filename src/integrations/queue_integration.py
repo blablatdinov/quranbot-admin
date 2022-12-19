@@ -18,6 +18,8 @@ import nats
 from loguru import logger
 from quranbot_schema_registry import validate_schema
 
+from settings import settings
+
 
 class QueueIntegrationInterface(object):
     """Интерфейс интеграции с шиной событий."""
@@ -54,7 +56,10 @@ class NatsIntegration(QueueIntegrationInterface):
             'data': event_data,
         }
         validate_schema(event, event_name, version)
-        nats_client = await nats.connect('localhost')
+        nats_client = await nats.connect(
+            'nats://{0}:{1}'.format(settings.NATS_HOST, settings.NATS_PORT),
+            token=settings.NATS_TOKEN,
+        )
         js = nats_client.jetstream()
         await js.add_stream(name=self._queue_name)
         logger.info('Publishing to queue: {0}, event_id: {1}'.format(self._queue_name, event['event_id']))
@@ -75,7 +80,10 @@ class NatsEvents(object):
 
     async def receive(self) -> None:
         """Прием сообщений."""
-        nats_client = await nats.connect('localhost')
+        nats_client = await nats.connect(
+            'nats://{0}:{1}'.format(settings.NATS_HOST, settings.NATS_PORT),
+            token=settings.NATS_TOKEN,
+        )
         logger.info('Start handling events...')
         logger.info('Receive evenst list: {0}'.format([event_handler.event_name for event_handler in self._handlers]))
         js = nats_client.jetstream()
