@@ -24,7 +24,7 @@ databases = {extras = ["asyncpg"], version = "^0.7.0"}
 aiofiles = "22.1.0"
 alembic = "1.9.1"
 SQLAlchemy = "1.4.45"
-httpx = "0.23.1"
+httpx = "0.23.2"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
