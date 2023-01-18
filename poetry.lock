@@ -2146,14 +2146,14 @@ test = ["pre-commit", "pytest"]
 
 [[package]]
 name = "types-aiofiles"
-version = "22.1.0.5"
+version = "22.1.0.6"
 description = "Typing stubs for aiofiles"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-aiofiles-22.1.0.5.tar.gz", hash = "sha256:6216e367a831945879536133e40893865789d00a0cc1d32e6c8e8a394a897a6b"},
-    {file = "types_aiofiles-22.1.0.5-py3-none-any.whl", hash = "sha256:932f395b3cd04c492ae3d2e8719f482fbedfcbb74da9dce0c2f3ea42f811be9e"},
+    {file = "types-aiofiles-22.1.0.6.tar.gz", hash = "sha256:4399a20ff93f81dd4cc9ac25a76e0c508cd5bbccc0b1b6f972129213c9560b97"},
+    {file = "types_aiofiles-22.1.0.6-py3-none-any.whl", hash = "sha256:416d5299b28b5070126b6618a6714e70d7bacb6082cc83aa19432d868f67b0d8"},
 ]
 
 [[package]]
@@ -2350,4 +2350,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "af47c8d8c29eb5ee253f941842ff3e1abfa8f1025a76313e6aff2141cb5211c3"
+content-hash = "d183ec23e5611941a21141f8abd8ade3be2ac13fb5b0a33b42f09dacdca84b08"
