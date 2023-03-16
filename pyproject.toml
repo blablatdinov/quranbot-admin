@@ -7,7 +7,7 @@ authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 fastapi = "0.94.1"
-uvicorn = "0.21.0"
+uvicorn = "0.21.1"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 loguru = "0.6.0"
 PyPika = "0.48.9"
