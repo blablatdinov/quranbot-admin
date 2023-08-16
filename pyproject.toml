@@ -22,7 +22,7 @@ websockets = "10.4"
 Jinja2 = "3.1.2"  # remove after writing ui
 databases = {extras = ["asyncpg"], version = "^0.7.0"}
 aiofiles = "22.1.0"
-alembic = "1.11.2"
+alembic = "1.11.3"
 SQLAlchemy = "1.4.49"
 httpx = "0.24.1"
 
