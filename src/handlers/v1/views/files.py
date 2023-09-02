@@ -13,7 +13,7 @@ from integrations.queue_integration import NatsIntegration
 from repositories.file import FilePaginatedQuery, OrderedFileQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.file import DiskFile, FileTriggeredToDownload
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 
 router = APIRouter(prefix='/files')
@@ -48,7 +48,7 @@ async def get_files(
             .update_query(
                 OrderedFileQuery(
                     FilePaginatedQuery(
-                        LimitOffsetByPageParams(page_num, page_size),
+                        LimitOffset(page_num, page_size),
                     ),
                     order_param,
                 ),
@@ -68,7 +68,7 @@ async def get_files(
                 page_size,
                 UrlWithoutQueryParams(request),
                 count,
-                LimitOffsetByPageParams(page_num, page_size),
+                LimitOffset(page_num, page_size),
             ),
         ),
     ).get()

@@ -12,7 +12,7 @@ from pypika import Order, Query, Table
 
 from app_types.query import QueryInterface
 from db.connection import db_connection
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 
 
 class FilePaginatedQuery(QueryInterface):
@@ -20,10 +20,10 @@ class FilePaginatedQuery(QueryInterface):
 
     _files_table = Table('content_file')
 
-    def __init__(self, limit_offset_calculator: LimitOffsetByPageParams):
+    def __init__(self, limit_offset_calculator: LimitOffset):
         """Конструктор класса.
 
-        :param limit_offset_calculator: LimitOffsetByPageParams
+        :param limit_offset_calculator: LimitOffset
         """
         self._limit_offset_calculator = limit_offset_calculator
 

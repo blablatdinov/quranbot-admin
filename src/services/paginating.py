@@ -14,7 +14,7 @@ from starlette.requests import Request
 
 from app_types.stringable import Stringable
 from repositories.paginated_sequence import ElementsCountInterface, PaginatedSequenceInterface
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 
 PydanticModel = TypeVar('PydanticModel', bound=BaseModel)
 
@@ -48,7 +48,7 @@ class NextPage(object):
     _page_size: int
     _url: Stringable
     _elements_count: ElementsCountInterface
-    _limit_offset_by_page_params: LimitOffsetByPageParams
+    _limit_offset_by_page_params: LimitOffset
 
     def __init__(  # noqa: WPS211
         self,
@@ -56,7 +56,7 @@ class NextPage(object):
         page_size: int,
         url: Stringable,
         elements_count: ElementsCountInterface,
-        limit_offset_by_page_params: LimitOffsetByPageParams,
+        limit_offset_by_page_params: LimitOffset,
     ):
         """Конструктор класса.
 
@@ -64,7 +64,7 @@ class NextPage(object):
         :param page_size: int
         :param url: Stringable
         :param elements_count: ElementsCountInterface
-        :param limit_offset_by_page_params: LimitOffsetByPageParams
+        :param limit_offset_by_page_params: LimitOffset
         """
         self._page_num = page_num
         self._page_size = page_size

@@ -21,7 +21,7 @@ from app_types.query import QueryInterface
 from app_types.stringable import Stringable
 from db.connection import db_connection
 from handlers.v1.schemas.messages import MessageGraphDataItem
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 
 
 class MessageRepositoryInterface(object):
@@ -182,11 +182,11 @@ class PaginatedMessagesQuery(QueryInterface):
 
     _messages_table = Table('bot_init_message')
 
-    def __init__(self, messages_query: QueryInterface, limit_offset_calculator: LimitOffsetByPageParams):
+    def __init__(self, messages_query: QueryInterface, limit_offset_calculator: LimitOffset):
         """Конструктор класса.
 
         :param messages_query: QueryInterface
-        :param limit_offset_calculator: LimitOffsetByPageParams
+        :param limit_offset_calculator: LimitOffset
         """
         self._origin = messages_query
         self._limit_offset_calculator = limit_offset_calculator
