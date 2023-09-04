@@ -10,7 +10,6 @@ from typing import Optional
 from databases import Database
 from fastapi import Depends
 from pydantic import BaseModel
-from pypika import Query, Table
 
 from db.connection import db_connection
 from exceptions import UserNotFoundError
