@@ -37,7 +37,7 @@ async def add_process_time_header(request: Request, call_next: Callable):
 
 
 @app.on_event('startup')
-async def startup():
+async def startup() -> None:
     """Действия, при запуске приложения."""
     transport, protocol = await aioamqp.connect(
         host=settings.RABBITMQ_HOST,

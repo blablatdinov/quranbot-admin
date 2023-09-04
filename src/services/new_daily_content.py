@@ -22,7 +22,7 @@ class NewDailyContent(object):
     _pgsql: Database
     _input_data: DailyContentInputModel
 
-    async def create(self):
+    async def create(self) -> None:
         """Создание."""
         query = """
             UPDATE ayats
@@ -35,7 +35,7 @@ class NewDailyContent(object):
         )
         await self._publish_event()
 
-    async def _publish_event(self):
+    async def _publish_event(self) -> None:
         transport, protocol = await aioamqp.connect(
             host=settings.RABBITMQ_HOST,
             login=settings.RABBITMQ_USER,
