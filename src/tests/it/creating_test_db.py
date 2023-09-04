@@ -36,9 +36,9 @@ def fill_test_db() -> None:
     qbot_cursor = qbot_connection.cursor()
     apply_migrations(qbot_cursor)
     fixtures = (
-        'src/tests/integration/db-fixtures/admin/files.sql',
-        'src/tests/integration/db-fixtures/admin/suras.sql',
-        'src/tests/integration/db-fixtures/admin/ayats.sql',
+        'src/tests/it/db-fixtures/admin/files.sql',
+        'src/tests/it/db-fixtures/admin/suras.sql',
+        'src/tests/it/db-fixtures/admin/ayats.sql',
     )
     for fixture in fixtures:
         qbot_cursor.execute(Path(fixture).read_text())

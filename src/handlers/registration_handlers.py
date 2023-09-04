@@ -9,9 +9,9 @@ Misc variables:
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
-from handlers.v1.daily_content import router as daily_content_router
 from handlers.v1.views.auth import router as auth_router
 from handlers.v1.views.ayats import router as ayats_router
+from handlers.v1.views.daily_content import router as daily_content_router
 from handlers.v1.views.debug import router as debug_router
 from handlers.v1.views.files import router as files_router
 from handlers.v1.views.mailings import router as mailings_router
