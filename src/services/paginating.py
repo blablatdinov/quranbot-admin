@@ -78,7 +78,7 @@ class NextPage(object):
         :return: str
         """
         elements_count = await self._elements_count.get()
-        _, offset = self._limit_offset_by_page_params.calculate()
+        offset = self._limit_offset_by_page_params.offset()
         if offset + self._page_size > elements_count:
             return None
         return '{0}?page_num={1}&page_size={2}'.format(

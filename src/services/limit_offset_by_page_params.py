@@ -3,7 +3,7 @@
 Classes:
     LimitOffset
 """
-from typing import final, SupportsInt, TypeAlias
+from typing import SupportsInt, TypeAlias, final
 
 import attrs
 
@@ -13,13 +13,19 @@ PositiveNumber: TypeAlias = SupportsInt
 @final
 @attrs.define(frozen=True)
 class PositiveNum(PositiveNumber):
+    """Положительное число."""
 
     _origin: SupportsInt
 
-    def __int__(self):
+    def __int__(self) -> int:
+        """Числовое представление.
+
+        :return: int
+        :raises ValueError: при отрицательном числе
+        """
         if int(self._origin) < 0:
             raise ValueError
-        return self._origin
+        return int(self._origin)
 
 
 @final
@@ -31,14 +37,28 @@ class LimitOffset(object):
     _page_size: PositiveNumber
 
     @classmethod
-    def int_ctor(cls, page_num, page_size):
+    def int_ctor(cls, page_num: int, page_size: int):
+        """Конструктор для чисел.
+
+        :param page_num: int
+        :param page_size: int
+        :return: LimitOffset
+        """
         return cls(
             PositiveNum(page_num),
             PositiveNum(page_size),
         )
 
     def offset(self) -> int:
+        """Отступ.
+
+        :return: int
+        """
         return (int(self._page_num) - 1) * int(self._page_size)
 
     def limit(self) -> int:
+        """Ограничение.
+
+        :return: int
+        """
         return int(self._page_size)

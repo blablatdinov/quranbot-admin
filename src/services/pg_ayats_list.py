@@ -1,8 +1,12 @@
+"""Список аятов.
+
+Classes:
+    PgAyatsList
+"""
 from typing import final
 
 import attrs
 from databases import Database
-from pydantic import parse_obj_as
 
 from handlers.v1.schemas.ayats import AyatModelShort
 from services.limit_offset_by_page_params import LimitOffset
@@ -10,12 +14,17 @@ from services.limit_offset_by_page_params import LimitOffset
 
 @final
 @attrs.define(frozen=True)
-class PgAyatsList:
+class PgAyatsList(object):
+    """Список аятов."""
 
     _pgsql: Database
     _limit_offset: LimitOffset
 
     async def models(self) -> list[AyatModelShort]:
+        """Модели.
+
+        :return: list[AyatModelShort]
+        """
         query = """
             SELECT
                 ayat_id AS id,

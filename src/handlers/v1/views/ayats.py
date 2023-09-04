@@ -5,18 +5,14 @@ Functions:
     get_ayat_detail
 """
 from databases import Database
-from fastapi import APIRouter, Depends, Query, Request
-from pypika import Query as SqlQuery
-from pypika.functions import Count
+from fastapi import APIRouter, Depends, Query
 
 from db.connection import db_connection
-from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import AyatPaginatedQuery, AyatRepository
-from repositories.paginated_sequence import CachedPaginatedSequence, ElementsCount
+from handlers.v1.schemas.ayats import AyatModel, PaginatedAyatResponse
+from repositories.ayat import AyatRepository
 from services.ayats_count import AyatsCount
 from services.ayats_paginated_response import AyatsPaginatedResponse
 from services.limit_offset_by_page_params import LimitOffset
-from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 from services.pg_ayats_list import PgAyatsList
 
 router = APIRouter(prefix='/ayats')

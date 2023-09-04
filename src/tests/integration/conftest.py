@@ -1,4 +1,3 @@
-import psycopg2
 import pytest
 from databases import Database
 

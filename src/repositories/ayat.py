@@ -52,7 +52,8 @@ class AyatPaginatedQuery(QueryInterface):
 
         :return: str
         """
-        limit, offset = self._limit_offset_calculator.calculate()
+        limit = self._limit_offset_calculator.limit()
+        offset = self._limit_offset_calculator.offset()
         select = (
             SqlQuery()
             .from_(self._ayats_table)

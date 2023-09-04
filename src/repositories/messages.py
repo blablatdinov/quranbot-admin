@@ -196,5 +196,6 @@ class PaginatedMessagesQuery(QueryInterface):
 
         :return: pypika.QueryBuilder
         """
-        limit, offset = self._limit_offset_calculator.calculate()
+        limit = self._limit_offset_calculator.limit()
+        offset = self._limit_offset_calculator.offset()
         return self._origin.query().limit(limit).offset(offset)

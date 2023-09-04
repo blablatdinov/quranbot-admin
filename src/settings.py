@@ -54,12 +54,5 @@ class Settings(BaseSettings):
             uri = self.DATABASE_URL.replace('postgres://', 'postgresql://', 1)
         return uri.replace('postgresql', 'postgresql+asyncpg')
 
-    @property
-    def test_db_url(self) -> str:
-        uri = str(self.DATABASE_URL)
-        splitted_uri = uri.split('/')
-        splitted_uri[-1] += '_test'
-        return '/'.join(splitted_uri)
-
 
 settings = Settings()

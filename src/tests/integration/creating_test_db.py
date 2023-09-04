@@ -10,10 +10,10 @@ def create_db() -> None:
     connection.autocommit = True
     cursor = connection.cursor()
     try:
-        cursor.execute(f'CREATE DATABASE qbot_admin_test')
+        cursor.execute('CREATE DATABASE qbot_admin_test')
     except psycopg2.errors.DuplicateDatabase:
         drop_db()
-        cursor.execute(f'CREATE DATABASE qbot_admin_test')
+        cursor.execute('CREATE DATABASE qbot_admin_test')
     connection.close()
 
 
@@ -49,10 +49,11 @@ def drop_db() -> None:
     connection = psycopg2.connect(settings.DATABASE_URL.replace('qbot_admin_test', 'postgres'))
     connection.autocommit = True
     cursor = connection.cursor()
-    cursor.execute("""
-        SELECT pg_terminate_backend (pg_stat_activity.pid)
-        FROM pg_stat_activity
-        WHERE pg_stat_activity.datname = 'qbot_admin_test'
-          AND pid <> pg_backend_pid();
-    """)
-    cursor.execute(f'DROP DATABASE qbot_admin_test')
+    cursor.execute(
+        '\n'.join([
+            'SELECT pg_terminate_backend (pg_stat_activity.pid)',
+            'FROM pg_stat_activity',
+            "WHERE pg_stat_activity.datname = 'qbot_admin_test' AND pid <> pg_backend_pid();",
+        ]),
+    )
+    cursor.execute('DROP DATABASE qbot_admin_test')

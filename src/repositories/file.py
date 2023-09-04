@@ -32,7 +32,8 @@ class FilePaginatedQuery(QueryInterface):
 
         :return: str
         """
-        limit, offset = self._limit_offset_calculator.calculate()
+        limit = self._limit_offset_calculator.limit()
+        offset = self._limit_offset_calculator.offset()
         return (
             Query()
             .from_(self._files_table)
