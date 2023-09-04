@@ -7,7 +7,7 @@ lint:
 	poetry run mypy src
 
 test:
-	poetry run pytest src --ignore=src/tests/integration/
+	poetry run pytest src
 
 cov:
 	poetry run pytest src --cov=src

@@ -13,7 +13,7 @@ def migrate():
     drop_db()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture()
 async def pgsql(migrate):
     database = Database(settings.DATABASE_URL)
     await database.connect()

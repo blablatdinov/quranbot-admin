@@ -12,13 +12,11 @@ from databases import Database
 
 from settings import settings
 
-database = Database(settings.DATABASE_URL)
-
 
 async def db_connection() -> AsyncGenerator:
     """Зависимость для указания в контроллерах Fastapi.
 
     :yields: Connection
     """
-    await database.connect()
-    yield database
+    async with Database(settings.DATABASE_URL) as database:
+        yield database
