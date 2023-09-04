@@ -50,3 +50,7 @@ class CliError(Exception):
         :return: str
         """
         return self._details
+
+
+class AyatNotFoundError(Exception):
+    """Аят не найден."""

@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Query
 
 from db.connection import db_connection
 from handlers.v1.schemas.ayats import AyatModel, PaginatedAyatResponse
-from repositories.ayat import AyatRepository
+from services.ayat_detail_response import AyatDetailResponse
 from services.ayats_count import AyatsCount
 from services.ayats_paginated_response import AyatsPaginatedResponse
 from services.limit_offset_by_page_params import LimitOffset
@@ -40,12 +40,12 @@ async def get_ayats_list(
 @router.get('/{ayat_id}/', response_model=AyatModel)
 async def get_ayat_detail(
     ayat_id: int,
-    ayat_repository: AyatRepository = Depends(),
+    pgsql: Database = Depends(db_connection),
 ) -> AyatModel:
     """Получить детальную инфу по аяту.
 
     :param ayat_id: int
-    :param ayat_repository: AyatRepository
+    :param pgsql: Database
     :return: AyatModel
     """
-    return await ayat_repository.get_ayat_detail(ayat_id)
+    return await AyatDetailResponse(pgsql, ayat_id).build()
