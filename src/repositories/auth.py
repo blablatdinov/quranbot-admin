@@ -19,7 +19,7 @@ from exceptions import UserNotFoundError
 class UserSchema(BaseModel):
     """Модель пользователя."""
 
-    id: int
+    chat_id: int
     username: str
     password: str
 
@@ -80,17 +80,22 @@ class UserRepository(UserRepositoryInterface):
         :return: UserSchema
         :raises UserNotFoundError: если пользователь не найден
         """
-        user_table = Table('users')
-        query = str(
-            Query
-            .select(user_table.chat_id.as_('id'), user_table.username, user_table.password_hash.as_('password'))
-            .from_(user_table).where(user_table.username == username),
-        )
-        row = await self._connection.fetch_one(query)
+        query = """
+            SELECT
+                chat_id,
+                username,
+                password_hash
+            FROM users
+            WHERE username = :username
+        """
+        row = await self._connection.fetch_one(query, {'username': username})
         if not row:
             raise UserNotFoundError
-        # https://github.com/encode/databases/pull/447
-        return UserSchema.parse_obj(row._mapping)  # noqa: WPS437
+        return UserSchema(
+            chat_id=row['chat_id'],
+            username=row['username'],
+            password=row['password_hash'],
+        )
 
     async def create(self, user: UserInsertSchema):
         """Создание пользователя.
