@@ -12,7 +12,8 @@ def test(client, pgsql):
     assert got.json() == {'day_num': 774}
 
 
-async def test_create(client, pgsql):
+async def test_create(client, pgsql, freezer):
+    freezer.move_to('2023-09-05')
     got = client.post('/api/v1/daily-content/', json={
         'day_num': 775,
         'ayat_ids': [1, 2, 3],
@@ -29,6 +30,7 @@ async def test_create(client, pgsql):
         .basic_get(queue='my_queue', auto_ack=True)[2]
         .decode('utf-8'),
     )
+    published_event.pop('event_id')
 
     assert got.status_code == 201
     assert [
@@ -40,11 +42,10 @@ async def test_create(client, pgsql):
         {'ayat_id': 2, 'day': 775},
     ]
     assert published_event == {
-        'event_id': 'some_id',
-        'event_name': 'event_name',
-        'event_time': '392409283',
+        'event_name': 'DailyContent.Created',
+        'event_time': '1693872000',
         'event_version': 1,
-        'producer': 'some producer',
+        'producer': 'quranbot-admin',
         'data': {
             'ayat_ids': [1, 2, 3],
             'day': 775,
