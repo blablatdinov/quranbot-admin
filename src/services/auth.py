@@ -63,10 +63,13 @@ class Password(PasswordInterface):
         except UserNotFoundError as error:
             raise IncorrectCredentialsError from error
         splitted_password_data = user.password.split('$')
-        password_hash_id_storage = splitted_password_data[-1][:-1].replace('+', '.')
-        input_password_hash = pbkdf2_sha256.hash(
-            password, rounds=int(splitted_password_data[1]), salt=splitted_password_data[2].encode('utf8'),
-        ).split('$')[-1]
+        password_hash_id_storage = splitted_password_data[-1]
+        input_password_hash = (
+            pbkdf2_sha256
+            .using(rounds=100, salt='SomeKey'.encode('utf-8'))
+            .hash(password)
+            .split('$')[-1]
+        )
         return input_password_hash == password_hash_id_storage
 
 
@@ -103,7 +106,7 @@ class AuthService(object):
             'iat': now,
             'nbf': now,
             'exp': now + datetime.timedelta(seconds=settings.JWT_EXPIRES_S),
-            'sub': str(user_data.id),
+            'sub': str(user_data.chat_id),
             'user': user_data.dict(),
         }
         token = jwt.encode(
@@ -145,14 +148,11 @@ class Token(object):
             )
         except JWTError as error:
             raise exception from error
-
         user_data = payload.get('user')
-
         try:
             user = UserSchema.parse_obj(user_data)
         except ValidationError as validation_error:
             raise exception from validation_error
-
         return user
 
 
