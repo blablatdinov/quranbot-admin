@@ -20,4 +20,5 @@ async def db_connection() -> AsyncGenerator:
 
     :yields: Connection
     """
+    await database.connect()
     yield database

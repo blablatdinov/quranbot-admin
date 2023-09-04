@@ -4,67 +4,37 @@ Functions:
     get_ayats_list
     get_ayat_detail
 """
-from fastapi import APIRouter, Depends, Query, Request
-from pypika import Query as SqlQuery
-from pypika.functions import Count
+from databases import Database
+from fastapi import APIRouter, Depends, Query
 
-from handlers.v1.schemas.ayats import AyatModel, AyatModelShort, PaginatedAyatResponse
-from repositories.ayat import AyatPaginatedQuery, AyatRepository
-from repositories.paginated_sequence import CachedPaginatedSequence, ElementsCount
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
-from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
+from db.connection import db_connection
+from handlers.v1.schemas.ayats import AyatModel, PaginatedAyatResponse
+from repositories.ayat import AyatRepository
+from services.ayats_count import AyatsCount
+from services.ayats_paginated_response import AyatsPaginatedResponse
+from services.limit_offset_by_page_params import LimitOffset
+from services.pg_ayats_list import PgAyatsList
 
 router = APIRouter(prefix='/ayats')
 
 
 @router.get('/', response_model=PaginatedAyatResponse)
 async def get_ayats_list(
-    request: Request,
     page_num: int = Query(default=1, ge=1),
     page_size: int = 50,
-    elements_count: ElementsCount = Depends(),
-    paginated_sequence: CachedPaginatedSequence = Depends(),
+    pgsql: Database = Depends(db_connection),
 ) -> PaginatedAyatResponse:
     """Получить список аятов.
 
-    :param request: Request
     :param page_num: int
     :param page_size: int
-    :param elements_count: ElementsCount
-    :param paginated_sequence: PaginatedSequence
-    :return: list[AyatModelShort]
+    :param pgsql: Database
+    :return: PaginatedAyatResponse
     """
-    count = elements_count.update_query(
-        str(SqlQuery().from_('content_ayat').select(Count('*'))),
-    )
-    return await PaginatedResponse(
-        count,
-        (
-            paginated_sequence
-            .update_query(
-                AyatPaginatedQuery(
-                    LimitOffsetByPageParams(page_num, page_size),
-                ),
-            )
-            .update_model_to_parse(AyatModelShort)
-        ),
-        PaginatedAyatResponse,
-        NeighborsPageLinks(
-            PrevPage(
-                page_num,
-                page_size,
-                count,
-                UrlWithoutQueryParams(request),
-            ),
-            NextPage(
-                page_num,
-                page_size,
-                UrlWithoutQueryParams(request),
-                count,
-                LimitOffsetByPageParams(page_num, page_size),
-            ),
-        ),
-    ).get()
+    return await AyatsPaginatedResponse(
+        AyatsCount(pgsql),
+        PgAyatsList(pgsql, LimitOffset(page_num, page_size)),
+    ).build()
 
 
 @router.get('/{ayat_id}/', response_model=AyatModel)

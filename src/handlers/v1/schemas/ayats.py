@@ -44,6 +44,6 @@ class PaginatedAyatResponse(BaseModel):
     """Модель ответа списка аятов с пагинацией."""
 
     count: int
-    next: Optional[str]
-    prev: Optional[str]
+    next: Optional[int]
+    prev: Optional[int]
     results: list[AyatModelShort]  # noqa: WPS110 api schema field name

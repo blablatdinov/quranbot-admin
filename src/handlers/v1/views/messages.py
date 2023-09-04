@@ -26,7 +26,7 @@ from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.auth import User
 from services.date_range import DateRange
 from services.empty_graphe_item_fill import GraphZeroValueItemSave
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 from services.messages import Messages
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
 from services.start_date_dependency import start_date_dependency
@@ -73,7 +73,7 @@ async def get_messages_list(
                         MessagesQuery(),
                         filter_param,
                     ),
-                    LimitOffsetByPageParams(page_num, page_size),
+                    LimitOffset(page_num, page_size),
                 ),
             )
             .update_model_to_parse(Message)
@@ -86,7 +86,7 @@ async def get_messages_list(
                 page_size,
                 UrlWithoutQueryParams(request),
                 count,
-                LimitOffsetByPageParams(page_num, page_size),
+                LimitOffset(page_num, page_size),
             ),
         ),
     ).get()

@@ -17,7 +17,7 @@ from pypika.queries import QueryBuilder
 from app_types.query import QueryInterface
 from db.connection import db_connection
 from handlers.v1.schemas.ayats import AyatModel, FileModel
-from services.limit_offset_by_page_params import LimitOffsetByPageParams
+from services.limit_offset_by_page_params import LimitOffset
 
 
 class AyatRepositoryInterface(object):
@@ -38,12 +38,12 @@ class AyatPaginatedQuery(QueryInterface):
     _ayats_table = Table('content_ayat')
     _sura_table = Table('content_sura')
     _file_table = Table('content_file')
-    _limit_offset_calculator: LimitOffsetByPageParams
+    _limit_offset_calculator: LimitOffset
 
-    def __init__(self, limit_offset_calculator: LimitOffsetByPageParams):
+    def __init__(self, limit_offset_calculator: LimitOffset):
         """Конструктор класса.
 
-        :param limit_offset_calculator: LimitOffsetByPageParams
+        :param limit_offset_calculator: LimitOffset
         """
         self._limit_offset_calculator = limit_offset_calculator
 
@@ -52,7 +52,8 @@ class AyatPaginatedQuery(QueryInterface):
 
         :return: str
         """
-        limit, offset = self._limit_offset_calculator.calculate()
+        limit = self._limit_offset_calculator.limit()
+        offset = self._limit_offset_calculator.offset()
         select = (
             SqlQuery()
             .from_(self._ayats_table)
