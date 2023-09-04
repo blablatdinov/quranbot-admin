@@ -8,7 +8,7 @@ import asyncio
 import sys
 
 from caching import redis_connection
-from db.connection import database
+from db.connection import db_connection
 from exceptions import CliError
 from integrations.event_handlers.message_created import MessageCreatedEvent
 from integrations.event_handlers.notification_created import NotificationCreatedEvent
@@ -22,7 +22,7 @@ from repositories.user_action import UserActionRepository
 
 async def start_events_receiver() -> None:
     """Обработка сообщений из очереди."""
-    await database.connect()
+    database = await anext(db_connection())
     nats_integration = NatsIntegration()
     await NatsEvents([
         NotificationCreatedEvent(

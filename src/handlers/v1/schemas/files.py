@@ -7,6 +7,7 @@ Classes:
 """
 import enum
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -23,7 +24,7 @@ class OrderingParams(str, enum.Enum):  # noqa: WPS600
 class FileModel(BaseModel):
     """Модель файла."""
 
-    id: int
+    id: UUID
     link: Optional[str]  # TODO: must replace to Optional[pydantic.AnyUrl]
     telegram_file_id: Optional[str]
     name: Optional[str]

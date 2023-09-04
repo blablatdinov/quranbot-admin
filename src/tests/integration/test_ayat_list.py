@@ -1,4 +1,4 @@
-def test(pgsql, client):
+async def test(migrate, client):
     got = client.get('/api/v1/ayats')
 
     assert got.status_code == 200
