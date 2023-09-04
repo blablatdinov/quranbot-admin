@@ -34,6 +34,6 @@ async def test(migrate, client, user, freezer):
         'user': {
             'chat_id': 123,
             'password': 'PYJ8Ug4L9xd..QmScF7rVCcqBMoKrpaqlMfkDn3uvL8',
-            'username': 'me'
+            'username': 'me',
         },
     }
