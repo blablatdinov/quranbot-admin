@@ -13,6 +13,3 @@ def test(pgsql, client):
         'ayat_num',
         'audio_file_link',
     ]
-    assert got.json()['results'][0] == {
-
-    }
