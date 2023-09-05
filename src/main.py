@@ -7,12 +7,14 @@ Functions:
 import time
 from typing import Callable
 
+import aioamqp
 from fastapi import FastAPI, Request
 from fastapi.middleware.gzip import GZipMiddleware
 
 from handlers.registration_handlers import router
 from handlers.websockets import websocket_endpoint
 from logging_settings import configure_logging
+from settings import settings
 
 app = FastAPI()
 
@@ -32,6 +34,18 @@ async def add_process_time_header(request: Request, call_next: Callable):
     process_time = time.time() - start_time
     response.headers['X-Process-Time'] = '{0} s'.format(str(process_time))
     return response
+
+
+@app.on_event('startup')
+async def startup() -> None:
+    """Действия, при запуске приложения."""
+    transport, protocol = await aioamqp.connect(
+        host=settings.RABBITMQ_HOST,
+        login=settings.RABBITMQ_USER,
+        password=settings.RABBITMQ_PASS,
+    )
+    channel = await protocol.channel()
+    await channel.queue_declare(queue_name='my_queue')
 
 
 app.websocket('/ws/')(websocket_endpoint)

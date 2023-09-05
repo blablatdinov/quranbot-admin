@@ -1,3 +1,3 @@
-[submodule "src/tests/integration/db-fixtures"]
-	path = src/tests/integration/db-fixtures
+[submodule "src/tests/it/db-fixtures"]
+	path = src/tests/it/db-fixtures
 	url = https://github.com/blablatdinov/quranbot-fixtures/

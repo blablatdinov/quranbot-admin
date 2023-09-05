@@ -42,4 +42,4 @@ jobs:
     - name: Check types with mypy
       run: .venv/bin/mypy src
     - name: Run tests with pytest
-      run: .venv/bin/pytest src --ignore=src/tests/integration/
+      run: .venv/bin/pytest src --ignore=src/tests/it/

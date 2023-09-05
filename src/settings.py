@@ -36,9 +36,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = 'HS256'
     JWT_EXPIRES_S: int = 3600
     DEBUG: bool = False
-    NATS_HOST: str = 'localhost'
-    NATS_PORT: int = 4222
-    NATS_TOKEN: str
+    RABBITMQ_HOST: str
+    RABBITMQ_USER: str
+    RABBITMQ_PASS: str
 
     class Config(object):
         env_file = '.env'
