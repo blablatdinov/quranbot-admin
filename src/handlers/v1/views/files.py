@@ -8,8 +8,7 @@ from databases import Database
 from fastapi import APIRouter, Depends, Query, UploadFile, status
 
 from db.connection import db_connection
-from integrations.queue_integration import NatsIntegration
-from services.file import DiskFile, FileTriggeredToDownload
+from services.file import PgFile, FileToDownloadEvent
 from services.files_paginated_response import FilesCount, FilesPaginatedResponse
 from services.limit_offset_by_page_params import LimitOffset
 from services.pg_files_list import PgFilesList
@@ -42,13 +41,13 @@ async def get_files(
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def post_file(
     file: UploadFile,  # noqa: WPS110 name used in api schema
-    disk_file: DiskFile = Depends(),
-    nats_integration: NatsIntegration = Depends(),
+    pgsql: Database = Depends(db_connection),
 ):
     """Метод для создания файла.
 
     :param file: UploadFile
-    :param disk_file: DiskFile
-    :param nats_integration: NatsIntegration
+    :param pgsql: Database
     """
-    await FileTriggeredToDownload(disk_file, nats_integration).save(file.filename, await file.read())
+    await FileToDownloadEvent(
+        await PgFile.new_file_ctor(file.filename, await file.read(), pgsql),
+    ).trigger()

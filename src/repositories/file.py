@@ -87,30 +87,3 @@ class FileRepositoryInterface(object):
         :raises NotImplementedError: if not implemented
         """
         raise NotImplementedError
-
-
-class FileRepository(FileRepositoryInterface):
-    """Класс для работы с хранилищем файлов."""
-
-    def __init__(self, connection: Database = Depends(db_connection)):
-        """Конструктор класса.
-
-        :param connection: Database
-        """
-        self._connection = connection
-
-    async def create(self, filename: str):
-        """Создать запись о файле.
-
-        :param filename: str
-        :return: int
-        """
-        query = """
-            INSERT INTO files (file_id, created_at)
-            VALUES (:file_id, :created_at)
-            RETURNING file_id
-        """
-        return await self._connection.execute(query, {
-            'file_id': str(uuid.uuid4()),
-            'created_at': datetime.datetime.now(),
-        })

@@ -7,55 +7,63 @@ Classes:
 import json
 import time
 import uuid
+import datetime
+from typing import final
 
 import aioamqp
-from fastapi import Depends
+import aiofiles
+import attrs
+from databases import Database
+from loguru import logger
 from quranbot_schema_registry import validate_schema
 
 from integrations.queue_integration import QueueIntegrationInterface
-from repositories.file import FileRepository
-from repositories.storage import FileSystemStorage
 from settings import settings
 
 
-class DiskFile(object):
+@final
+@attrs.define(frozen=True)
+class PgFile(object):
     """Сервисный класс для создания файла на диске."""
 
-    def __init__(
-        self,
-        storage: FileSystemStorage = Depends(),
-        file_repository: FileRepository = Depends(),
-    ):
-        """Конструктор класса.
+    _file_id: uuid.UUID
+    _pgsql: Database
 
-        :param storage: FileSystemStorage
-        :param file_repository: FileRepository
+    @classmethod
+    async def new_file_ctor(cls, filename: str, file_bytes: bytes, pgsql: Database):
+        async with aiofiles.open(settings.BASE_DIR / 'media' / filename, 'wb') as file_sink:
+            await file_sink.write(file_bytes)
+        query = """
+            INSERT INTO files (file_id, created_at, filename)
+            VALUES (:file_id, :created_at, :filename)
+            RETURNING file_id
         """
-        self._storage = storage
-        self._file_repository = file_repository
+        return cls(
+            await pgsql.execute(query, {
+                'file_id': str(uuid.uuid4()),
+                'created_at': datetime.datetime.now(),
+                'filename': filename,
+            }),
+            pgsql,
+        )
 
-    async def save(self, filename, bytes_list) -> None:
-        """Сохранить файл.
-
-        :param filename: str
-        :param bytes_list: bytes
-        """
-        self._path = await self._storage.write(filename, bytes_list)
-        self._file_id = await self._file_repository.create(filename)
-
-    def get_id(self) -> int:
+    def file_id(self) -> uuid.UUID:
         """Получить идентификатор.
 
         :return: int
         """
+        logger.info(f'Generated file id {self._file_id}')
         return self._file_id
 
-    def path(self) -> str:
+    async def path(self) -> str:
         """Получить путь до файла.
 
         :return: int
         """
-        return self._path
+        return settings.BASE_DIR / 'media' / await self._pgsql.fetch_val(
+            'SELECT filename FROM files WHERE file_id = :file_id',
+            {'file_id': self._file_id}
+        )
 
     def get_source(self) -> str:
         """Получить источник байтов.
@@ -65,28 +73,25 @@ class DiskFile(object):
         return 'disk'
 
 
-class FileTriggeredToDownload(object):
+class FileToDownloadEvent(object):
     """Класс, чтобы создавать файлы и отправлять событие, чтобы другой сервис скачал и установил файлу file_id.
 
     https://core.telegram.org/bots/api#file
     """
 
-    def __init__(self, file_service: DiskFile, queue_integration: QueueIntegrationInterface):
+    def __init__(self, file: PgFile):
         """Конструктор класса.
 
-        :param file_service: DiskFile
-        :param queue_integration: QueueIntegrationInterface
+        :param file: DiskFile
         """
-        self._origin = file_service
-        self._queue_integration = queue_integration
+        self._origin = file
 
-    async def save(self, filename, bytes_list) -> None:
+    async def trigger(self) -> None:
         """Сохранить файл.
 
         :param filename: str
         :param bytes_list: bytes
         """
-        await self._origin.save(filename, bytes_list)
         await self._publish_event()
 
     async def _publish_event(self) -> None:
@@ -103,9 +108,9 @@ class FileTriggeredToDownload(object):
             'event_time': str(int(time.time())),
             'producer': 'quranbot-admin',
             'data': {
-                'file_id': self._origin.get_id(),
+                'file_id': self._origin.file_id(),
                 'source': self._origin.get_source(),
-                'path': str(self._origin.path()),
+                'path': str(await self._origin.path()),
             },
         }
         validate_schema(event_data, 'File.SendTriggered', 1)

@@ -1,9 +1,4 @@
-import json
 from pathlib import Path
-
-import pika
-
-from settings import settings
 
 
 def test(pgsql, client):
@@ -22,35 +17,18 @@ def test(pgsql, client):
     ]
 
 
-def test_create_file(pgsql, client, freezer):
+async def test_create_file(pgsql, client, freezer, wait_event):
     freezer.move_to('2023-09-05')
     got = client.post('/api/v1/files/', files={
         'file': ('empty.mp3', Path('src/tests/fixtures/empty.mp3').read_bytes()),
     })
-    published_event = json.loads(
-        pika.BlockingConnection(
-            pika.ConnectionParameters(
-                host='localhost',
-                port=5672,
-                credentials=pika.PlainCredentials(settings.RABBITMQ_USER, settings.RABBITMQ_PASS),
-            ),
-        )
-        .channel()
-        .basic_get(queue='my_queue', auto_ack=True)[2]
-        .decode('utf-8'),
+    published_event = wait_event('File.SendTriggered', 1)
+    updated_db_row = await pgsql.fetch_one(
+        'select * from files where file_id = :file_id',
+        {'file_id': published_event['data']['file_id']},
     )
 
     assert got.status_code == 201, got.content
-    assert {
-        key: value
-        for key, value in published_event.items()
-        if key not in {'event_id', 'data'}
-    } == {
-        'event_name': 'File.SendTriggered',
-        'event_time': '1693872000',
-        'event_version': 1,
-        'producer': 'quranbot-admin',
-    }
     assert {
         key: value
         for key, value in published_event['data'].items()
@@ -62,3 +40,4 @@ def test_create_file(pgsql, client, freezer):
     assert Path(
         published_event['data']['path'],
     ).read_bytes() == Path('src/tests/fixtures/empty.mp3').read_bytes()
+    assert updated_db_row['created_at'].strftime('%Y-%m-%dT%H:%M:%S') == '2023-09-05T00:00:00'
