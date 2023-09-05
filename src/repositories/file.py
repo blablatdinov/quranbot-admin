@@ -6,6 +6,9 @@ Classes:
     FileRepositoryInterface
     FileRepository
 """
+import datetime
+import uuid
+
 from databases import Database
 from fastapi import Depends
 from pypika import Order, Query, Table
@@ -102,5 +105,12 @@ class FileRepository(FileRepositoryInterface):
         :param filename: str
         :return: int
         """
-        query = 'INSERT INTO content_file (name) VALUES (:filename) RETURNING id'
-        return await self._connection.execute(query, {'filename': filename})
+        query = """
+            INSERT INTO files (file_id, created_at)
+            VALUES (:file_id, :created_at)
+            RETURNING file_id
+        """
+        return await self._connection.execute(query, {
+            'file_id': str(uuid.uuid4()),
+            'created_at': datetime.datetime.now(),
+        })

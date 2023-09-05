@@ -4,17 +4,21 @@ Functions:
     get_files
     post_file
 """
+from databases import Database
 from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
 from pypika import Query as SqlQuery
 from pypika.functions import Count
 
+from db.connection import db_connection
 from handlers.v1.schemas.files import FileModel, OrderingParams, PaginatedFileResponse
 from integrations.queue_integration import NatsIntegration
 from repositories.file import FilePaginatedQuery, OrderedFileQuery
 from repositories.paginated_sequence import ElementsCount, PaginatedSequence
 from services.file import DiskFile, FileTriggeredToDownload
+from services.files_paginated_response import FilesPaginatedResponse, FilesCount
 from services.limit_offset_by_page_params import LimitOffset
 from services.paginating import NeighborsPageLinks, NextPage, PaginatedResponse, PrevPage, UrlWithoutQueryParams
+from services.pg_files_list import PgFilesList
 
 router = APIRouter(prefix='/files')
 
@@ -27,6 +31,7 @@ async def get_files(
     elements_count: ElementsCount = Depends(),
     order_param: OrderingParams = Query('id', alias='ordering'),
     paginated_sequence: PaginatedSequence = Depends(),
+    pgsql: Database = Depends(db_connection),
 ):
     """Получить список файлов с пагинацией.
 
@@ -38,40 +43,13 @@ async def get_files(
     :param paginated_sequence: PaginatedSequence
     :return: PaginatedResponse
     """
-    count = elements_count.update_query(
-        str(SqlQuery().from_('content_file').select(Count('*'))),
-    )
-    return await PaginatedResponse(
-        count,
-        (
-            paginated_sequence
-            .update_query(
-                OrderedFileQuery(
-                    FilePaginatedQuery(
-                        LimitOffset(page_num, page_size),
-                    ),
-                    order_param,
-                ),
-            )
-            .update_model_to_parse(FileModel)
+    return await FilesPaginatedResponse(
+        FilesCount(pgsql),
+        PgFilesList(
+            pgsql,
+            LimitOffset.int_ctor(page_num, page_size),
         ),
-        PaginatedFileResponse,
-        NeighborsPageLinks(
-            PrevPage(
-                page_num,
-                page_size,
-                count,
-                UrlWithoutQueryParams(request),
-            ),
-            NextPage(
-                page_num,
-                page_size,
-                UrlWithoutQueryParams(request),
-                count,
-                LimitOffset(page_num, page_size),
-            ),
-        ),
-    ).get()
+    ).build()
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)

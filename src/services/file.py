@@ -4,11 +4,18 @@ Classes:
     DiskFile
     FileTriggeredToDownload
 """
+import json
+import time
+import uuid
+
+import aioamqp
 from fastapi import Depends
+from quranbot_schema_registry import validate_schema
 
 from integrations.queue_integration import QueueIntegrationInterface
 from repositories.file import FileRepository
 from repositories.storage import FileSystemStorage
+from settings import settings
 
 
 class DiskFile(object):
@@ -80,12 +87,30 @@ class FileTriggeredToDownload(object):
         :param bytes_list: bytes
         """
         await self._origin.save(filename, bytes_list)
-        await self._queue_integration.send(
-            {
+
+        transport, protocol = await aioamqp.connect(
+            host=settings.RABBITMQ_HOST,
+            login=settings.RABBITMQ_USER,
+            password=settings.RABBITMQ_PASS,
+        )
+        channel = await protocol.channel()
+        event_data = {
+            'event_id': str(uuid.uuid4()),
+            'event_version': 1,
+            'event_name': 'File.SendTriggered',
+            'event_time': str(int(time.time())),
+            'producer': 'quranbot-admin',
+            'data': {
                 'file_id': self._origin.get_id(),
                 'source': self._origin.get_source(),
                 'path': str(self._origin.path()),
             },
-            'File.SendTriggered',
-            1,
+        }
+        validate_schema(event_data, 'File.SendTriggered', 1)
+        await channel.basic_publish(
+            payload=json.dumps(event_data).encode('utf-8'),
+            exchange_name='',
+            routing_key='my_queue',
         )
+        await channel.close()
+        await protocol.close()
