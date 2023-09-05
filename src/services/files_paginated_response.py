@@ -8,20 +8,22 @@ from typing import final
 import attrs
 from databases import Database
 
-from handlers.v1.schemas.ayats import PaginatedAyatResponse
 from handlers.v1.schemas.files import PaginatedFileResponse
-from services.ayats_count import AyatsCount
-from services.pg_ayats_list import PgAyatsList
 from services.pg_files_list import PgFilesList
 
 
 @final
 @attrs.define(frozen=True)
 class FilesCount(object):
+    """Кол-во записей с файлом."""
 
     _pgsql: Database
 
     async def to_int(self) -> int:
+        """Числовое представление.
+
+        :return: int
+        """
         return await self._pgsql.fetch_val('SELECT COUNT(*) FROM files')
 
 

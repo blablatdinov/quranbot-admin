@@ -8,7 +8,6 @@ from typing import final
 import attrs
 from databases import Database
 
-from handlers.v1.schemas.ayats import AyatModelShort
 from handlers.v1.schemas.files import FileModel
 from services.limit_offset_by_page_params import LimitOffset
 

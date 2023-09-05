@@ -44,7 +44,7 @@ def test_create_file(pgsql, client, freezer):
     assert {
         key: value
         for key, value in published_event.items()
-        if key not in ('event_id', 'data')
+        if key not in {'event_id', 'data'}
     } == {
         'event_name': 'File.SendTriggered',
         'event_time': '1693872000',
@@ -59,4 +59,6 @@ def test_create_file(pgsql, client, freezer):
         'path': '/Users/almazilaletdinov/code/quranbot/admin/media/empty.mp3',
         'source': 'disk',
     }
-    assert Path(published_event['data']['path']).read_bytes() == Path('src/tests/fixtures/empty.mp3').read_bytes()
+    assert Path(
+        published_event['data']['path'],
+    ).read_bytes() == Path('src/tests/fixtures/empty.mp3').read_bytes()

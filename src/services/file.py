@@ -87,7 +87,9 @@ class FileTriggeredToDownload(object):
         :param bytes_list: bytes
         """
         await self._origin.save(filename, bytes_list)
+        await self._publish_event()
 
+    async def _publish_event(self) -> None:
         transport, protocol = await aioamqp.connect(
             host=settings.RABBITMQ_HOST,
             login=settings.RABBITMQ_USER,
