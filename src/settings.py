@@ -39,9 +39,6 @@ class Settings(BaseSettings):
     RABBITMQ_HOST: str
     RABBITMQ_USER: str
     RABBITMQ_PASS: str
-    NATS_HOST: str = 'localhost'
-    NATS_PORT: int = 4222
-    NATS_TOKEN: str
 
     class Config(object):
         env_file = '.env'
