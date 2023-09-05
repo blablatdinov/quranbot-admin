@@ -29,7 +29,7 @@ async def pgsql(migrate):
 
 @pytest.fixture()
 def wait_event(migrate):
-    def _wait_event(name, version):
+    def _wait_event(name, version):  # noqa: WPS430
         for _ in range(50):
             published_event = json.loads(
                 pika.BlockingConnection(

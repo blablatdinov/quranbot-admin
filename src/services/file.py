@@ -4,20 +4,18 @@ Classes:
     DiskFile
     FileTriggeredToDownload
 """
+import datetime
 import json
 import time
 import uuid
-import datetime
 from typing import final
 
 import aioamqp
 import aiofiles
 import attrs
 from databases import Database
-from loguru import logger
 from quranbot_schema_registry import validate_schema
 
-from integrations.queue_integration import QueueIntegrationInterface
 from settings import settings
 
 
@@ -30,7 +28,14 @@ class PgFile(object):
     _pgsql: Database
 
     @classmethod
-    async def new_file_ctor(cls, filename: str, file_bytes: bytes, pgsql: Database):
+    async def new_file_ctor(cls, filename: str, file_bytes: bytes, pgsql: Database) -> 'PgFile':
+        """Конструктор для нового файла.
+
+        :param filename: str
+        :param file_bytes: bytes
+        :param pgsql: Database
+        :return: PgFile
+        """
         async with aiofiles.open(settings.BASE_DIR / 'media' / filename, 'wb') as file_sink:
             await file_sink.write(file_bytes)
         query = """
@@ -52,7 +57,6 @@ class PgFile(object):
 
         :return: int
         """
-        logger.info(f'Generated file id {self._file_id}')
         return self._file_id
 
     async def path(self) -> str:
@@ -62,7 +66,7 @@ class PgFile(object):
         """
         return settings.BASE_DIR / 'media' / await self._pgsql.fetch_val(
             'SELECT filename FROM files WHERE file_id = :file_id',
-            {'file_id': self._file_id}
+            {'file_id': self._file_id},
         )
 
     def get_source(self) -> str:
@@ -73,33 +77,26 @@ class PgFile(object):
         return 'disk'
 
 
+@final
+@attrs.define(frozen=True)
 class FileToDownloadEvent(object):
     """Класс, чтобы создавать файлы и отправлять событие, чтобы другой сервис скачал и установил файлу file_id.
 
     https://core.telegram.org/bots/api#file
     """
 
-    def __init__(self, file: PgFile):
-        """Конструктор класса.
-
-        :param file: DiskFile
-        """
-        self._origin = file
+    _pg_file: PgFile
 
     async def trigger(self) -> None:
-        """Сохранить файл.
-
-        :param filename: str
-        :param bytes_list: bytes
-        """
-        await self._publish_event()
-
-    async def _publish_event(self) -> None:
+        """Отправить событие о сохраненном файле."""
         transport, protocol = await aioamqp.connect(
             host=settings.RABBITMQ_HOST,
             login=settings.RABBITMQ_USER,
             password=settings.RABBITMQ_PASS,
         )
+        await self._publish_event(transport, protocol)
+
+    async def _publish_event(self, transport, protocol) -> None:
         channel = await protocol.channel()
         event_data = {
             'event_id': str(uuid.uuid4()),
@@ -108,9 +105,9 @@ class FileToDownloadEvent(object):
             'event_time': str(int(time.time())),
             'producer': 'quranbot-admin',
             'data': {
-                'file_id': self._origin.file_id(),
-                'source': self._origin.get_source(),
-                'path': str(await self._origin.path()),
+                'file_id': self._pg_file.file_id(),
+                'source': self._pg_file.get_source(),
+                'path': str(await self._pg_file.path()),
             },
         }
         validate_schema(event_data, 'File.SendTriggered', 1)
