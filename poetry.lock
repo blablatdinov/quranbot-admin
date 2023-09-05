@@ -1312,12 +1312,12 @@ files = [
 
 [[package]]
 name = "nats-py"
-version = "2.3.0"
+version = "2.3.1"
 description = "NATS client for Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "nats-py-2.3.0.tar.gz", hash = "sha256:0375be9fbdeb7c8756a1401f87928d6780e30c36941e85f74ae22e4d3448ca47"},
+    {file = "nats-py-2.3.1.tar.gz", hash = "sha256:3c50a710c8e4753d40db7935ff6a14c797534215267a596cbb64366d1f19d768"},
 ]
 
 [package.extras]
@@ -2508,4 +2508,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "ea3d68bc3ab9f82b5ec2dc303ac3b6079ae7190ae953837109738348d4e79f40"
+content-hash = "b99266c15ef38fad3bfe14b25994b0a33c8e00881374c15fc00e2ee02eff9d54"
