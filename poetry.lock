@@ -2205,13 +2205,13 @@ test = ["pre-commit", "pytest"]
 
 [[package]]
 name = "types-aiofiles"
-version = "22.1.0.9"
+version = "23.2.0.0"
 description = "Typing stubs for aiofiles"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-aiofiles-22.1.0.9.tar.gz", hash = "sha256:d46712556746cb4c9b63f86217c8cc0e9c54b5cf228ed9d8c1c21e38c2d9de99"},
-    {file = "types_aiofiles-22.1.0.9-py3-none-any.whl", hash = "sha256:d0bdc4d978528c6df37816879b7ff9dc0096dd70483d885e9c8624a560f31cc5"},
+    {file = "types-aiofiles-23.2.0.0.tar.gz", hash = "sha256:b6a7127bd232e0802532837b84140b1cd5df19ee60bea3a5699720d2b583361b"},
+    {file = "types_aiofiles-23.2.0.0-py3-none-any.whl", hash = "sha256:5d6719e8148cb2a9c4ea46dad86d50d3b675c46a940adca698533a8d2216d53d"},
 ]
 
 [[package]]
@@ -2508,4 +2508,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "ea3d68bc3ab9f82b5ec2dc303ac3b6079ae7190ae953837109738348d4e79f40"
+content-hash = "af1f1404753f8ecae07dc956a35d5316a4a380d955c6f09b54ebe6b1dc4ea7f8"
