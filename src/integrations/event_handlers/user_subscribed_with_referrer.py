@@ -35,6 +35,7 @@ class UserSubscribeWithReferrerEvent(object):
         await self._user_repository.create(UserInsertSchema(
             chat_id=event_data['user_id'],
             day=2,
+            referrer_id=None,
         ))
         await self._user_action_repository.save(UserActionSchema(
             user_action_id=uuid.uuid4(),

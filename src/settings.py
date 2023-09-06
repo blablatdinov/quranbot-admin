@@ -55,4 +55,4 @@ class Settings(BaseSettings):
         return uri.replace('postgresql', 'postgresql+asyncpg')
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
