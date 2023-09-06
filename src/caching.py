@@ -8,8 +8,7 @@ https://redis.io/
 Functions:
     redis_connection
 """
-import aioredis
-from aioredis.client import Redis
+from redis.asyncio import Redis
 
 from settings import settings
 
@@ -19,4 +18,4 @@ async def redis_connection() -> Redis:
 
     :return: Redis
     """
-    return await aioredis.from_url(str(settings.REDIS_DSN))  # type: ignore
+    return Redis(str(settings.REDIS_DSN))  # type: ignore

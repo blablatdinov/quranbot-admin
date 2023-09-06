@@ -3,7 +3,7 @@
 Classes:
     NotificationCreatedEvent
 """
-from aioredis import Redis
+from redis.asyncio import Redis
 
 from integrations.queue_integration import QueueIntegrationInterface
 from repositories.notification import NotificationRepositoryInterface
