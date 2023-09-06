@@ -20,7 +20,7 @@ class UserMock(object):
 
     @classmethod
     def get_from_token(cls, _: str = Header(..., alias='Authorization')):
-        return UserSchema(id=1, username='user', password='1')  # noqa: S106
+        return UserSchema(chat_id=1, username='user', password='1')  # noqa: S106
 
 
 class QueueIntegrationMock(QueueIntegrationInterface):

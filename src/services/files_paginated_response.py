@@ -43,6 +43,6 @@ class FilesPaginatedResponse(object):
         return PaginatedFileResponse(
             count=1,
             prev=None,
-            next=2,
+            next='2',
             results=await self._files_list.models(),
         )

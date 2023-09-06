@@ -58,5 +58,6 @@ async def get_users_count(elements_count: ElementsCount = Depends()) -> UsersCou
     )
     return UsersCountGithubBadge(
         label='users count',
-        message=await count.get(),
+        message=str(await count.get()),
+        schemaVersion=1,
     )
