@@ -5,8 +5,8 @@ Functions:
 """
 import asyncio
 
-from aioredis.client import Redis
 from fastapi import Depends, Query, WebSocket
+from redis.asyncio import Redis
 
 from caching import redis_connection
 

@@ -9,11 +9,11 @@ Classes:
 """
 import json
 
-from aioredis.client import Redis
 from databases import Database
 from fastapi import Depends
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as, parse_raw_as
+from redis.asyncio import Redis
 
 from app_types.query import QueryInterface
 from caching import redis_connection
