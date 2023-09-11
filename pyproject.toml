@@ -9,7 +9,7 @@ python = ">=3.11,<3.12"
 fastapi = "0.103.1"
 uvicorn = "0.23.2"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
-loguru = "0.7.1"
+loguru = "0.7.2"
 PyPika = "0.48.9"
 bcrypt = "4.0.1"
 passlib = "1.7.4"
