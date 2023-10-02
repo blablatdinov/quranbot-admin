@@ -27,7 +27,7 @@ aioamqp = "0.15.0"
 
 [tool.poetry.group.dev.dependencies]
 wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
-ipython = "8.16.0"
+ipython = "8.16.1"
 mypy = "1.5.1"
 asyncpg-stubs = "0.28.0"
 Faker = "19.6.2"
