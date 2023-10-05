@@ -29,14 +29,8 @@ async def test_create_file(pgsql, client, freezer, wait_event):
     )
 
     assert got.status_code == 201, got.content
-    assert {
-        key: value
-        for key, value in published_event['data'].items()
-        if key != 'file_id'
-    } == {
-        'path': '/Users/almazilaletdinov/code/quranbot/admin/media/empty.mp3',
-        'source': 'disk',
-    }
+    assert published_event['data']['source'] == 'disk'
+    assert 'media/empty.mp3' in published_event['data']['path']
     assert Path(
         published_event['data']['path'],
     ).read_bytes() == Path('src/tests/fixtures/empty.mp3').read_bytes()
