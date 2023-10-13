@@ -20,25 +20,12 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 # OR OTHER DEALINGS IN THE SOFTWARE.
 
-FROM python:3.12-slim as base
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-WORKDIR /app
+FROM rust:1.73.0 as build
+WORKDIR /usr/src/app
+COPY src ./src
+COPY Cargo.toml Cargo.lock ./
+RUN cargo install --path .
 
-FROM base as poetry
-RUN pip install poetry==1.3.1
-COPY poetry.lock pyproject.toml /app/
-RUN poetry export --without dev -o requirements.txt
-
-FROM base as build
-COPY --from=poetry /app/requirements.txt /tmp/requirements.txt
-RUN cat /tmp/requirements.txt
-RUN python -m venv /app/.venv && /app/.venv/bin/pip install -r /tmp/requirements.txt
-
-FROM python:3.12-slim as runtime
-
-# Copy only requirements to cache them in docker layer
-WORKDIR /app
-COPY --from=build /app/.venv /app/.venv
-
-# Creating folders, and files for a project:
-COPY src /app
+FROM debian
+RUN apt-get update & apt-get install -y libc6 & rm -rf /var/lib/apt/lists/*
+COPY --from=build /usr/src/app/target/release/quranbot-admin /usr/local/bin/quranbot-admin
