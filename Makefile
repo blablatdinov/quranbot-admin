@@ -1,5 +1,5 @@
 run:
-	poetry run uvicorn main:app --reload --app-dir src --port 8010
+	cargo run
 
 lint:
 	poetry run isort src

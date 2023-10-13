@@ -5,7 +5,7 @@ name: Python application
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "temporary-disable" ]
 
 permissions:
   contents: read
