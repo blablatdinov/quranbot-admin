@@ -23,6 +23,7 @@
 FROM rust:1.73.0 as build
 WORKDIR /usr/src/app
 COPY src ./src
+COPY .sqlx ./.sqlx
 COPY Cargo.toml Cargo.lock ./
 RUN cargo install --path .
 
