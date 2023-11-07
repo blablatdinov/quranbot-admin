@@ -140,13 +140,13 @@ test = ["flake8 (>=6.1,<7.0)", "uvloop (>=0.15.3)"]
 
 [[package]]
 name = "asyncpg-stubs"
-version = "0.29.0"
+version = "0.29.1"
 description = "asyncpg stubs"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "asyncpg_stubs-0.29.0-py3-none-any.whl", hash = "sha256:07268b8da5c774aca8abaf0f2a2e0714283c741bc5640e8c475e7bbee0531671"},
-    {file = "asyncpg_stubs-0.29.0.tar.gz", hash = "sha256:61c277d5556b8f9faddb89326aa2651a07f2d611d95424c0693a6058b148b4c4"},
+    {file = "asyncpg_stubs-0.29.1-py3-none-any.whl", hash = "sha256:cce994d5a19394249e74ae8d252bde3c77cee0ddfc776cc708b724fdb4adebb6"},
+    {file = "asyncpg_stubs-0.29.1.tar.gz", hash = "sha256:686afcc0af3a2f3c8e393cd850e0de430e5a139ce82b2f28ef8f693ecdf918bf"},
 ]
 
 [package.dependencies]
@@ -2597,4 +2597,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "a1059514c60cd25bfa069a7f35047d622c6b1a60a055f57af08925770f0c26f9"
+content-hash = "9f0180afd6676d21bbd8ae03f707c4532a9638829b8c10b6304991f1d43c92c5"
