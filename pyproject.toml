@@ -21,7 +21,7 @@ websockets = "11.0.3"
 Jinja2 = "3.1.2"  # remove after writing ui
 databases = {extras = ["asyncpg"], version = "0.8.0"}
 aiofiles = "23.2.1"
-httpx = "0.25.1"
+httpx = "0.25.2"
 eljson = "0.0.1a1"
 aioamqp = "0.15.0"
 greenlet = "3.0.1"
