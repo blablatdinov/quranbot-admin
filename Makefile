@@ -1,5 +1,5 @@
 run:
-	go run src/cmd/main.go
+	go run src/cmd/server/main.go
 
 lint:
 	go fmt ./src/...
