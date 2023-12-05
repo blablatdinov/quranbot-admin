@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "quranbot-admin"
+version = "0.1.0"
+description = ""
+authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+
+[tool.poetry.group.dev.dependencies]
+wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
+pytest = "7.4.3"
+httpx = "0.25.2"
