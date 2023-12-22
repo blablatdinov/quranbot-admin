@@ -24,7 +24,7 @@ aiofiles = "23.2.1"
 httpx = "0.26.0"
 eljson = "0.0.1a1"
 aioamqp = "0.15.0"
-greenlet = "3.0.2"
+greenlet = "3.0.3"
 
 [tool.poetry.group.dev.dependencies]
 wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-python-styleguide", branch = "master" }
