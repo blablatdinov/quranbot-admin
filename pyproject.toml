@@ -31,7 +31,7 @@ wemake-python-styleguide = { git= "https://github.com/wemake-services/wemake-pyt
 ipython = "8.19.0"
 mypy = "1.8.0"
 asyncpg-stubs = "0.29.1"
-Faker = "19.13.0"
+Faker = "21.0.0"
 pytest-cov = "4.1.0"
 pytest = "7.4.3"
 pytest-asyncio = "0.23.2"
