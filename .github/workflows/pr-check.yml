@@ -1,45 +1,51 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python application
-
-on:
+---
+name: CI
+"on":
+  push:
+    branches:
+      - master
   pull_request:
-    branches: [ "temporary-disable" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  checks:
+  build:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.12"
-    - name: Install Poetry
-      uses: snok/install-poetry@v1.3.4
-      with:
-        virtualenvs-create: true
-        virtualenvs-in-project: true
-        installer-parallel: true
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v3
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-    - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: poetry install --no-interaction --no-root
-    - name: create .env file
-      run: cp .github/.ci.env .env
-    - name: Lint with flake8
-      run: .venv/bin/flake8 src
-    - name: Check types with mypy
-      run: .venv/bin/mypy src
-    - name: Run tests with pytest
-      run: .venv/bin/pytest src --ignore=src/tests/it/
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create default environment
+        run: cp config/.env.template config/.env
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build the image
+        uses: docker/bake-action@v4
+        with:
+          files: docker-compose.yml
+          targets: web
+          load: true
+          set: |
+            *.cache-from=type=gha,scope=cached-stage
+            *.cache-to=type=gha,scope=cached-stage,mode=max
+
+      - name: Test
+        run: |
+          docker compose run \
+            -e DJANGO_SECRET_KEY --user=root --rm web ./docker/django/ci.sh
+        env:
+          # This must not be public and must be stored as a secret value.
+          # But, we don't really care in this homework.
+          DJANGO_SECRET_KEY: |
+            htrG1aAJYa9fwmVMoW13PL0zwIFcwBV4iCevHTJzZHmpq1oR8Q
