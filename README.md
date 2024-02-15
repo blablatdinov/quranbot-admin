@@ -1,26 +1,24 @@
-# Административная панель для телеграм [бота](https://github.com/blablatdinov/quranbot-aiogram)
-[![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
-[![Hits-of-Code](https://hitsofcode.com/github/blablatdinov/quranbot-admin)](https://hitsofcode.com/github/blablatdinov/quranbot-admin/view)
+# README
 
-(Пока находится в тестовом режиме)
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-[Ссылка](https://quranbot.ilaletdinov.ru/docs) на swagger
+Things you may want to cover:
 
-## Используемые технологии:
+* Ruby version
 
- - fastapi
- - nats
- - postgres
- - pydantic
- - pytest
- - flake8
- - mypy
- - redis
+* System dependencies
 
-## Смежные проекты:
+* Configuration
 
-[django-version](https://github.com/blablatdinov/quranbot) - предыдущая версия бота, сейчас используется для управления миграциями
+* Database creation
 
-[Бот](https://github.com/blablatdinov/quranbot-aiogam) - бот на aiogram
+* Database initialization
 
-[Хранилище схем для событий](https://github.com/blablatdinov/quranbot-schema-registry/)
+* How to run the test suite
+
+* Services (job queues, cache servers, search engines, etc.)
+
+* Deployment instructions
+
+* ...
