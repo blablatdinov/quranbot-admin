@@ -1,0 +1,127 @@
+---
+
+variables:
+  GROUP_NAME: "blablatdinov"
+  PROJECT_NAME: "quranbot-admin"
+  REGISTRY: "registry.gitlab.com"
+  IMAGE_FULL_NAME: "${REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}"
+
+
+# Base scripts
+# ============
+
+.docker:
+  # We use a custom dind image that is based on raw `docker`,
+  # it has all the dependencies required.
+  # By using it we reduce the build time significantly.
+  # You can fallback to use raw `docker` image, see:
+  # https://github.com/wemake-services/wemake-dind/
+  image: wemakeservices/wemake-dind:latest
+  interruptible: true
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: 1
+    COMPOSE_DOCKER_CLI_BUILD: 1
+  before_script: &docker-before-script
+    # Making sure we are in the right directory, does nothing by default:
+    - pwd && echo "$CI_PROJECT_DIR" && cd "$CI_PROJECT_DIR"
+    # Creating `.env` configuration file:
+    - dump-env
+      -t config/.env.template
+      -p 'SECRET_'
+      --strict SECRET_DJANGO_SECRET_KEY > config/.env
+    # Login into Docker registry:
+    - echo "$CI_JOB_TOKEN" | docker login "$REGISTRY"
+      -u gitlab-ci-token --password-stdin
+    # Debug information:
+    - docker info && docker compose --version && git --version
+
+# Test scripts
+# ============
+
+test:
+  stage: test
+  extends: .docker
+  before_script:
+    - *docker-before-script
+    # Pulling cache:
+    - docker pull "${IMAGE_FULL_NAME}:dev" || true
+    - docker tag "${IMAGE_FULL_NAME}:dev" "${PROJECT_NAME}:dev" || true
+  script:
+    # Checking config:
+    - docker compose -f docker-compose.yml
+      -f docker/docker-compose.prod.yml config --quiet
+
+    # Build and run tests:
+    - docker compose build
+      --build-arg BUILDKIT_INLINE_CACHE=1
+      --progress=plain web
+    - docker compose run --user=root --rm web ./docker/django/ci.sh
+
+    # Check the result image size:
+    - disl "${PROJECT_NAME}:dev" 950MiB
+
+    # Pushing back the result for future runs:
+    - docker tag "${PROJECT_NAME}:dev" "${IMAGE_FULL_NAME}:dev"
+    - docker push "${IMAGE_FULL_NAME}:dev"
+  only:
+    - merge_requests
+  # Coverage reporting:
+  # https://docs.gitlab.com/ee/ci/yaml/index.html#coverage
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+\%)/'
+  # Coverage visualisation, needs `--cov-report=xml` in `setup.cfg`.
+  # Docs: https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+# Testing caddy configuration if it changes.
+test-caddy:
+  stage: test
+  extends: .docker
+  script:
+    - docker-compose
+      -f docker-compose.yml
+      -f docker/docker-compose.prod.yml
+      run --no-deps --rm caddy sh /etc/ci.sh
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - docker/caddy/*
+
+
+# Release scripts
+# ===============
+
+# Releasing image, when in `master` branch,
+# can be replaced with `kira-release` bot:
+# https://github.com/wemake-services/kira-release
+release-image:
+  extends: .docker
+  stage: deploy
+  allow_failure: false
+  before_script:
+    # Build local image to be released to gitlab registry,
+    # modify it to suite your needs as you wish.
+    # We only care about the name of the image:
+    - *docker-before-script
+
+    # Now we need the latest images for cache and improved build times:
+    - docker pull "${IMAGE_FULL_NAME}:latest" || true
+    - docker tag "${IMAGE_FULL_NAME}:latest" "${PROJECT_NAME}:latest" || true
+  script:
+    # Building the image itself:
+    - docker-compose
+      -f docker-compose.yml
+      -f docker/docker-compose.prod.yml
+      build --progress=plain web
+    - docker push "${IMAGE_FULL_NAME}:latest"
+  only:
+    - master
+  environment:
+    name: production  # used to track time with 'cycle analytics'
