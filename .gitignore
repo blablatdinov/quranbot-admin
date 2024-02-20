@@ -247,3 +247,5 @@ artifacts/
 
 # ruff:
 .ruff_cache/
+
+.deltaver_cache/
