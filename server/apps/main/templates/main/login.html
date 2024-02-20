@@ -1,4 +1,4 @@
-{% extends 'admin_layout.html' %}
+{% extends "admin_layout.html" %}
 
 {% block content %}
   <form class="mt-5">
@@ -9,17 +9,15 @@
              class="form-control"
              id="email"
              aria-describedby="emailHelp"
-             value="a.ilaletdinov@yandex.ru">
-      <div id="emailHelp" class="form-text">
-        We'll never share your email with anyone else.
-      </div>
+             value="a.ilaletdinov@yandex.ru" />
+      <div id="emailHelp" class="form-text">We"ll never share your email with anyone else.</div>
     </div>
     <div class="mb-3">
       <label for="exampleInputPassword1" class="form-label">Password</label>
       <input type="password"
              class="form-control"
              id="exampleInputPassword1"
-             value="a.ilaletdinov@yandex.ru">
+             value="a.ilaletdinov@yandex.ru" />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

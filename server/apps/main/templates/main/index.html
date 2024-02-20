@@ -1,19 +1,19 @@
-{% extends 'admin_layout.html' %}
+{% extends "admin_layout.html" %}
 
 {% block content %}
   <canvas id="myLineChart" width="400" height="400"></canvas>
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('myLineChart').getContext('2d');
+  document.addEventListener("DOMContentLoaded", function() {
+    var ctx = document.getElementById("myLineChart").getContext("2d");
     var myLineChart = new Chart(ctx, {
-      type: 'line',
+      type: "line",
       data: {
         labels: {{ labels|safe }},
         datasets: [{
-          label: 'Data',
+          label: "Data",
           data: {{ values|safe }},
           fill: false,
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: "rgb(75, 192, 192)",
           tension: 0.1
         }]
       },
@@ -22,14 +22,14 @@
           x: {
             title: {
               display: true,
-              text: 'Date'
+              text: "Date"
             }
           },
           y: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Value'
+              text: "Value"
             }
           }
         }

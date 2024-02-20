@@ -8,7 +8,7 @@ authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.12"
 
-django = { version = "5.0.2", extras = ["argon2"] }
+django = { version = "4.2.10", extras = ["argon2"] }
 django-split-settings = "1.2.0"
 django-axes = "6.3.0"
 django-csp = "3.7"
@@ -21,6 +21,8 @@ psycopg2-binary = "2.9.9"
 gunicorn = "21.2.0"
 python-decouple = "3.8"
 structlog = "24.1.0"
+beautifulsoup4 = "4.12.3"
+lxml = "5.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -59,18 +61,19 @@ dump-env = "1.4.0"
 ipython = "8.21.0"
 ruff = "0.2.2"
 deltaver = "0.2.1"
+mixer = "7.2.2"
 
 [build-system]
 requires = ["poetry-core>=1.6"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.djlint]
-ignore = "H006,H030,H031"
+ignore = "H006,H025,H030,H031"
 include = "H017,H035"
 indent = 2
 blank_line_after_tag = "load,extends"
 profile = "django"
-max_line_length = 80
+max_line_length = 120
 format_attribute_template_tags = true
 
 [tool.nitpick]

@@ -62,7 +62,7 @@ def test_ayat_list(client, ayats):
             'hx-target': '#ayats-list',
         },
     ]
-    assert [list_elem.text for list_elem in links] == ['1', '2', '3', '»', '&rarrb;']
+    assert [list_elem.text for list_elem in links] == ['1', '2', '3', '\\xc2\\xbb', '\\xe2\\x87\\xa5']
 
 
 def test_ayat_list_middle_page(client, ayats):
