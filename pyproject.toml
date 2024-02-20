@@ -74,3 +74,71 @@ format_attribute_template_tags = true
 
 [tool.nitpick]
 style = "https://raw.githubusercontent.com/wemake-services/wemake-python-styleguide/0.18.0/styles/nitpick-style-wemake.toml"
+
+[tool.ruff]
+target-version = "py311"  # TODO: up to 3.12
+line-length = 120
+preview = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+preview = true
+fixable = [
+  "F401",   # Unused import
+]
+ignore = [
+  "DTZ005",  # TODO
+  "DTZ007",  # TODO
+  "INP001",  # TODO
+  "CPY001",  # TODO
+  # ----------------------------------
+  "ANN101",  # Missing type annotation for `self` in method
+  "ANN102",  # Missing type annotation for `cls` in classmethod
+  "ARG001",  # Unused function argument
+  "ARG002",  # Unused method argument
+  "D203",    # no-blank-line-before-class
+  "D213",    # multi-line-summary-first-line
+  "D418",    # Function decorated with `@overload` shouldn't contain a docstring
+  "FBT001",  # Boolean-typed positional argument in function definition
+  "FBT002",  # Boolean-typed positional argument in function definition
+  "FIX002",  # Line contains TODO, consider resolving the issue
+  "FLY002",  # We not use f-strings
+  "I001",    # Conflict with isort
+  "RUF100",  # WPS primary linter
+  "RUF001",  # Project contain cyrillic symbols
+  "RUF002",  # Project contain cyrillic symbols
+  "RET505",  # Unnecessary `elif` after `return` statement
+  "RET506",  # Unnecessary `elif` after `raise` statement
+  "UP030",   # We use explicit references
+  "UP032",   # We not use f-strings
+  "UP004",   # Class `PrayerReaction` inherits from `object`
+  "TD",      # "todo" formats
+  "PLR630",  # We not respect staticmethods
+  "TCH003",  # type checing block
+]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "double"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.pylint]
+max-args = 6
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "S101",    # use of `assert` detected
+  "D",       # Docstrings
+  "ANN",     # Annotations
+  "PLR2004", # Magic value
+  "PLR0913", # Too many arguments to function call
+]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.refurb]
+ignore = [184]

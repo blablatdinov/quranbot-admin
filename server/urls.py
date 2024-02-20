@@ -1,5 +1,4 @@
-"""
-Main URL mapping configuration file.
+"""Main URL mapping configuration file.
 
 Include other URLConfs from external apps using method `include()`.
 
@@ -11,39 +10,44 @@ files serving technique in development.
 
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.admindocs import urls as admindocs_urls
 from django.urls import include, path
 from django.views.generic import TemplateView
 from health_check import urls as health_urls
 
-from server.apps.main import urls as main_urls
-from server.apps.main.views import index
+from server.apps.main.views import (
+    AyatDetail,
+    LoginView,
+    ayats_page,
+    index,
+    landing,
+)
 
 admin.autodiscover()
 
 urlpatterns = [
-    # Apps:
-    path('main/', include(main_urls, namespace='main')),
-
     # Health checks:
     path('health/', include(health_urls)),
-
-    # django-admin:
-    path('admin/doc/', include(admindocs_urls)),
-    path('admin/', admin.site.urls),
-
     # Text and xml static files:
-    path('robots.txt', TemplateView.as_view(
-        template_name='txt/robots.txt',
-        content_type='text/plain',
-    )),
-    path('humans.txt', TemplateView.as_view(
-        template_name='txt/humans.txt',
-        content_type='text/plain',
-    )),
-
+    path(
+        'robots.txt',
+        TemplateView.as_view(
+            template_name='txt/robots.txt',
+            content_type='text/plain',
+        ),
+    ),
+    path(
+        'humans.txt',
+        TemplateView.as_view(
+            template_name='txt/humans.txt',
+            content_type='text/plain',
+        ),
+    ),
     # It is a good practice to have explicit index view:
-    path('', index, name='index'),
+    path('', landing, name='landing'),
+    path('index', index, name='index'),
+    path('login', LoginView.as_view(), name='login'),
+    path('ayats', ayats_page, name='ayats'),
+    path('ayats/<str:public_id>', AyatDetail.as_view(), name='ayat_detail'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

@@ -1,0 +1,22 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Public id</th>
+      <th scope="col">Ayat number</th>
+      <th scope="col">Day</th>
+      <th scope="col">Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ayat in page.object_list %}
+      <tr>
+        <th scope="row">{{ ayat.ayat_id }}</th>
+        <td><a href="/ayats/{{ ayat.public_id }}">{{ ayat.public_id }}</a></td>
+        <td>{{ ayat.sura_id }}:{{ ayat.ayat_number }}</td>
+        <td>{{ ayat.day }}</td>
+        <td>{{ ayat.content|truncatechars:100 }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
