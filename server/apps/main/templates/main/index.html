@@ -1,7 +1,8 @@
 {% extends 'admin_layout.html' %}
+
 {% block content %}
-<canvas id="myLineChart" width="400" height="400"></canvas>
-<script>
+  <canvas id="myLineChart" width="400" height="400"></canvas>
+  <script>
   document.addEventListener('DOMContentLoaded', function() {
     var ctx = document.getElementById('myLineChart').getContext('2d');
     var myLineChart = new Chart(ctx, {
@@ -35,5 +36,5 @@
       }
     });
   });
-</script>
+  </script>
 {% endblock content %}

@@ -1,6 +1,8 @@
-# Gunicorn configuration file
-# https://docs.gunicorn.org/en/stable/configure.html#configuration-file
-# https://docs.gunicorn.org/en/stable/settings.html
+"""Gunicorn configuration file.
+
+https://docs.gunicorn.org/en/stable/configure.html#configuration-file
+https://docs.gunicorn.org/en/stable/settings.html
+"""
 
 import multiprocessing
 

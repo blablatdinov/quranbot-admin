@@ -97,8 +97,10 @@ ignore = [
   "ANN102",  # Missing type annotation for `cls` in classmethod
   "ARG001",  # Unused function argument
   "ARG002",  # Unused method argument
+  "D106",    # Missing docstring in public nested class
   "D203",    # no-blank-line-before-class
   "D213",    # multi-line-summary-first-line
+  "D401",    # First line of docstring should be in imperative mood
   "D418",    # Function decorated with `@overload` shouldn't contain a docstring
   "FBT001",  # Boolean-typed positional argument in function definition
   "FBT002",  # Boolean-typed positional argument in function definition
@@ -136,6 +138,11 @@ max-args = 6
   "ANN",     # Annotations
   "PLR2004", # Magic value
   "PLR0913", # Too many arguments to function call
+]
+"*/migrations/*.py" = [
+  "RUF012",
+  "D100",
+  "D101",
 ]
 
 [tool.ruff.format]

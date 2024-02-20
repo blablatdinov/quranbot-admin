@@ -1,5 +1,7 @@
 """Контроллеры."""
+
 import uuid
+
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse

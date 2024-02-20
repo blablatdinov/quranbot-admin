@@ -34,7 +34,8 @@ run_ci () {
   dotenv-linter config/.env config/.env.template
 
   # Running linting for all python files in the project:
-  flake8 .
+  # flake8 .
+  ruff check server tests
 
   # Linl HTML formatting:
   djlint --check server
