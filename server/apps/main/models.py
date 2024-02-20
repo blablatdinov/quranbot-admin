@@ -15,7 +15,7 @@ class Sura(models.Model):
 
 @final
 class City(models.Model):
-    city_id = models.UUIDField(editable=False, primary_key=True)
+    city_id = models.CharField(editable=False, primary_key=True)
     name = models.CharField(max_length=64)
 
     class Meta:
@@ -24,7 +24,7 @@ class City(models.Model):
 
 @final
 class File(models.Model):
-    file_id = models.UUIDField(editable=False, primary_key=True)
+    file_id = models.CharField(editable=False, primary_key=True)
     telegram_file_id = models.CharField(max_length=128, null=True)
     link = models.CharField(max_length=128, null=True)
     created_at = models.DateTimeField()
@@ -37,7 +37,7 @@ class File(models.Model):
 @final
 class Ayat(models.Model):
     ayat_id = models.BigAutoField(primary_key=True)
-    public_id = models.UUIDField(editable=False, unique=True)
+    public_id = models.CharField(editable=False, unique=True)
     day = models.IntegerField(null=True)
     sura = models.ForeignKey(Sura, on_delete=models.PROTECT)
     audio = models.ForeignKey(File, on_delete=models.PROTECT)
@@ -77,7 +77,7 @@ class User(AbstractUser):
 
 @final
 class UserAction(models.Model):
-    user_action_id = models.UUIDField(primary_key=True, editable=False)
+    user_action_id = models.CharField(primary_key=True, editable=False)
     date_time = models.DateTimeField()
     action = models.CharField(max_length=16)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
