@@ -1,3 +1,5 @@
+"""Components."""
+
 from pathlib import Path
 
 from decouple import AutoConfig

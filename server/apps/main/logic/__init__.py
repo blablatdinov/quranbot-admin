@@ -1,5 +1,4 @@
-"""
-This package is a place for your business logic.
+"""Package is a place for your business logic.
 
 Please, do not create any other files inside your app package.
 Place all files here, including: logic, forms, serializers.

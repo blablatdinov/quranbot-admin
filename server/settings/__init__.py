@@ -1,5 +1,4 @@
-"""
-This is a django-split-settings main file.
+"""Django-split-settings main file.
 
 For more information read this:
 https://github.com/sobolevn/django-split-settings
@@ -27,10 +26,8 @@ _base_settings = (
     'components/logging.py',
     'components/csp.py',
     'components/caches.py',
-
     # Select the right env:
     'environments/{0}.py'.format(_ENV),
-
     # Optionally override some settings:
     optional('environments/local.py'),
 )

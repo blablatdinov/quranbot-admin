@@ -1,0 +1,17 @@
+<h1>Аят {{ ayat.sura_id }}:{{ ayat.ayat_number }}</h1>
+<form hx-post="/ayats/{{ ayat.public_id }}">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="content-field" class="form-label">Контент:</label>
+    <textarea class="form-control" id="content-field" rows="3">{{ ayat.content }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label for="content-field" class="form-label">Контент:</label>
+    <textarea class="form-control" id="content-field" rows="3">{{ ayat.arab_text }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label for="content-field" class="form-label">Контент:</label>
+    <textarea class="form-control" id="content-field" rows="3">{{ ayat.transliteration }}</textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

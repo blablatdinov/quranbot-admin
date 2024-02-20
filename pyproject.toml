@@ -8,69 +8,148 @@ authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.12"
 
-django = { version = "^4.2", extras = ["argon2"] }
-django-split-settings = "^1.2"
-django-axes = "^6.3"
-django-csp = "^3.7"
-django-health-check = "^3.18"
-django-http-referrer-policy = "^1.1"
-django-permissions-policy = "^4.19"
-django-stubs-ext = "^4.2"
+django = { version = "4.2.10", extras = ["argon2"] }
+django-split-settings = "1.2.0"
+django-axes = "6.3.0"
+django-csp = "3.7"
+django-health-check = "3.18.1"
+django-http-referrer-policy = "1.1.1"
+django-permissions-policy = "4.19.0"
+django-stubs-ext = "4.2.7"
 
-psycopg2-binary = "^2.9"
-gunicorn = "^21.2"
-python-decouple = "^3.8"
-structlog = "^24.1"
+psycopg2-binary = "2.9.9"
+gunicorn = "21.2.0"
+python-decouple = "3.8"
+structlog = "24.1.0"
+beautifulsoup4 = "4.12.3"
+lxml = "5.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^4.3"
-django-querycount = "^0.8"
-django-migration-linter = "^5.0"
-django-extra-checks = "^0.13"
-nplusone = "^1.0"
+django-debug-toolbar = "4.3.0"
+django-querycount = "0.8.3"
+django-migration-linter = "5.0.0"
+django-extra-checks = "0.14.0"
+nplusone = "1.0.0"
 
-wemake-python-styleguide = "^0.18"
-flake8-pytest-style = "^1.7"
+wemake-python-styleguide = "0.18.0"
+flake8-pytest-style = "1.7.2"
 # flake8-django = "^1.4"
-flake8-logging-format = "^0.9"
-nitpick = "^0.35"
-doc8 = "^1.0"
+flake8-logging-format = "0.9.0"
+nitpick = "0.35.0"
+doc8 = "1.1.1"
 
-pytest = "^8.0"
-pytest-django = "^4.8"
-pytest-cov = "^4.0"
-covdefaults = "^2.3"
-django-coverage-plugin = "^3.1"
-pytest-randomly = "^3.15"
-pytest-timeout = "^2.2"
-django-test-migrations = "^1.3"
-hypothesis = "^6.98"
+pytest = "8.0.1"
+pytest-django = "4.8.0"
+pytest-cov = "4.1.0"
+covdefaults = "2.3.0"
+django-coverage-plugin = "3.1.0"
+pytest-randomly = "3.15.0"
+pytest-timeout = "2.2.0"
+django-test-migrations = "1.3.0"
+hypothesis = "6.98.9"
 
-django-stubs = { version = "^4.2.7", extras = ["compatible-mypy"] }
+django-stubs = { version = "4.2.7", extras = ["compatible-mypy"] }
 
-djlint = "^1.34"
-yamllint = "^1.34"
-safety = "^3.0"
-dotenv-linter = "^0.4"
-polint = "^0.4"
-dennis = "^1.1"
-dump-env = "^1.3"
-ipython = "^8.21"
-ruff = "^0.2.1"
+djlint = "1.34.1"
+yamllint = "1.35.1"
+safety = "3.0.1"
+dotenv-linter = "0.4.0"
+polint = "0.4"
+dennis = "1.1.0"
+dump-env = "1.4.0"
+ipython = "8.21.0"
+ruff = "0.2.2"
+deltaver = "0.2.1"
+mixer = "7.2.2"
 
 [build-system]
 requires = ["poetry-core>=1.6"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.djlint]
-ignore = "H006,H030,H031"
+ignore = "H006,H025,H030,H031"
 include = "H017,H035"
 indent = 2
 blank_line_after_tag = "load,extends"
 profile = "django"
-max_line_length = 80
+max_line_length = 120
 format_attribute_template_tags = true
 
 [tool.nitpick]
 style = "https://raw.githubusercontent.com/wemake-services/wemake-python-styleguide/0.18.0/styles/nitpick-style-wemake.toml"
+
+[tool.ruff]
+target-version = "py311"  # TODO: up to 3.12
+line-length = 120
+preview = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+preview = true
+fixable = [
+  "F401",   # Unused import
+]
+ignore = [
+  "DTZ005",  # TODO
+  "DTZ007",  # TODO
+  "INP001",  # TODO
+  "CPY001",  # TODO
+  # ----------------------------------
+  "ANN101",  # Missing type annotation for `self` in method
+  "ANN102",  # Missing type annotation for `cls` in classmethod
+  "ARG001",  # Unused function argument
+  "ARG002",  # Unused method argument
+  "D106",    # Missing docstring in public nested class
+  "D203",    # no-blank-line-before-class
+  "D213",    # multi-line-summary-first-line
+  "D401",    # First line of docstring should be in imperative mood
+  "D418",    # Function decorated with `@overload` shouldn't contain a docstring
+  "FBT001",  # Boolean-typed positional argument in function definition
+  "FBT002",  # Boolean-typed positional argument in function definition
+  "FIX002",  # Line contains TODO, consider resolving the issue
+  "FLY002",  # We not use f-strings
+  "I001",    # Conflict with isort
+  "RUF100",  # WPS primary linter
+  "RUF001",  # Project contain cyrillic symbols
+  "RUF002",  # Project contain cyrillic symbols
+  "RET505",  # Unnecessary `elif` after `return` statement
+  "RET506",  # Unnecessary `elif` after `raise` statement
+  "UP030",   # We use explicit references
+  "UP032",   # We not use f-strings
+  "UP004",   # Class `PrayerReaction` inherits from `object`
+  "TD",      # "todo" formats
+  "PLR630",  # We not respect staticmethods
+  "TCH003",  # type checing block
+]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "double"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.pylint]
+max-args = 6
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "S101",    # use of `assert` detected
+  "D",       # Docstrings
+  "ANN",     # Annotations
+  "PLR2004", # Magic value
+  "PLR0913", # Too many arguments to function call
+]
+"*/migrations/*.py" = [
+  "RUF012",
+  "D100",
+  "D101",
+]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.refurb]
+ignore = [184]

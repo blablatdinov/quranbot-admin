@@ -1,20 +1,17 @@
 from http import HTTPStatus
 
 from django.test import Client
-from django.urls import reverse
 
 
 def test_main_page(client: Client, main_heading: str) -> None:
-    """This test ensures that main page works."""
-    response = client.get(reverse('index'))
+    response = client.get('/index')
 
     assert response.status_code == HTTPStatus.OK
     assert main_heading in str(response.content)
 
 
-def test_hello_page(client: Client, main_heading: str) -> None:
-    """This test ensures that hello page works."""
-    response = client.get(reverse('main:hello'))
+def test_landing_page(client: Client, main_heading: str) -> None:
+    response = client.get('/')
 
     assert response.status_code == HTTPStatus.OK
     assert main_heading in str(response.content)

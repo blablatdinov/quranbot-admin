@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="container">
+    <h1>Административная панель</h1>
+    <p>
+      <a href="https://github.com/blablatdinov/quranbot-aiogram/tree/master/docs">Документация</a>
+    </p>
+    <p>Функционал:</p>
+    <ul>
+      <li>Каждое утро, вам будут приходить аяты из Священного Корана.</li>
+      <li>
+        При нажатии на кнопку <strong>Подкасты</strong>, вам будут присылаться проповеди с сайта umma.ru.
+      </li>
+      <li>В боте вы можете получать время намаза.</li>
+      <li>Доступен поиск по ключевым словам.</li>
+    </ul>
+    <p>
+      Ссылка на бота: <a href="https://t.me/Quran_365_bot?start=github">Quran_365_bot</a>
+    </p>
+    <p>
+      Если хотите поучаствовать в разработке пишите - <a href="https://t.me/ilaletdinov">telegram</a>, <a href="mailto:a.ilaletdinov@yandex.ru?subject=[GitHub]%20Quranbot">email</a>
+    </p>
+    <p>Информация берется с сайтов:</p>
+    <ul>
+      <li>
+        <a href="https://umma.ru/">umma.ru</a>
+      </li>
+      <li>
+        <a href="https://dumrt.ru/ru/">dumrt.ru</a>
+      </li>
+    </ul>
+    <div class="technologies">
+      <p>Используемые технологии:</p>
+      <ul>
+        <li>rabbitmq</li>
+        <li>postgres</li>
+        <li>pytest</li>
+        <li>flake8</li>
+        <li>mypy</li>
+        <li>redis</li>
+      </ul>
+    </div>
+    <div class="sm_projects">
+      <p>Смежные проекты:</p>
+      <ul>
+        <li>
+          <a href="https://github.com/blablatdinov/quranbot">django-version</a> - предыдущая версия бота
+        </li>
+        <li>
+          <a href="https://github.com/blablatdinov/quranbot-admin">API</a> - для административной панели. Доступен по <a href="https://quranbot.ilaletdinov.ru/docs">ссылке</a>
+        </li>
+        <li>
+          <a href="https://github.com/blablatdinov/quranbot-schema-registry/">Хранилище схем для событий</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock body %}
