@@ -1,0 +1,152 @@
+---
+name: Deploy
+"on":
+  push:
+    branches:
+      # - master
+      - deploy
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    env:
+      TZ: "Europe/Moscow"
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: quranbot-admin
+          POSTGRES_DB: quranbot-admin
+          POSTGRES_PASSWORD: quranbot-admin
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672:5672
+          - 15672:15672
+        env:
+          RABBITMQ_DEFAULT_USER: user
+          RABBITMQ_DEFAULT_PASS: pass
+        options: --health-cmd "rabbitmqctl status" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create default environment
+        run: cp config/.env.template config/.env
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.2"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.3.4
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Lint doten files
+        run: .venv/bin/dotenv-linter config/.env config/.env.template
+
+      # TODO: flake8 .
+      - name: Running linting for all python files in the project
+        run: .venv/bin/ruff check server tests
+
+      - name: Linl HTML formatting
+        run: |
+          .venv/bin/djlint --check server
+          .venv/bin/djlint --lint server
+
+      - name: Running type checking, see https://github.com/typeddjango/django-stubs
+        run: .venv/bin/mypy manage.py server tests
+
+      - name: Running tests
+        run: .venv/bin/pytest
+
+      # - name: Run checks to be sure we follow all django's best practices:
+      #   run: python manage.py check --fail-level WARNING
+
+      - name: Run checks to be sure settings are correct (production flag is required)
+        run: DJANGO_ENV=production .venv/bin/python manage.py check --deploy --fail-level WARNING
+
+      - name: Check that staticfiles app is working fine
+        run: DJANGO_ENV=production DJANGO_COLLECTSTATIC_DRYRUN=1 .venv/bin/python manage.py collectstatic --no-input --dry-run
+
+      - name: Check that all migrations worked fine
+        run: .venv/bin/python manage.py makemigrations --dry-run --check
+
+      # - name: Check that all migrations are backwards compatible:
+      #   run: python manage.py lintmigrations --exclude-apps=axes --warnings-as-errors
+
+      - name: Check production settings for gunicorn
+        run: .venv/bin/gunicorn --check-config --config python:docker.django.gunicorn_config server.wsgi
+
+      - name: Generate a report about the state of dependencies' safety, it is not blocking, because there are too many false positives
+        run: .venv/bin/safety check --full-report || true 
+
+      - name: Checking `pyproject.toml` file contents
+        run: poetry check
+
+      - name: Checking dependencies status
+        run: pip check
+
+      - name: Checking `yaml` files
+        run: |
+          .venv/bin/yamllint -d '{"extends": "default", "ignore": ".venv"}' -s .
+
+      - name: Checking translation files, ignoring ordering and locations
+        run: .venv/bin/polint -i location,unsorted locale
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: create .env file
+        run: echo '${{ secrets.ENV }}' > .env
+      
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag_name
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/django/Dockerfile
+          push: true
+          tags: blablatdinov/quranbot-admin:${{ steps.tag_name.outputs.TAG_NAME }}#
+          build-args: DJANGO_ENV=production
