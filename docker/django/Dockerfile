@@ -99,7 +99,7 @@ RUN chmod +x '/docker-entrypoint.sh' \
 USER web
 
 # We customize how our app is loaded with the custom entrypoint:
-ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
+# ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
 
 
 # The following stage is only for production:

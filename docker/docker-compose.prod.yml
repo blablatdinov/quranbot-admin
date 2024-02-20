@@ -9,24 +9,16 @@
 version: "3.8"
 services:
   web:
-    <<: &web
-      # Image for production:
-      image: "registry.gitlab.com/blablatdinov/quranbot-admin:latest"
-      build:
-        target: production_build
-        args:
-          DJANGO_ENV: production
-
-      restart: unless-stopped
-      volumes:
-        - django-media:/var/www/django/media  # since in dev it is app's folder
-        - django-locale:/code/locale  # since in dev it is app's folder
-
-    command: bash ./docker/django/gunicorn.sh
-    networks:
-      - proxynet
-    expose:
-      - 8000
+    # Image for production:
+    image: "blablatdinov/quranbot-admin:c8548f9"
+    restart: always
+    volumes:
+      - django-media:/var/www/django/media  # since in dev it is app's folder
+      - django-locale:/code/locale  # since in dev it is app's folder
+    command: |
+      /usr/local/bin/gunicorn --config python:docker.django.gunicorn_config server.wsgi
+    ports:
+      - "8010:8010"
 
 # This task is an example of how to extend existing ones:
 #   some_worker:
@@ -34,11 +26,6 @@ services:
 #     command: python manage.py worker_process
 #     deploy:
 #       replicas: 2
-
-networks:
-  # Network for your proxy server and application to connect them,
-  # do not use it for anything else!
-  proxynet:
 
 volumes:
   django-media:
