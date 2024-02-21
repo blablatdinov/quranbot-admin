@@ -46,7 +46,7 @@ urlpatterns = [
     # It is a good practice to have explicit index view:
     path('', landing, name='landing'),
     path('index', login_required(index), name='index'),
-    path('login', login_required(LoginView.as_view()), name='login'),
+    path('login', LoginView.as_view(), name='login'),
     path('ayats', login_required(ayats_page), name='ayats'),
     path('ayats/<str:public_id>', login_required(AyatDetail.as_view()), name='ayat_detail'),
 ]
