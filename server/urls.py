@@ -10,6 +10,7 @@ files serving technique in development.
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import include, path
 from django.views.generic import TemplateView
 from health_check import urls as health_urls
@@ -44,10 +45,10 @@ urlpatterns = [
     ),
     # It is a good practice to have explicit index view:
     path('', landing, name='landing'),
-    path('index', index, name='index'),
-    path('login', LoginView.as_view(), name='login'),
-    path('ayats', ayats_page, name='ayats'),
-    path('ayats/<str:public_id>', AyatDetail.as_view(), name='ayat_detail'),
+    path('index', login_required(index), name='index'),
+    path('login', login_required(LoginView.as_view()), name='login'),
+    path('ayats', login_required(ayats_page), name='ayats'),
+    path('ayats/<str:public_id>', login_required(AyatDetail.as_view()), name='ayat_detail'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

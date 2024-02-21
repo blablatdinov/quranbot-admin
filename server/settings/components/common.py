@@ -198,3 +198,5 @@ EMAIL_TIMEOUT = 5
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 AUTH_USER_MODEL = 'main.User'
+
+LOGIN_URL = '/login'

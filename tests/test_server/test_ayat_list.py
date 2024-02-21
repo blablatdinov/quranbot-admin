@@ -75,3 +75,10 @@ def test_by_htmx(client, ayats):
     got = client.get('/ayats?page=3', headers={'Hx-Request': 'true'})
 
     assert got.status_code == 200
+
+
+def test_by_anon(anon):
+    response = anon.get('/ayats')
+
+    assert response.status_code == 302
+    assert response.headers['Location'] == '/login?next=/ayats'
