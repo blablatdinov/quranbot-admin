@@ -11,8 +11,8 @@ def user(mixer):
     return new_user
 
 
-def test_page(client):
-    response = client.get('/login')
+def test_page(anon):
+    response = anon.get('/login')
 
     assert response.status_code == 200
 
