@@ -27,11 +27,11 @@ def test_login(client, user):
     )
 
     assert response.status_code == 302
-    assert response.headers['Location'] == '/ayats'
+    assert response.headers['Location'] == '/ayats?hx-full=true'
 
 
-def test_fail_auth(client, user):
-    response = client.post(
+def test_invalid_password(anon, user):
+    response = anon.post(
         '/login',
         {
             'username': user.username,
@@ -39,5 +39,18 @@ def test_fail_auth(client, user):
         },
     )
 
-    assert response.status_code == 302
-    assert response.headers['Location'] == '/login'
+    assert response.status_code == 401
+    assert 'Пароль не верен' in response.content.decode('utf-8')
+
+
+def test_invalid_username(anon, user):
+    response = anon.post(
+        '/login',
+        {
+            'username': 'NotFoundable',
+            'password': 'invalid',
+        },
+    )
+
+    assert response.status_code == 401
+    assert 'Пользователь не найден' in response.content.decode('utf-8')

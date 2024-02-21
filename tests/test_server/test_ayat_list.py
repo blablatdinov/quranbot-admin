@@ -87,3 +87,9 @@ def test_by_anon(anon):
 
     assert response.status_code == 302
     assert response.headers['Location'] == '/login?next=/ayats'
+
+
+def test_hx_full(client, ayats):
+    response = client.get('/ayats?hx-full=true', headers={'Hx-Request': 'true'})
+
+    assert 'id="ayats-list"' in str(response.content)

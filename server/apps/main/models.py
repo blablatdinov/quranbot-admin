@@ -97,13 +97,15 @@ class Message(models.Model):
 class User(AbstractUser):
     """Пользователь."""
 
+    REQUIRED_FIELDS = ['chat_id']
+
     chat_id = models.BigIntegerField(primary_key=True)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
     comment = models.CharField(max_length=128)
-    day = models.IntegerField()
-    city = models.ForeignKey(City, on_delete=models.PROTECT)
+    day = models.IntegerField(default=2)
+    city = models.ForeignKey(City, on_delete=models.PROTECT, null=True)
     referrer_id = models.ForeignKey('self', on_delete=models.PROTECT, null=True)
-    legacy_id = models.BigIntegerField()
+    legacy_id = models.BigIntegerField(null=True)
 
     class Meta:
         db_table = 'users'

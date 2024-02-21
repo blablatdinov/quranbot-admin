@@ -5,12 +5,12 @@ import uuid
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, reverse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
 
-from server.apps.main.models import Ayat
+from server.apps.main.models import Ayat, User
 
 
 def landing(request: HttpRequest) -> HttpResponse:
@@ -42,7 +42,26 @@ class LoginView(View):
             password=request.POST['password'],
         )
         if not user:
-            return redirect('login')
+            username_error = None
+            password_error = None
+            if not User.objects.filter(username=request.POST['username']).exists():
+                return render(
+                    request,
+                    'main/login_form.html',
+                    context={
+                        'username_error': 'Пользователь не найден',
+                    },
+                    status=401,
+                )
+            else:  # not User.objects.get(username=request.POST['username']).check_password(request.POST['password']):
+                return render(
+                    request,
+                    'main/login_form.html',
+                    context={
+                        'password_error': 'Пароль не верен',
+                    },
+                    status=401,
+                )
         login(request, user)
         return redirect(reverse('ayats'))
 
