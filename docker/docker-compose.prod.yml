@@ -10,8 +10,9 @@ version: "3.8"
 services:
   web:
     # Image for production:
-    image: "blablatdinov/quranbot-admin:c8548f9"
+    image: "blablatdinov/quranbot-admin:latest"
     restart: always
+    env_file: ../config/.env
     volumes:
       - django-media:/var/www/django/media  # since in dev it is app's folder
       - django-locale:/code/locale  # since in dev it is app's folder

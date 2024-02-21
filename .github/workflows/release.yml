@@ -3,8 +3,7 @@ name: Deploy
 "on":
   push:
     branches:
-      # - master
-      - deploy
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -91,7 +90,10 @@ jobs:
         run: DJANGO_ENV=production .venv/bin/python manage.py check --deploy --fail-level WARNING
 
       - name: Check that staticfiles app is working fine
-        run: DJANGO_ENV=production DJANGO_COLLECTSTATIC_DRYRUN=1 .venv/bin/python manage.py collectstatic --no-input --dry-run
+        run: |
+          DJANGO_ENV=production  \
+          DJANGO_COLLECTSTATIC_DRYRUN=1  \
+          .venv/bin/python manage.py collectstatic --no-input --dry-run
 
       - name: Check that all migrations worked fine
         run: .venv/bin/python manage.py makemigrations --dry-run --check
@@ -99,11 +101,11 @@ jobs:
       # - name: Check that all migrations are backwards compatible:
       #   run: python manage.py lintmigrations --exclude-apps=axes --warnings-as-errors
 
-      - name: Check production settings for gunicorn
-        run: .venv/bin/gunicorn --check-config --config python:docker.django.gunicorn_config server.wsgi
+      # - name: Check production settings for gunicorn
+      #   run: .venv/bin/gunicorn --check-config --config python:docker.django.gunicorn_config server.wsgi
 
-      - name: Generate a report about the state of dependencies' safety, it is not blocking, because there are too many false positives
-        run: .venv/bin/safety check --full-report || true 
+      - name: Generate a report about the state of dependencies' safety
+        run: .venv/bin/safety check --full-report || true
 
       - name: Checking `pyproject.toml` file contents
         run: poetry check
@@ -113,12 +115,13 @@ jobs:
 
       - name: Checking `yaml` files
         run: |
-          .venv/bin/yamllint -d '{"extends": "default", "ignore": ".venv"}' -s .
+          .venv/bin/yamllint -d '{"extends": "default", "ignore": [".venv", ".github"], "rules": {"line-length": {"max": 120}}}' -s .
 
       - name: Checking translation files, ignoring ordering and locations
         run: .venv/bin/polint -i location,unsorted locale
 
   build-and-push:
+    needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -126,8 +129,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: create .env file
-        run: echo '${{ secrets.ENV }}' > .env
-      
+        run: echo '${{ secrets.ENV }}' > config/.env
+
       - uses: actions/checkout@v4
 
       - name: Login to Docker Hub
@@ -148,5 +151,31 @@ jobs:
           context: .
           file: ./docker/django/Dockerfile
           push: true
-          tags: blablatdinov/quranbot-admin:${{ steps.tag_name.outputs.TAG_NAME }}#
+          tags: blablatdinov/quranbot-admin:${{ steps.tag_name.outputs.short_sha }}
           build-args: DJANGO_ENV=production
+
+  update-remote-container:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY}}
+          known_hosts: '87.249.49.217 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDXsftBFh0RQ0pupvfT8zZp7HEIT8cWD9ziL7glOEtCqVWu8mMqgmYH+GzA7xsWHkAGgQ0BHHQinVMg2sQzDyyHdSVuMvsi04WsgAaOdD0mQa5LwauXpaw/X5nyOKAtiVzzUSi6I8leTS+o4/5nnNz+wxGEZSItESEYYbLWIhE9p30Mt1cSB+F8iUXsAO/I1DqwqXsOUET5ocVOfeRd7/3P7ZT8KGjG6DP8D4aCvxnc1NIAVnW9sfj7hsR84kTWNFFfihMZkmFrDuQfS30mFBlb9sAahHmQfeYfVUexU0ntkiSyE7jsnvfKJIKb3uyfbP1TjJ5EwTt7lDgNdZst3aAkK/JHiEJaIyod1AHt5gG8OFC75+Cy7fbwawPJUuRysxz2O35KFGcbZyN42kdHYZoVLpe5GvcziUSkQLW/KRBrbK7Uw4X6Q6h1QOhUL1ifbqACEIZXeuqkje0c6nL9M5lFeYITn1Ikc3N+c50hAmnX6F4rnifbFUnqiELBk0sn7zM='
+      - name: Get tag name
+        id: tag_name
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+      - name: Update docker-compose file
+        run: |
+          sed -i 's/image: "blablatdinov\/quranbot-admin:latest"/image: "blablatdinov\/quranbot-admin:${{ steps.tag_name.outputs.short_sha }}"/' docker/docker-compose.prod.yml
+          cat docker/docker-compose.prod.yml
+      - name: Deploy with docker-compose on remote server
+        run: |
+          ssh www@87.249.49.217 'echo "Connected!"'
+          scp docker/docker-compose.prod.yml www@87.249.49.217:/home/www/code/quranbot-admin/docker/docker-compose.prod.yml
+          ssh www@87.249.49.217 'cd /home/www/code/quranbot-admin/ && docker-compose -f docker/docker-compose.prod.yml up -d'

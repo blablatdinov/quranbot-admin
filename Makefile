@@ -10,3 +10,5 @@ lint:
 	# poetry run flake8 server tests
 	# poetry run refurb server tests
 	poetry run mypy server tests
+	poetry run yamllint -d '{"extends": "default", "ignore": [".venv", ".github"], "rules": {"line-length": {"max": 120}}}' -s .
+	DJANGO_ENV=production DJANGO_COLLECTSTATIC_DRYRUN=1 poetry run python manage.py collectstatic --no-input --dry-run

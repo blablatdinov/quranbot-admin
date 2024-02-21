@@ -5,7 +5,7 @@ pytestmark = [pytest.mark.django_db]
 
 @pytest.fixture()
 def user(mixer):
-    new_user = mixer.blend('main.User', referrer_id=None)
+    new_user = mixer.blend('main.User', referrer_id=None, is_active=True)
     new_user.set_password('simple')
     new_user.save()
     return new_user
