@@ -8,44 +8,18 @@
 
 version: "3.8"
 services:
-  caddy:
-    image: "caddy:2.7.6"
-    restart: unless-stopped
-    env_file: ./config/.env
-    volumes:
-      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile  # configuration
-      - ./docker/caddy/ci.sh:/etc/ci.sh  # test script
-      - caddy-config:/config  # configuration autosaves
-      - caddy-data:/data  # saving certificates
-      - django-static:/var/www/django/static  # serving django's statics
-      - django-media:/var/www/django/media  # serving django's media
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - web
-    networks:
-      - proxynet
-
   web:
-    <<: &web
-      # Image for production:
-      image: "registry.gitlab.com/blablatdinov/quranbot-admin:latest"
-      build:
-        target: production_build
-        args:
-          DJANGO_ENV: production
-
-      restart: unless-stopped
-      volumes:
-        - django-media:/var/www/django/media  # since in dev it is app's folder
-        - django-locale:/code/locale  # since in dev it is app's folder
-
-    command: bash ./docker/django/gunicorn.sh
-    networks:
-      - proxynet
-    expose:
-      - 8000
+    # Image for production:
+    image: "blablatdinov/quranbot-admin:latest"
+    restart: always
+    env_file: ../config/.env
+    volumes:
+      - django-media:/var/www/django/media  # since in dev it is app's folder
+      - django-locale:/code/locale  # since in dev it is app's folder
+    command: |
+      /usr/local/bin/gunicorn --config python:docker.django.gunicorn_config server.wsgi
+    ports:
+      - "8010:8010"
 
 # This task is an example of how to extend existing ones:
 #   some_worker:
@@ -54,13 +28,6 @@ services:
 #     deploy:
 #       replicas: 2
 
-networks:
-  # Network for your proxy server and application to connect them,
-  # do not use it for anything else!
-  proxynet:
-
 volumes:
   django-media:
   django-locale:
-  caddy-config:
-  caddy-data:

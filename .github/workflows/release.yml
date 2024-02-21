@@ -1,7 +1,9 @@
 ---
-name: CI
+name: Deploy
 "on":
-  pull_request:
+  push:
+    branches:
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -117,3 +119,63 @@ jobs:
 
       - name: Checking translation files, ignoring ordering and locations
         run: .venv/bin/polint -i location,unsorted locale
+
+  build-and-push:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: create .env file
+        run: echo '${{ secrets.ENV }}' > config/.env
+
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag_name
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/django/Dockerfile
+          push: true
+          tags: blablatdinov/quranbot-admin:${{ steps.tag_name.outputs.short_sha }}
+          build-args: DJANGO_ENV=production
+
+  update-remote-container:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY}}
+          known_hosts: '87.249.49.217 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDXsftBFh0RQ0pupvfT8zZp7HEIT8cWD9ziL7glOEtCqVWu8mMqgmYH+GzA7xsWHkAGgQ0BHHQinVMg2sQzDyyHdSVuMvsi04WsgAaOdD0mQa5LwauXpaw/X5nyOKAtiVzzUSi6I8leTS+o4/5nnNz+wxGEZSItESEYYbLWIhE9p30Mt1cSB+F8iUXsAO/I1DqwqXsOUET5ocVOfeRd7/3P7ZT8KGjG6DP8D4aCvxnc1NIAVnW9sfj7hsR84kTWNFFfihMZkmFrDuQfS30mFBlb9sAahHmQfeYfVUexU0ntkiSyE7jsnvfKJIKb3uyfbP1TjJ5EwTt7lDgNdZst3aAkK/JHiEJaIyod1AHt5gG8OFC75+Cy7fbwawPJUuRysxz2O35KFGcbZyN42kdHYZoVLpe5GvcziUSkQLW/KRBrbK7Uw4X6Q6h1QOhUL1ifbqACEIZXeuqkje0c6nL9M5lFeYITn1Ikc3N+c50hAmnX6F4rnifbFUnqiELBk0sn7zM='
+      - name: Get tag name
+        id: tag_name
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+      - name: Update docker-compose file
+        run: |
+          sed -i 's/image: "blablatdinov\/quranbot-admin:latest"/image: "blablatdinov\/quranbot-admin:${{ steps.tag_name.outputs.short_sha }}"/' docker/docker-compose.prod.yml
+          cat docker/docker-compose.prod.yml
+      - name: Deploy with docker-compose on remote server
+        run: |
+          ssh www@87.249.49.217 'echo "Connected!"'
+          scp docker/docker-compose.prod.yml www@87.249.49.217:/home/www/code/quranbot-admin/docker/docker-compose.prod.yml
+          ssh www@87.249.49.217 'cd /home/www/code/quranbot-admin/ && docker-compose -f docker/docker-compose.prod.yml up -d'
