@@ -1,32 +1,29 @@
-<form class="mt-5" hx-post="/login" hx-swap="outerHTML" hx-replace-url="/ayats?page=1">
+<form class="mt-5"
+      hx-post="/login"
+      hx-swap="outerHTML"
+      hx-replace-url="/ayats?page=1">
   {% csrf_token %}
   <div class="mb-3">
     <label for="username" class="form-label">Username</label>
     <!-- TODO: check that form contain need inputs -->
     <input type="text"
-           class="form-control {% if username_error %} is-invalid {% endif %}"
-           id="username" 
+           class="form-control
+                  {% if username_error %}is-invalid{% endif %}"
+           id="username"
            name="username"
            aria-describedby="emailHelp"
            value="blablatdinov" />
-    {% if username_error %}
-    <div class="invalid-feedback">
-      {{ username_error }}
-    </div>
-    {% endif %}
+    {% if username_error %}<div class="invalid-feedback">{{ username_error }}</div>{% endif %}
   </div>
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Password</label>
     <input type="password"
-           class="form-control {% if password_error %} is-invalid {% endif %}"
+           class="form-control
+                  {% if password_error %}is-invalid{% endif %}"
            id="password"
            name="password"
            value="blablatdinov" />
-    {% if password_error %}
-    <div class="invalid-feedback">
-      {{ password_error }}
-    </div>
-    {% endif %}
+    {% if password_error %}<div class="invalid-feedback">{{ password_error }}</div>{% endif %}
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

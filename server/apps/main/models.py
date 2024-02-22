@@ -1,6 +1,6 @@
 """Модели БД."""
 
-from typing import final
+from typing import ClassVar, final
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -97,7 +97,7 @@ class Message(models.Model):
 class User(AbstractUser):
     """Пользователь."""
 
-    REQUIRED_FIELDS = ['chat_id']
+    REQUIRED_FIELDS: ClassVar = ['chat_id']
 
     chat_id = models.BigIntegerField(primary_key=True)
     is_active = models.BooleanField(default=True)

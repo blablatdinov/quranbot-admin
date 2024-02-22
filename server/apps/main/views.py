@@ -5,7 +5,7 @@ import uuid
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
@@ -42,8 +42,6 @@ class LoginView(View):
             password=request.POST['password'],
         )
         if not user:
-            username_error = None
-            password_error = None
             if not User.objects.filter(username=request.POST['username']).exists():
                 return render(
                     request,
