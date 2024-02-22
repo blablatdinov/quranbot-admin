@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.views import View
 
 from server.apps.main.models import Ayat
@@ -43,7 +44,7 @@ class LoginView(View):
         if not user:
             return redirect('login')
         login(request, user)
-        return redirect('ayats')
+        return redirect(reverse('ayats'))
 
 
 def ayats_page(request: HttpRequest) -> HttpResponse:
@@ -53,8 +54,10 @@ def ayats_page(request: HttpRequest) -> HttpResponse:
     page = paginator.page(request.GET.get('page', 1))
     if request.headers.get('Hx-Request') == 'true':
         return HttpResponse(
-            render_to_string('main/ayats_list.html', {'page': page})
-            + render_to_string('main/pagination.html', {'page': page, 'paginator': paginator}),
+            '<div id="ayats-list">{0}\n{1}</div>'.format(
+                render_to_string('main/ayats_list.html', {'page': page}),
+                render_to_string('main/pagination.html', {'page': page, 'paginator': paginator}),
+            ),
         )
     return render(
         request,

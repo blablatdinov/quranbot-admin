@@ -23,6 +23,7 @@ def test_ayat_list(client, ayats):
             'href': '?page=1',
             'hx-get': '/ayats?page=1',
             'hx-replace-url': '/ayats?page=1',
+            'hx-swap': 'outerHTML',
             'hx-target': '#ayats-list',
         },
         {
@@ -32,6 +33,7 @@ def test_ayat_list(client, ayats):
             'href': '?page=2',
             'hx-get': '/ayats?page=2',
             'hx-replace-url': '/ayats?page=2',
+            'hx-swap': 'outerHTML',
             'hx-target': '#ayats-list',
         },
         {
@@ -41,6 +43,7 @@ def test_ayat_list(client, ayats):
             'href': '?page=3',
             'hx-get': '/ayats?page=3',
             'hx-replace-url': '/ayats?page=3',
+            'hx-swap': 'outerHTML',
             'hx-target': '#ayats-list',
         },
         {
@@ -50,15 +53,17 @@ def test_ayat_list(client, ayats):
             'href': '?page=2',
             'hx-get': '/ayats?page=2',
             'hx-replace-url': '/ayats?page=2',
+            'hx-swap': 'outerHTML',
             'hx-target': '#ayats-list',
         },
         {
             'class': [
                 'page-link',
             ],
-            'href': '?page=1',
+            'href': '?page=5',
             'hx-get': '/ayats?page=5',
             'hx-replace-url': '/ayats?page=5',
+            'hx-swap': 'outerHTML',
             'hx-target': '#ayats-list',
         },
     ]
