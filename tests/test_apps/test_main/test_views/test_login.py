@@ -27,7 +27,7 @@ def test_login(client, user):
     )
 
     assert response.status_code == 302
-    assert response.headers['Location'] == '/ayats?hx-full=true'
+    assert response.headers['Location'] == '/ayats'
 
 
 def test_invalid_password(anon, user):
