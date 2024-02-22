@@ -7,6 +7,7 @@
              hx-get="/ayats?page=1"
              href="?page=1"
              hx-target="#ayats-list"
+             hx-swap="outerHTML"
              hx-replace-url="/ayats?page=1">⇤</a>
         </li>
         <li class="page-item">
@@ -14,6 +15,7 @@
              hx-get="/ayats?page={{ page.previous_page_number }}"
              href="?page={{ page.previous_page_number }}"
              hx-target="#ayats-list"
+             hx-swap="outerHTML"
              hx-replace-url="/ayats?page={{ page.previous_page_number }}">«</a>
         </li>
       {% endif %}
@@ -24,6 +26,7 @@
                hx-get="/ayats?page={{ num }}"
                hx-target="#ayats-list"
                hx-replace-url="/ayats?page={{ num }}"
+               hx-swap="outerHTML"
                href="?page={{ num }}">{{ num }}</a>
           </li>
         {% elif num > page.number|add:"-3" and num < page.number|add:"3" %}
@@ -32,6 +35,7 @@
                hx-get="/ayats?page={{ num }}"
                hx-target="#ayats-list"
                hx-replace-url="/ayats?page={{ num }}"
+               hx-swap="outerHTML"
                href="?page={{ num }}">{{ num }}</a>
           </li>
         {% endif %}
@@ -42,12 +46,14 @@
              hx-get="/ayats?page={{ page.next_page_number }}"
              hx-target="#ayats-list"
              hx-replace-url="/ayats?page={{ page.next_page_number }}"
+             hx-swap="outerHTML"
              href="?page={{ page.next_page_number }}">»</a>
         </li>
         <li class="page-item">
           <a class="page-link"
+             href="?page={{ paginator.num_pages }}"
              hx-get="/ayats?page={{ paginator.num_pages }}"
-             href="?page=1"
+             hx-swap="outerHTML"
              hx-target="#ayats-list"
              hx-replace-url="/ayats?page={{ paginator.num_pages }}">⇥</a>
         </li>
