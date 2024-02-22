@@ -1,61 +1,62 @@
+{% load build_url %}
 <div class="pagination-container">
   <nav aria-label="Page navigation example">
     <ul class="pagination">
       {% if page.has_previous %}
         <li class="page-item">
           <a class="page-link"
-             hx-get="/ayats?page=1"
+             hx-get="{% add_page_param request 1 %}"
              href="?page=1"
-             hx-target="#ayats-list"
+             hx-target="#{{ target_id }}"
              hx-swap="outerHTML"
-             hx-replace-url="/ayats?page=1">⇤</a>
+             hx-replace-url="{% add_page_param request 1 %}">⇤</a>
         </li>
         <li class="page-item">
           <a class="page-link"
-             hx-get="/ayats?page={{ page.previous_page_number }}"
-             href="?page={{ page.previous_page_number }}"
-             hx-target="#ayats-list"
+             hx-get="{% add_page_param request page.previous_page_number %}"
+             href="{% add_page_param request page.previous_page_number %}"
+             hx-target="#{{ target_id }}"
              hx-swap="outerHTML"
-             hx-replace-url="/ayats?page={{ page.previous_page_number }}">«</a>
+             hx-replace-url="{% add_page_param request page.previous_page_number %}">«</a>
         </li>
       {% endif %}
       {% for num in page.paginator.page_range %}
         {% if num == page.number %}
           <li class="page-item">
             <a class="page-link active"
-               hx-get="/ayats?page={{ num }}"
-               hx-target="#ayats-list"
-               hx-replace-url="/ayats?page={{ num }}"
+               hx-get="{% add_page_param request num %}"
+               hx-target="#{{ target_id }}"
+               hx-replace-url="{% add_page_param request num %}"
                hx-swap="outerHTML"
-               href="?page={{ num }}">{{ num }}</a>
+               href="{% add_page_param request num %}">{{ num }}</a>
           </li>
         {% elif num > page.number|add:"-3" and num < page.number|add:"3" %}
           <li class="page-item">
             <a class="page-link"
-               hx-get="/ayats?page={{ num }}"
-               hx-target="#ayats-list"
-               hx-replace-url="/ayats?page={{ num }}"
+               hx-get="{% add_page_param request num %}"
+               hx-target="#{{ target_id }}"
+               hx-replace-url="{% add_page_param request num %}"
                hx-swap="outerHTML"
-               href="?page={{ num }}">{{ num }}</a>
+               href="{% add_page_param request num %}">{{ num }}</a>
           </li>
         {% endif %}
       {% endfor %}
       {% if page.has_next %}
         <li class="page-item">
           <a class="page-link"
-             hx-get="/ayats?page={{ page.next_page_number }}"
-             hx-target="#ayats-list"
-             hx-replace-url="/ayats?page={{ page.next_page_number }}"
+             hx-get="{% add_page_param request page.next_page_number %}"
+             hx-target="#{{ target_id }}"
+             hx-replace-url="{% add_page_param request page.next_page_number %}"
              hx-swap="outerHTML"
-             href="?page={{ page.next_page_number }}">»</a>
+             href="{% add_page_param request page.next_page_number %}">»</a>
         </li>
         <li class="page-item">
           <a class="page-link"
-             href="?page={{ paginator.num_pages }}"
-             hx-get="/ayats?page={{ paginator.num_pages }}"
+             href="{% add_page_param request paginator.num_pages %}"
+             hx-get="{% add_page_param request paginator.num_pages %}"
              hx-swap="outerHTML"
-             hx-target="#ayats-list"
-             hx-replace-url="/ayats?page={{ paginator.num_pages }}">⇥</a>
+             hx-target="#{{ target_id }}"
+             hx-replace-url="{% add_page_param request paginator.num_pages %}">⇥</a>
         </li>
       {% endif %}
     </ul>

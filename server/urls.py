@@ -21,6 +21,7 @@ from server.apps.main.views import (
     ayats_page,
     index,
     landing,
+    users_page,
 )
 
 admin.autodiscover()
@@ -49,6 +50,8 @@ urlpatterns = [
     path('login', LoginView.as_view(), name='login'),
     path('ayats', login_required(ayats_page), name='ayats'),
     path('ayats/<str:public_id>', login_required(AyatDetail.as_view()), name='ayat_detail'),
+
+    path('users', login_required(users_page), name='users'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

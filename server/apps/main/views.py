@@ -72,16 +72,17 @@ def ayats_page(request: HttpRequest) -> HttpResponse:
     if request.headers.get('Hx-Request') == 'true':
         return HttpResponse(
             '<div id="ayats-list">{0}\n{1}</div>'.format(
-                render_to_string('main/ayats_list.html', {'page': page}),
-                render_to_string('main/pagination.html', {'page': page, 'paginator': paginator}),
+                render_to_string('main/ayats/ayats_list.html', {'page': page, 'target_id': 'ayats-list'}),
+                render_to_string('main/pagination.html', {'page': page, 'paginator': paginator, 'request': request, 'target_id': 'ayats-list'}),
             ),
         )
     return render(
         request,
-        'main/ayats.html',
+        'main/ayats/ayats.html',
         context={
             'page': page,
             'paginator': paginator,
+            'target_id': 'ayats-list',
         },
     )
 
@@ -92,9 +93,47 @@ class AyatDetail(View):
     def get(self, request: HttpRequest, public_id: uuid.UUID) -> HttpResponse:
         """Детальная информация об аяте."""
         ayat = Ayat.objects.get(public_id=public_id)
-        return render(request, 'main/ayat_detail.html', context={'ayat': ayat})
+        return render(request, 'main/ayats/ayat_detail.html', context={'ayat': ayat})
 
     def post(self, request: HttpRequest, public_id: uuid.UUID) -> HttpResponse:
         """Обновить аят."""
         ayat = Ayat.objects.get(public_id=public_id)
-        return render(request, 'main/ayat_detail_form.html', context={'ayat': ayat})
+        return render(request, 'main/ayats/ayat_detail_form.html', context={'ayat': ayat})
+
+
+def reverse_param(param):
+    return f'-{param}' if not param.startswith('-') else param[1:]
+
+
+def _get_order_path(request, param):
+    query_params = {key: value for key, value in request.GET.items()}
+    query_params['order'] = reverse_param(request.GET['order']) if request.GET.get('order') else param
+    return '{}?{}'.format(
+        request.path,
+        '&'.join([
+            f'{key}={value}'
+            for key, value
+            in query_params.items()
+        ])
+    )
+
+
+def users_page(request):
+    users = User.objects.all()
+    if request.GET.get('is_active'):
+        users = users.filter(is_active=request.GET.get('is_active') == 'true')
+    users = users.order_by(request.GET.get('order', 'date_joined'), 'chat_id')
+    paginator = Paginator(users, 50)
+    page = paginator.page(request.GET.get('page', 1))
+    template = {
+        'true': 'main/users_content.html',
+        'false': 'main/users_page.html',
+    }.get(request.headers.get('Hx-Request', 'false'))
+    return render(request, template, context={
+        'page': page,
+        'paginator': paginator,
+        'is_active': request.GET.get('is_active'),
+        'sorting_by_comment': _get_order_path(request, 'comment'),
+        'url': reverse('users'),
+        'target_id': '#users-list',
+    })
