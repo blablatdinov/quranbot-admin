@@ -1,0 +1,53 @@
+{% load build_url %}
+
+<div id="users-list">
+  <div class="form-check">
+    <input class="form-check-input"
+           type="radio"
+           name="active_users"
+           id="flexRadioDefault1"
+           hx-trigger="click"
+           hx-target="{{ target_id }}"
+           hx-get="{% add_filter_param request 'is_active' 'true' %}"
+           hx-push-url="true"
+           {% if is_active == 'true' %}checked{% endif %} />
+    <label class="form-check-label" for="flexRadioDefault1">Активные</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input"
+           type="radio"
+           name="active_users"
+           id="flexRadioDefault2"
+           hx-trigger="click"
+           hx-target="{{ target_id }}"
+           hx-get="{% add_filter_param request 'is_active' 'false' %}"
+           hx-push-url="true"
+           {% if is_active == 'false' %}checked{% endif %} />
+    <label class="form-check-label" for="flexRadioDefault2">Не активные</label>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Активен</th>
+        <th scope="col"
+            hx-trigger="click"
+            hx-target="{{ target_id }}"
+            hx-get="{% add_sorting_param request 'comment' %}"
+            hx-push-url="true">Комментарий</th>
+        <th scope="col">Дата регистрации</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in page.object_list %}
+        <tr>
+          <th user_id scope="row">{{ user.chat_id }}</th>
+          <td>{{ user.is_active }}</td>
+          <td>{{ user.comment }}</td>
+          <td>{{ user.date_joined }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% include "main/pagination.html" %}
+</div>

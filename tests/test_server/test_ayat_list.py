@@ -20,7 +20,7 @@ def test_ayat_list(client, ayats):
                 'page-link',
                 'active',
             ],
-            'href': '?page=1',
+            'href': '/ayats?page=1',
             'hx-get': '/ayats?page=1',
             'hx-replace-url': '/ayats?page=1',
             'hx-swap': 'outerHTML',
@@ -30,7 +30,7 @@ def test_ayat_list(client, ayats):
             'class': [
                 'page-link',
             ],
-            'href': '?page=2',
+            'href': '/ayats?page=2',
             'hx-get': '/ayats?page=2',
             'hx-replace-url': '/ayats?page=2',
             'hx-swap': 'outerHTML',
@@ -40,7 +40,7 @@ def test_ayat_list(client, ayats):
             'class': [
                 'page-link',
             ],
-            'href': '?page=3',
+            'href': '/ayats?page=3',
             'hx-get': '/ayats?page=3',
             'hx-replace-url': '/ayats?page=3',
             'hx-swap': 'outerHTML',
@@ -50,7 +50,7 @@ def test_ayat_list(client, ayats):
             'class': [
                 'page-link',
             ],
-            'href': '?page=2',
+            'href': '/ayats?page=2',
             'hx-get': '/ayats?page=2',
             'hx-replace-url': '/ayats?page=2',
             'hx-swap': 'outerHTML',
@@ -60,7 +60,7 @@ def test_ayat_list(client, ayats):
             'class': [
                 'page-link',
             ],
-            'href': '?page=5',
+            'href': '/ayats?page=5',
             'hx-get': '/ayats?page=5',
             'hx-replace-url': '/ayats?page=5',
             'hx-swap': 'outerHTML',
