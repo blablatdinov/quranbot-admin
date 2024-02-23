@@ -41,7 +41,7 @@
     <tbody>
       {% for user in page.object_list %}
         <tr>
-          <th scope="row">{{ user.chat_id }}</th>
+          <th user_id scope="row">{{ user.chat_id }}</th>
           <td>{{ user.is_active }}</td>
           <td>{{ user.comment }}</td>
           <td>{{ user.date_joined }}</td>
