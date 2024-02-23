@@ -1,0 +1,32 @@
+<form hx-post="/days">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col">
+      <div class="mb-3">
+        <label for="content-field" class="form-label">День:</label>
+        <input class="form-control"
+               id="content-field"
+               rows="3"
+               name="day"
+               value="{{ next_day }}" />
+      </div>
+      Длина итогового сообщения в телеграмм: 162  <!--- TODO: -->
+    </div>
+    {# djlint:off H021 #} {# TODO #}
+    <div class="col" style="height: 200px; overflow-y: auto">
+      {# djlint:on H021 #}
+      {% for ayat in ayats_without_day %}
+        <div class="form-check">
+          <input class="form-check-input"
+                 type="checkbox"
+                 value=""
+                 id="flexCheckDefault"
+                 name="ayat-{{ ayat.ayat_id }}"
+                 {% if forloop.counter < 6 %}checked{% endif %} />
+          <label class="form-check-label" for="flexCheckDefault">{{ ayat.sura_id }}:{{ ayat.ayat_number }}</label>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

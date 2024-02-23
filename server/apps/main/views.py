@@ -13,6 +13,10 @@ from django.views import View
 from server.apps.main.models import Ayat, User
 
 
+class UnreachebleCaseError(Exception):
+    """Недостежимое состояние."""
+
+
 def landing(request: HttpRequest) -> HttpResponse:
     """Страница с публичной информацией."""
     return render(request, 'main/landing.html')
@@ -126,5 +130,31 @@ def users_page(request: HttpRequest) -> HttpResponse:
             'is_active': request.GET.get('is_active'),
             'url': reverse('users'),
             'target_id': '#users-list',
+        },
+    )
+
+
+def days(request: HttpRequest) -> HttpResponse:
+    """Получить/обновить дни для аятов."""
+    template = 'main/days.html'
+    if request.method == 'POST':
+        day = int(request.POST['day'])
+        ayats = Ayat.objects.filter(
+            ayat_id__in=[item_name[5:] for item_name in request.POST if item_name.startswith('ayat')],
+        )
+        ayats.update(day=day)
+        template = 'main/days_form.html'
+    last_ayat_day = Ayat.objects.filter(day__isnull=False).latest('day').day
+    if not last_ayat_day:  # pragma: no cover
+        msg = 'unreacheble'
+        raise UnreachebleCaseError(msg)
+    next_day = last_ayat_day + 1
+    # TODO: event to rabbitmq must be published
+    return render(
+        request,
+        template,
+        context={
+            'next_day': next_day,
+            'ayats_without_day': Ayat.objects.filter(day__isnull=True).order_by('ayat_id'),
         },
     )

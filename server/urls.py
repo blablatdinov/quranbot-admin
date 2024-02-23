@@ -19,6 +19,7 @@ from server.apps.main.views import (
     AyatDetail,
     LoginView,
     ayats_page,
+    days,
     index,
     landing,
     users_page,
@@ -51,6 +52,7 @@ urlpatterns = [
     path('ayats', login_required(ayats_page), name='ayats'),
     path('ayats/<str:public_id>', login_required(AyatDetail.as_view()), name='ayat_detail'),
     path('users', login_required(users_page), name='users'),
+    path('days', login_required(days), name='days'),
 ]
 
 if settings.DEBUG:  # pragma: no cover
