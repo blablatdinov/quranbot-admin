@@ -200,3 +200,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 AUTH_USER_MODEL = 'main.User'
 
 LOGIN_URL = '/login'
+
+RABBITMQ_USER = config('RABBITMQ_USER')
+RABBITMQ_PASS = config('RABBITMQ_PASS')
+RABBITMQ_HOST = config('RABBITMQ_HOST')
+RABBITMQ_VHOST = config('RABBITMQ_VHOST')

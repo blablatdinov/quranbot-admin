@@ -1,7 +1,10 @@
 """Контроллеры."""
 
+import json
 import uuid
 
+import pika
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
@@ -144,12 +147,44 @@ def days(request: HttpRequest) -> HttpResponse:
         )
         ayats.update(day=day)
         template = 'main/days_form.html'
+        connection = pika.BlockingConnection(
+            pika.URLParameters(
+                'amqp://{0}:{1}@{2}:5672/{3}'.format(
+                    settings.RABBITMQ_USER,
+                    settings.RABBITMQ_PASS,
+                    settings.RABBITMQ_HOST,
+                    settings.RABBITMQ_VHOST,
+                ),
+            ),
+        )
+        channel = connection.channel()
+        channel.queue_declare(queue='quranbot_queue')
+        for ayat in ayats:
+            channel.basic_publish(
+                exchange='',
+                routing_key='quranbot_queue',
+                body=json.dumps({
+                    'event_id': str(uuid.uuid4()),
+                    'event_version': 1,
+                    'event_name': 'Ayat.Changed',
+                    'event_time': '392409283',
+                    'producer': 'quranbot-admin',
+                    'data': {
+                        'public_id': str(ayat.public_id),
+                        'day': day,
+                        'audio_id': str(ayat.audio_id),
+                        'ayat_number': ayat.ayat_number,
+                        'content': ayat.content,
+                        'arab_text': ayat.arab_text,
+                        'transliteration': ayat.transliteration,
+                    },
+                }).encode('utf-8'),
+            )
     last_ayat_day = Ayat.objects.filter(day__isnull=False).latest('day').day
     if not last_ayat_day:  # pragma: no cover
         msg = 'unreacheble'
         raise UnreachebleCaseError(msg)
     next_day = last_ayat_day + 1
-    # TODO: event to rabbitmq must be published
     return render(
         request,
         template,
