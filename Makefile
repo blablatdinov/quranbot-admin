@@ -1,3 +1,6 @@
+run:
+	poetry run python manage.py runserver
+
 test:
 	poetry run pytest
 

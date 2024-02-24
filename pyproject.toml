@@ -23,7 +23,7 @@ python-decouple = "3.8"
 structlog = "24.1.0"
 beautifulsoup4 = "4.12.3"
 lxml = "5.1.0"
-
+pika = "1.3.2"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "4.3.0"
