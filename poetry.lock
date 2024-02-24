@@ -1495,13 +1495,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "hypothesis"
-version = "6.98.10"
+version = "6.98.11"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.98.10-py3-none-any.whl", hash = "sha256:149ec797f69f0dbf4e77972900e06f6886c993e4462319d1c31a0895c28d7127"},
-    {file = "hypothesis-6.98.10.tar.gz", hash = "sha256:b9ab40b13f8941df6a5266f652e62f2ff41bc15ab4cf89fe4864fa5fd06a9bb1"},
+    {file = "hypothesis-6.98.11-py3-none-any.whl", hash = "sha256:3ec000228b0a5367255dd79a5d0ed6d9b2f395b24cf6ae334c5f4837c1380f73"},
+    {file = "hypothesis-6.98.11.tar.gz", hash = "sha256:64d4615574ab8346a2352c595f1438adb225904df2101adbdd17e0e3d817df1c"},
 ]
 
 [package.dependencies]
@@ -3418,4 +3418,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "622b9e7a27d5b8233f612dea86fa56b216f544739e75d251cee33648cdbb82de"
+content-hash = "5cd4533a3baf7de4fdd7ed393497b9b864a0a4146985ba7ffd28ef8005425cd4"
