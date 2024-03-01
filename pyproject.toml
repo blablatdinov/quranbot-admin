@@ -24,6 +24,7 @@ structlog = "24.1.0"
 beautifulsoup4 = "4.12.3"
 lxml = "5.1.0"
 pika = "1.3.2"
+quranbot-schema-registry = "^0.0.20"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "4.3.0"
@@ -121,6 +122,7 @@ ignore = [
   "TD",      # "todo" formats
   "PLR630",  # We not respect staticmethods
   "TCH003",  # type checing block
+  "G001"     # Logging statement uses `str.format`
 ]
 
 [tool.ruff.lint.flake8-quotes]
