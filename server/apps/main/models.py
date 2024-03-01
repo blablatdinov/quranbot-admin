@@ -83,7 +83,7 @@ class Message(models.Model):
     message_id = models.BigIntegerField(primary_key=True)
     message_json = models.JSONField()
     is_unknown = models.BooleanField()
-    trigger_message_id = models.BigIntegerField()
+    trigger_message_id = models.BigIntegerField(null=True)
 
     class Meta:
         db_table = 'messages'
@@ -100,6 +100,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS: ClassVar = ['chat_id']
 
     chat_id = models.BigIntegerField(primary_key=True)
+    username = models.CharField(max_length=128, unique=True)
     is_active = models.BooleanField(default=True)
     comment = models.CharField(max_length=128)
     day = models.IntegerField(default=2)
@@ -119,7 +120,7 @@ class User(AbstractUser):
 class UserAction(models.Model):
     """Действие пользователя."""
 
-    user_action_id = models.CharField(primary_key=True, editable=False)
+    user_action_id = models.BigAutoField(primary_key=True, editable=False)
     date_time = models.DateTimeField()
     action = models.CharField(max_length=16)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
