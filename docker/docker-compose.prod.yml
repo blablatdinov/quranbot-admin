@@ -21,6 +21,13 @@ services:
     ports:
       - "8010:8010"
 
+  receive_events:
+    image: "blablatdinov/quranbot-admin:latest"
+    restart: always
+    env_file: ../config/.env
+    command: |
+      /usr/local/bin/python manage.py receive_events
+
 # This task is an example of how to extend existing ones:
 #   some_worker:
 #     <<: *web
