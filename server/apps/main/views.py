@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
 
-from server.apps.main.models import Ayat, User
+from server.apps.main.models import Ayat, Message, User
 
 
 class UnreachebleCaseError(Exception):
@@ -191,5 +191,28 @@ def days(request: HttpRequest) -> HttpResponse:
         context={
             'next_day': next_day,
             'ayats_without_day': Ayat.objects.filter(day__isnull=True).order_by('ayat_id'),
+        },
+    )
+
+
+def messages(request: HttpRequest) -> HttpResponse:
+    """Страница со списком сообщений."""
+    messages = Message.objects.all()
+    messages = messages.order_by('-message_id')
+    paginator = Paginator(messages, 50)
+    page = paginator.page(request.GET.get('page', 1))
+    match request.headers.get('Hx-Request'):
+        case 'true':
+            template = 'main/messages_content.html'
+        case _:
+            template = 'main/messages_page.html'
+    return render(
+        request,
+        template,
+        context={
+            'page': page,
+            'paginator': paginator,
+            'url': reverse('messages'),
+            'target_id': '#messages-list',
         },
     )

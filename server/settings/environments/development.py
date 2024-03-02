@@ -48,6 +48,7 @@ INSTALLED_APPS += (
     'django_test_migrations.contrib.django_checks.DatabaseConfiguration',
     # django-extra-checks:
     'extra_checks',
+    'django_extensions',
 )
 
 
