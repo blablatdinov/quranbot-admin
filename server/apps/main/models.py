@@ -141,3 +141,7 @@ class CallbackData(models.Model):
     date_time = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     json = models.JSONField()
+
+    def __str__(self) -> str:
+        """Строковое представление."""
+        return 'CallbackData {0}, {1}'.format(self.callback_id, self.json)
