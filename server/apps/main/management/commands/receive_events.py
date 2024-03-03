@@ -3,14 +3,17 @@
 import json
 import logging
 import time
+import datetime
 from typing import Any
 
 import pika
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from quranbot_schema_registry import validate_schema
+from django.db.utils import IntegrityError
+from django.db import transaction
 
-from server.apps.main.models import Message, User, UserAction
+from server.apps.main.models import Message, User, UserAction, CallbackData
 
 logger = logging.getLogger('django')
 
@@ -60,7 +63,19 @@ class Command(BaseCommand):
                             str(err),  # noqa: TRY401
                         ),
                     )
-                handler(channel, method_frame, decoded_body)
+                try:
+                    with transaction.atomic():
+                        handler(channel, method_frame, decoded_body)
+                except Exception:
+                    logger.exception('{0} process failed, push to failed-events queue'.format(
+                        decoded_body['event_id'],
+                    ))
+                    channel.basic_publish(
+                        exchange='',
+                        routing_key='failed-events',
+                        body=body,
+                    )
+                channel.basic_ack(method_frame.delivery_tag)
 
     def _handle_updates_log(
         self,
@@ -68,14 +83,26 @@ class Command(BaseCommand):
         method_frame: pika.spec.Basic.GetOk,
         decoded_body: dict,  # type: ignore [type-arg]
     ) -> None:
-        for message in decoded_body['data']['messages']:
-            Message.objects.create(
-                message_id=json.loads(message['message_json'])['message_id'],
-                message_json=message['message_json'],
-                is_unknown=message['is_unknown'],
-                trigger_message_id=message['trigger_message_id'],
+        if decoded_body['event_name'] == 'Messages.Created':
+            for message in decoded_body['data']['messages']:
+                try:
+                    Message.objects.create(
+                        message_id=json.loads(message['message_json'])['message_id'],
+                        message_json=message['message_json'],
+                        is_unknown=message['is_unknown'],
+                        trigger_message_id=message['trigger_message_id'],
+                        trigger_callback_id=message['trigger_callback_id'],
+                    )
+                except IntegrityError:
+                    pass
+        elif decoded_body['event_name'] == 'Button.Pushed':
+            CallbackData.objects.create(
+                callback_id=int(json.loads(decoded_body['data']['json'])['callback_query']['id']),
+                date_time=datetime.datetime.fromisoformat(decoded_body['data']['timestamp']),
+                user_id=json.loads(decoded_body['data']['json'])['callback_query']['from']['id'],
+                json=decoded_body['data']['json'],
             )
-        channel.basic_ack(method_frame.delivery_tag)
+            decoded_body['data']
 
     def _handle_users(
         self,
@@ -91,11 +118,12 @@ class Command(BaseCommand):
             )
         elif decoded_body['event_name'] == 'User.Subscribed':
             User.objects.create(
+                username=decoded_body['data']['user_id'],
                 chat_id=decoded_body['data']['user_id'],
+                date_joined=decoded_body['data']['date_time'],
             )
             UserAction.objects.create(
                 date_time=decoded_body['data']['date_time'],
                 action='Reactivated',
                 user_id=decoded_body['data']['user_id'],
             )
-        channel.basic_ack(method_frame.delivery_tag)
