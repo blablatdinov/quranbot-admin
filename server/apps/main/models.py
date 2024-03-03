@@ -84,6 +84,7 @@ class Message(models.Model):
     message_json = models.JSONField()
     is_unknown = models.BooleanField()
     trigger_message_id = models.BigIntegerField(null=True)
+    trigger_callback_id = models.BigIntegerField(null=True)
 
     class Meta:
         db_table = 'messages'
@@ -131,3 +132,16 @@ class UserAction(models.Model):
     def __str__(self) -> str:
         """Строковое представление."""
         return 'UserAction {0}, {1}'.format(self.user_id, self.action)
+
+
+class CallbackData(models.Model):
+    """Модель для сохранения данных, с inline кнопок."""
+
+    callback_id = models.BigIntegerField(primary_key=True, editable=False)
+    date_time = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    json = models.JSONField()
+
+    def __str__(self) -> str:
+        """Строковое представление."""
+        return 'CallbackData {0}, {1}'.format(self.callback_id, self.json)
