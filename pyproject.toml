@@ -8,7 +8,7 @@ authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.12"
 
-django = { version = "4.2.10", extras = ["argon2"] }
+django = { version = "4.2.11", extras = ["argon2"] }
 django-split-settings = "1.2.0"
 django-axes = "6.3.0"
 django-csp = "3.8"
