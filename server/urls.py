@@ -23,6 +23,7 @@ from server.apps.main.views import (
     index,
     landing,
     messages,
+    users_count_badge,
     users_page,
 )
 
@@ -55,6 +56,7 @@ urlpatterns = [
     path('users', login_required(users_page), name='users'),
     path('days', login_required(days), name='days'),
     path('messages', login_required(messages), name='messages'),
+    path('api/v1/count-github-badge', users_count_badge, name='users_count_badge'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

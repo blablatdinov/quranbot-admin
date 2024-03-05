@@ -7,7 +7,7 @@ import pika
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -216,3 +216,13 @@ def messages(request: HttpRequest) -> HttpResponse:
             'target_id': '#messages-list',
         },
     )
+
+
+def users_count_badge(request: HttpRequest) -> HttpResponse:
+    """Кол-во пользователей."""
+    return JsonResponse({
+        'schemaVersion': 1,
+        'label': 'users count',
+        'message': User.objects.count(),
+        'color': 'informational',
+    })

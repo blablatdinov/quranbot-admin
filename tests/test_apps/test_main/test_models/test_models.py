@@ -26,5 +26,9 @@ def test_user_action(mixer):
     str(mixer.blend(models.UserAction, user__referrer_id=None))
 
 
+def test_callback_data(mixer):
+    str(mixer.blend(models.CallbackData, json={}, user__referrer_id=None))
+
+
 def test_user(mixer):
     str(mixer.blend(models.User, referrer_id=None))
