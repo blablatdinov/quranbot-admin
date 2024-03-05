@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from bs4 import BeautifulSoup
 
@@ -43,3 +45,15 @@ def test_filtering(client):
     assert list(User.objects.filter(is_active=True).values_list('chat_id', flat=True)[:50]) == [
         int(x.text) for x in BeautifulSoup(response.content.decode('utf-8'), 'lxml').find_all('th', user_id=True)
     ]
+
+
+def test_users_count_badge(client):
+    response = client.get('/api/v1/count-github-badge')
+
+    assert response.status_code == 200
+    assert json.loads(response.content.decode('utf-8')) == {
+        'color': 'informational',
+        'label': 'users count',
+        'message': '1',
+        'schemaVersion': 1,
+    }
