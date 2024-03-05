@@ -1,6 +1,7 @@
 """Контроллеры."""
 
 import json
+import time
 import uuid
 
 import pika
@@ -13,7 +14,35 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
 
-from server.apps.main.models import Ayat, Message, User
+from server.apps.main.models import Ayat, Mailing, Message, User
+
+
+def _publish_event(queue_name, event_name, event_version, event_data):
+    connection = pika.BlockingConnection(
+        pika.URLParameters(
+            'amqp://{0}:{1}@{2}:5672/{3}'.format(
+                settings.RABBITMQ_USER,
+                settings.RABBITMQ_PASS,
+                settings.RABBITMQ_HOST,
+                settings.RABBITMQ_VHOST,
+            ),
+        ),
+    )
+    channel = connection.channel()
+    channel.queue_declare(queue=queue_name)
+    channel.basic_publish(
+        exchange='',
+        routing_key=queue_name,
+        body=json.dumps({
+            'event_id': str(uuid.uuid4()),
+            'event_version': event_version,
+            'event_name': event_name,
+            'event_time': str(int(time.time())),
+            'producer': 'quranbot-admin',
+            'data': event_data,
+        }).encode('utf-8'),
+    )
+
 
 
 class UnreachebleCaseError(Exception):
@@ -147,38 +176,20 @@ def days(request: HttpRequest) -> HttpResponse:
         )
         ayats.update(day=day)
         template = 'main/days_form.html'
-        connection = pika.BlockingConnection(
-            pika.URLParameters(
-                'amqp://{0}:{1}@{2}:5672/{3}'.format(
-                    settings.RABBITMQ_USER,
-                    settings.RABBITMQ_PASS,
-                    settings.RABBITMQ_HOST,
-                    settings.RABBITMQ_VHOST,
-                ),
-            ),
-        )
-        channel = connection.channel()
-        channel.queue_declare(queue='quranbot_queue')
         for ayat in ayats:
-            channel.basic_publish(
-                exchange='',
-                routing_key='quranbot_queue',
-                body=json.dumps({
-                    'event_id': str(uuid.uuid4()),
-                    'event_version': 1,
-                    'event_name': 'Ayat.Changed',
-                    'event_time': '392409283',
-                    'producer': 'quranbot-admin',
-                    'data': {
-                        'public_id': str(ayat.public_id),
-                        'day': day,
-                        'audio_id': str(ayat.audio_id),
-                        'ayat_number': ayat.ayat_number,
-                        'content': ayat.content,
-                        'arab_text': ayat.arab_text,
-                        'transliteration': ayat.transliteration,
-                    },
-                }).encode('utf-8'),
+            _publish_event(
+                'ayats',
+                'Ayat.Changed',
+                1,
+                {
+                    'public_id': str(ayat.public_id),
+                    'day': day,
+                    'audio_id': str(ayat.audio_id),
+                    'ayat_number': ayat.ayat_number,
+                    'content': ayat.content,
+                    'arab_text': ayat.arab_text,
+                    'transliteration': ayat.transliteration,
+                },
             )
     last_ayat_day = Ayat.objects.filter(day__isnull=False).latest('day').day
     if not last_ayat_day:  # pragma: no cover
@@ -226,3 +237,39 @@ def users_count_badge(request: HttpRequest) -> HttpResponse:
         'message': str(User.objects.count()),
         'color': 'informational',
     })
+
+
+class Mailings(View):
+
+    def post(self, request):
+        _publish_event(
+            'mailings',
+            'Mailing.Created',
+            1,
+            {
+                'text': request.POST['text'],
+                'group': request.POST['group'],
+            },
+        )
+        paginator = Paginator(Mailing.objects.all(), 50)
+        page = paginator.page(request.GET.get('page', 1))
+        return render(request, 'main/mailings_content.html', context={
+            'page': page,
+            'paginator': paginator,
+            'target_id': '#mailings-list',
+        })
+
+    def get(self, request):
+        paginator = Paginator(Mailing.objects.all(), 50)
+        page = paginator.page(request.GET.get('page', 1))
+        return render(request, 'main/mailings_page.html', context={
+            'page': page,
+            'paginator': paginator,
+            'target_id': '#mailings-list',
+        })
+
+
+def new_mailing(request):
+    if 'Hx-Request' in request.headers:
+        return render(request, 'main/new_mailing_form.html')
+    return render(request, 'main/new_mailing_page.html')

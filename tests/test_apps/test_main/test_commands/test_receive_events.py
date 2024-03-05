@@ -128,7 +128,7 @@ def test_user_reactivated(event_publisher, user):
     ]
 
 
-def test_message_created(event_publisher):
+def test_message_created(event_publisher, user):
     event_publisher(
         'updates_log',
         {
@@ -140,10 +140,11 @@ def test_message_created(event_publisher):
             'data': {
                 'messages': [
                     {
-                        'message_json': '{"message_id": 1}',
+                        'message_json': json.dumps({"message_id": 1, "from": {"id": user.chat_id}}),
                         'is_unknown': False,
                         'trigger_message_id': None,
                         'trigger_callback_id': None,
+                        'mailing_id': None,
                     },
                 ],
             },
@@ -154,10 +155,17 @@ def test_message_created(event_publisher):
     assert list(Message.objects.values()) == [
         {
             'message_id': 1,
-            'message_json': '{"message_id": 1}',
+            'mailing_id': None,
+            'message_json': {
+                'from': {
+                    'id': user.chat_id,
+                },
+                'message_id': 1,
+            },
             'is_unknown': False,
             'trigger_message_id': None,
             'trigger_callback_id': None,
+            'user_id': user.chat_id,
         },
     ]
 

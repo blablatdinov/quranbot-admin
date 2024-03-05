@@ -98,12 +98,15 @@ def _handle_updates_log(
 ) -> None:
     if decoded_body['event_name'] == 'Messages.Created':
         for message in decoded_body['data']['messages']:
+            message_dict = json.loads(message['message_json'])
             Message.objects.create(
-                message_id=json.loads(message['message_json'])['message_id'],
-                message_json=message['message_json'],
+                message_id=message_dict['message_id'],
+                message_json=message_dict,
                 is_unknown=message['is_unknown'],
                 trigger_message_id=message['trigger_message_id'],
                 trigger_callback_id=message['trigger_callback_id'],
+                user_id=message_dict['from']['id'],
+                mailing_id=message['mailing_id'],
             )
     elif decoded_body['event_name'] == 'Button.Pushed':  # pragma: no cover
         CallbackData.objects.create(

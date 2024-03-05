@@ -1,0 +1,14 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+  <div id="mailings-page">
+  <button
+    type="button"
+    class="btn btn-primary"
+    hx-get="/mailings/new"
+    hx-target="#mailings-page"
+    hx-push-url="true"
+  >Новая рассылка</button>
+    {% include "main/mailings_content.html" %}
+  </div>
+{% endblock content %}
