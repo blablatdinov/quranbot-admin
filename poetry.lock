@@ -2750,13 +2750,13 @@ files = [
 
 [[package]]
 name = "quranbot-schema-registry"
-version = "0.0.23"
+version = "0.0.24"
 description = "quranbot-schema-registry"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "quranbot_schema_registry-0.0.23-py3-none-any.whl", hash = "sha256:9eb47b4aa40599cba26a00d55828eee859706b8d078bf6a518489a5a1060b36a"},
-    {file = "quranbot_schema_registry-0.0.23.tar.gz", hash = "sha256:43d84625079b48ba7342ace51d997af1a5e5c59c29f8f8b3e8673ed8f59a902d"},
+    {file = "quranbot_schema_registry-0.0.24-py3-none-any.whl", hash = "sha256:c5940d433642f7b0c14d0dc50b9838f5ef531e05500af82fa04643090dd07b49"},
+    {file = "quranbot_schema_registry-0.0.24.tar.gz", hash = "sha256:76179255b0dfbca431384ee8f5d8726c102a0d461757691e569f9d2721d737ea"},
 ]
 
 [package.dependencies]
@@ -3619,4 +3619,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f89fdcacbfb55efe10af0416e7090d4771e320225a97ba7517602f9d2aaed304"
+content-hash = "3cc25c234f911ba0c3d7069d09a30eec22d03811a61e4affeaa6db8d03ce2711"
