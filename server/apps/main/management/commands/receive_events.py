@@ -13,7 +13,13 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from quranbot_schema_registry import validate_schema
 
-from server.apps.main.models import CallbackData, Message, User, UserAction
+from server.apps.main.models import (
+    CallbackData,
+    Mailing,
+    Message,
+    User,
+    UserAction,
+)
 
 logger = logging.getLogger('django')
 
@@ -37,11 +43,11 @@ def receiver(root_loop: Generator[int, None, None]) -> None:
     )
     channel = connection.channel()
     handlers = {
-        'updates_log': _handle_updates_log,
-        'users': _handle_users,
+        'qbot_admin.updates_log': _handle_updates_log,
+        'qbot_admin.users': _handle_users,
     }
     for _ in root_loop:
-        time.sleep(1)
+        time.sleep(0.1)
         for queue_name, handler in handlers.items():
             method_frame, _, body = channel.basic_get(queue_name)
             if not body:
@@ -99,14 +105,18 @@ def _handle_updates_log(
     if decoded_body['event_name'] == 'Messages.Created':
         for message in decoded_body['data']['messages']:
             message_dict = json.loads(message['message_json'])
+            if message['mailing_id']:
+                mailing, _ = Mailing.objects.get_or_create(mailing_id=message['mailing_id'])
+            else:
+                mailing = None
             Message.objects.create(
                 message_id=message_dict['message_id'],
                 message_json=message_dict,
                 is_unknown=message['is_unknown'],
                 trigger_message_id=message['trigger_message_id'],
                 trigger_callback_id=message['trigger_callback_id'],
-                user_id=message_dict['from']['id'],
-                mailing_id=message['mailing_id'],
+                from_id=message_dict['from']['id'],
+                mailing=mailing,
             )
     elif decoded_body['event_name'] == 'Button.Pushed':  # pragma: no cover
         CallbackData.objects.create(

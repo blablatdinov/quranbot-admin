@@ -1,10 +1,11 @@
-<form class="mt-5"
-      hx-post="/mailings"
-      hx-swap="outerHTML">
+<form class="mt-5" hx-post="/mailings" hx-swap="outerHTML">
   {% csrf_token %}
   <div class="mb-3">
     <label for="group" class="form-label">Доставить</label>
-    <select class="form-select" aria-label="Default select example" id="group" name="group">
+    <select class="form-select"
+            aria-label="Default select example"
+            id="group"
+            name="group">
       <option selected value="all">Всем пользователям</option>
       <option selected value="admins">Администраторам</option>
     </select>
@@ -12,12 +13,11 @@
   </div>
   <div class="mb-3">
     <label for="text" class="form-label">Текст:</label>
-    <textarea
-           class="form-control
-                  {% if password_error %}is-invalid{% endif %}"
-           id="text"
-           name="text"
-           value="blablatdinov"></textarea>
+    <textarea class="form-control
+                     {% if password_error %}is-invalid{% endif %}"
+              id="text"
+              name="text"
+              value="blablatdinov"></textarea>
     {% if password_error %}<div class="invalid-feedback">{{ password_error }}</div>{% endif %}
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>

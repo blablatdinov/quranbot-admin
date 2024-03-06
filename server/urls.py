@@ -18,18 +18,14 @@ from health_check import urls as health_urls
 from server.apps.main.views import (
     AyatDetail,
     LoginView,
-    Mailings,
+    MailingsView,
     ayats_page,
     days,
     index,
     landing,
     messages,
-<<<<<<< HEAD
-    users_count_badge,
-||||||| parent of bdc0c61 (Mailings)
-=======
     new_mailing,
->>>>>>> bdc0c61 (Mailings)
+    users_count_badge,
     users_page,
 )
 
@@ -63,7 +59,7 @@ urlpatterns = [
     path('days', login_required(days), name='days'),
     path('messages', login_required(messages), name='messages'),
     path('api/v1/count-github-badge', users_count_badge, name='users_count_badge'),
-    path('mailings', login_required(Mailings.as_view()), name='mailings'),
+    path('mailings', login_required(MailingsView.as_view()), name='mailings'),
     path('mailings/new', login_required(new_mailing), name='new_mailing'),
 ]
 

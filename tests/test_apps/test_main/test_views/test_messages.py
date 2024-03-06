@@ -5,7 +5,7 @@ pytestmark = [pytest.mark.django_db]
 
 @pytest.fixture()
 def messages(mixer):
-    return mixer.cycle(20).blend('main.Message', message_json={'text': '', 'from': {'id': 123}}, user__referrer_id=None)
+    return mixer.cycle(20).blend('main.Message', message_json={'text': '', 'from': {'id': 123}})
 
 
 def test(client, messages):

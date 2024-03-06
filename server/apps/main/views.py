@@ -17,7 +17,7 @@ from django.views import View
 from server.apps.main.models import Ayat, Mailing, Message, User
 
 
-def _publish_event(queue_name, event_name, event_version, event_data):
+def _publish_event(queue_name: str, event_name: str, event_version: int, event_data: dict) -> None:  # type: ignore [type-arg]
     connection = pika.BlockingConnection(
         pika.URLParameters(
             'amqp://{0}:{1}@{2}:5672/{3}'.format(
@@ -42,7 +42,6 @@ def _publish_event(queue_name, event_name, event_version, event_data):
             'data': event_data,
         }).encode('utf-8'),
     )
-
 
 
 class UnreachebleCaseError(Exception):
@@ -178,7 +177,7 @@ def days(request: HttpRequest) -> HttpResponse:
         template = 'main/days_form.html'
         for ayat in ayats:
             _publish_event(
-                'ayats',
+                'quranbot.ayats',
                 'Ayat.Changed',
                 1,
                 {
@@ -239,11 +238,13 @@ def users_count_badge(request: HttpRequest) -> HttpResponse:
     })
 
 
-class Mailings(View):
+class MailingsView(View):
+    """Контроллер для рассылок."""
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """Создание рассылки."""
         _publish_event(
-            'mailings',
+            'quranbot.mailings',
             'Mailing.Created',
             1,
             {
@@ -253,23 +254,33 @@ class Mailings(View):
         )
         paginator = Paginator(Mailing.objects.all(), 50)
         page = paginator.page(request.GET.get('page', 1))
-        return render(request, 'main/mailings_content.html', context={
-            'page': page,
-            'paginator': paginator,
-            'target_id': '#mailings-list',
-        })
+        return render(
+            request,
+            'main/mailings_content.html',
+            context={
+                'page': page,
+                'paginator': paginator,
+                'target_id': '#mailings-list',
+            },
+        )
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        """Получить список рассылок."""
         paginator = Paginator(Mailing.objects.all(), 50)
         page = paginator.page(request.GET.get('page', 1))
-        return render(request, 'main/mailings_page.html', context={
-            'page': page,
-            'paginator': paginator,
-            'target_id': '#mailings-list',
-        })
+        return render(
+            request,
+            'main/mailings_page.html',
+            context={
+                'page': page,
+                'paginator': paginator,
+                'target_id': '#mailings-list',
+            },
+        )
 
 
-def new_mailing(request):
+def new_mailing(request: HttpRequest) -> HttpResponse:
+    """Форма для создания рассылки."""
     if 'Hx-Request' in request.headers:
         return render(request, 'main/new_mailing_form.html')
     return render(request, 'main/new_mailing_page.html')

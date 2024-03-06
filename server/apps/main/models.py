@@ -85,7 +85,7 @@ class Message(models.Model):
     is_unknown = models.BooleanField()
     trigger_message_id = models.BigIntegerField(null=True)
     trigger_callback_id = models.BigIntegerField(null=True)
-    user = models.ForeignKey('main.User', on_delete=models.PROTECT)
+    from_id = models.BigIntegerField(null=True)
     mailing = models.ForeignKey('main.Mailing', on_delete=models.PROTECT, null=True)
 
     class Meta:
@@ -160,4 +160,4 @@ class Mailing(models.Model):
 
     def __str__(self) -> str:
         """Строковое представление."""
-        return 'Mailing "{0}"'.format(self.mailing_id, self.message_set.count())
+        return 'Mailing "{0}", {1} messages'.format(self.mailing_id, self.message_set.count())

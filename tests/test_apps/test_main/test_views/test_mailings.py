@@ -5,8 +5,6 @@ import pika
 import pytest
 from django.conf import settings
 
-from server.apps.main.models import Mailing
-
 pytestmark = [pytest.mark.django_db]
 
 
@@ -23,12 +21,15 @@ def event_reader():
         ),
     )
     channel = connection.channel()
-    channel.queue_purge('mailings')
+    channel.queue_declare(queue='quranbot.mailings')
+    channel.queue_purge('quranbot.mailings')
+
     def _event_reader(queue_name):
         method_frame, _, body = channel.basic_get(queue_name)
         decoded_body = json.loads(body.decode('utf-8'))
         channel.basic_ack(method_frame.delivery_tag)
         return decoded_body
+
     return _event_reader
 
 
@@ -40,11 +41,11 @@ def user(mixer):
 @pytest.fixture()
 def mailings(mixer, user):
     mailings = mixer.cycle(5).blend('main.Mailing')
-    messages = mixer.cycle(40).blend(
+    mixer.cycle(40).blend(
         'main.Message',
         message_json={},
         mailing=(x for x in islice(cycle(mailings), 40)),
-        user=user,
+        from_id=user.chat_id,
     )
     return mailings
 
@@ -62,11 +63,14 @@ def test_mailing_form(client):
 
 
 def test_create_mailing(client, event_reader):
-    response = client.post('/mailings', {
-        'group': 'admins',
-        'text': 'Hello',
-    })
-    event = event_reader('mailings')
+    response = client.post(
+        '/mailings',
+        {
+            'group': 'admins',
+            'text': 'Hello',
+        },
+    )
+    event = event_reader('quranbot.mailings')
 
     assert response.status_code == 200
     assert event['event_name'] == 'Mailing.Created'

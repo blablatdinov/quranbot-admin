@@ -19,7 +19,7 @@ def test(model, mixer):
 
 
 def test_message(mixer):
-    str(mixer.blend(models.Message, message_json={}, user__referrer_id=None))
+    str(mixer.blend(models.Message, message_json={}))
 
 
 def test_user_action(mixer):
