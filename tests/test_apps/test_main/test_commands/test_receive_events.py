@@ -33,7 +33,7 @@ def event_publisher():
             ),
         )
         channel = connection.channel()
-        for queue in 'users', 'updates_log':
+        for queue in 'users', 'qbot_admin.updates_log':
             channel.queue_declare(queue=queue)
         channel.queue_purge(queue_name)
         channel.basic_publish(
@@ -130,7 +130,7 @@ def test_user_reactivated(event_publisher, user):
 
 def test_message_created(event_publisher):
     event_publisher(
-        'updates_log',
+        'qbot_admin.updates_log',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -165,7 +165,7 @@ def test_message_created(event_publisher):
 def test_button_pushed(event_publisher, user):
     date_time = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'updates_log',
+        'qbot_admin.updates_log',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
