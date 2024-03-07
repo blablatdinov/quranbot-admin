@@ -22,7 +22,10 @@ def test_get(client, ayats, nullday_ayats):
     assert response.status_code == 200
     assert [f'ayat-{x.ayat_id}' for x in nullday_ayats] == [
         input_['name']
-        for input_ in BeautifulSoup(response.content.decode('utf-8')).find_all('input', class_='form-check-input')
+        for input_ in BeautifulSoup(response.content.decode('utf-8'), 'lxml').find_all(
+            'input',
+            class_='form-check-input',
+        )
     ]
 
 
