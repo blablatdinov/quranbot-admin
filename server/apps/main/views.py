@@ -143,7 +143,7 @@ def users_page(request: HttpRequest) -> HttpResponse:
     users = User.objects.all()
     if request.GET.get('is_active'):
         users = users.filter(is_active=request.GET.get('is_active') == 'true')
-    users = users.order_by(request.GET.get('order', 'date_joined'), 'chat_id')
+    users = users.order_by(request.GET.get('order', '-date_joined'), 'chat_id')
     paginator = Paginator(users, 50)
     page = paginator.page(request.GET.get('page', 1))
     match request.headers.get('Hx-Request'):
