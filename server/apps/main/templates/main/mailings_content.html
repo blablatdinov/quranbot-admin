@@ -1,0 +1,21 @@
+{% load build_url %}
+
+<div id="users-list">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Кол-во доставленных сообщений</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mailing in page.object_list %}
+        <tr>
+          <th scope="row">{{ mailing.mailing_id }}</th>
+          <td>{{ mailing.message_set.count }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% include "main/pagination.html" %}
+</div>

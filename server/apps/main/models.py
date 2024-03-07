@@ -85,6 +85,8 @@ class Message(models.Model):
     is_unknown = models.BooleanField()
     trigger_message_id = models.BigIntegerField(null=True)
     trigger_callback_id = models.BigIntegerField(null=True)
+    from_id = models.BigIntegerField(null=True)
+    mailing = models.ForeignKey('main.Mailing', on_delete=models.PROTECT, null=True)
 
     class Meta:
         db_table = 'messages'
@@ -145,3 +147,17 @@ class CallbackData(models.Model):
     def __str__(self) -> str:
         """Строковое представление."""
         return 'CallbackData {0}, {1}'.format(self.callback_id, self.json)
+
+
+@final
+class Mailing(models.Model):
+    """Рассылка."""
+
+    mailing_id = models.UUIDField(primary_key=True, editable=False)
+
+    class Meta:
+        db_table = 'mailings'
+
+    def __str__(self) -> str:
+        """Строковое представление."""
+        return 'Mailing "{0}", {1} messages'.format(self.mailing_id, self.message_set.count())

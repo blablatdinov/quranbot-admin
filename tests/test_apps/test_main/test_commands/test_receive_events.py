@@ -33,7 +33,7 @@ def event_publisher():
             ),
         )
         channel = connection.channel()
-        for queue in 'users', 'updates_log':
+        for queue in 'qbot_admin.users', 'qbot_admin.updates_log', 'quranbot.mailings':
             channel.queue_declare(queue=queue)
         channel.queue_purge(queue_name)
         channel.basic_publish(
@@ -53,7 +53,7 @@ def user(mixer):
 def test(event_publisher):
     joined_date = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'users',
+        'qbot_admin.users',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -82,7 +82,7 @@ def test(event_publisher):
 def test_invalid_scheme(event_publisher):
     joined_date = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'users',
+        'qbot_admin.users',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -103,7 +103,7 @@ def test_invalid_scheme(event_publisher):
 def test_user_reactivated(event_publisher, user):
     joined_date = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'users',
+        'qbot_admin.users',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -128,9 +128,9 @@ def test_user_reactivated(event_publisher, user):
     ]
 
 
-def test_message_created(event_publisher):
+def test_message_created(event_publisher, user):
     event_publisher(
-        'updates_log',
+        'qbot_admin.updates_log',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -140,10 +140,11 @@ def test_message_created(event_publisher):
             'data': {
                 'messages': [
                     {
-                        'message_json': '{"message_id": 1}',
+                        'message_json': json.dumps({'message_id': 1, 'from': {'id': user.chat_id}}),
                         'is_unknown': False,
                         'trigger_message_id': None,
                         'trigger_callback_id': None,
+                        'mailing_id': None,
                     },
                 ],
             },
@@ -154,10 +155,17 @@ def test_message_created(event_publisher):
     assert list(Message.objects.values()) == [
         {
             'message_id': 1,
-            'message_json': '{"message_id": 1}',
+            'mailing_id': None,
+            'message_json': {
+                'from': {
+                    'id': user.chat_id,
+                },
+                'message_id': 1,
+            },
             'is_unknown': False,
             'trigger_message_id': None,
             'trigger_callback_id': None,
+            'from_id': user.chat_id,
         },
     ]
 
@@ -165,7 +173,7 @@ def test_message_created(event_publisher):
 def test_button_pushed(event_publisher, user):
     date_time = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'updates_log',
+        'qbot_admin.updates_log',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
@@ -200,7 +208,7 @@ def test_button_pushed(event_publisher, user):
 def test_fail_event(event_publisher, user):
     joined_date = datetime.datetime.now(tz=datetime.UTC)
     event_publisher(
-        'users',
+        'qbot_admin.users',
         {
             'event_id': str(uuid.uuid4()),
             'event_version': 1,
