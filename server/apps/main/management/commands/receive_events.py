@@ -146,6 +146,6 @@ def _handle_users(
         )
         UserAction.objects.create(
             date_time=decoded_body['data']['date_time'],
-            action='Reactivated',
+            action='Subscribed',
             user_id=decoded_body['data']['user_id'],
         )

@@ -1,5 +1,6 @@
 """Контроллеры."""
 
+import datetime
 import json
 import time
 import uuid
@@ -14,7 +15,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
 
-from server.apps.main.models import Ayat, Mailing, Message, User
+from server.apps.main.models import Ayat, Mailing, Message, User, UserAction
 
 
 def _publish_event(queue_name: str, event_name: str, event_version: int, event_data: dict) -> None:  # type: ignore [type-arg]
@@ -54,11 +55,27 @@ def landing(request: HttpRequest) -> HttpResponse:
 
 def index(request: HttpRequest) -> HttpResponse:
     """Страница с графиками."""
-    data = {'2022-01-01': 10, '2022-01-02': 20, '2022-01-03': 30, '2022-01-04': 25, '2022-01-05': 40}
-    # Преобразуем данные в списки для labels (даты) и data (значения)
+    user_actions = (
+        UserAction.objects.filter(date_time__date__range=['2018-01-01', datetime.datetime.now().strftime('%Y-%m-%d')])
+        .values('date_time__date', 'action')
+        .order_by('date_time')
+    )
+    data = {}
+    prev_value = 0
+    for row in user_actions:
+        new_value = prev_value + int(row['action'] == 'Subscribed')
+        data[row['date_time__date'].strftime('%Y-%m-%d')] = new_value
+        prev_value = new_value
     labels = list(data.keys())
     values = list(data.values())
-    return render(request, 'main/index.html', {'labels': labels, 'values': values})
+    return render(
+        request,
+        'main/index.html',
+        {
+            'labels': labels,
+            'values': values,
+        },
+    )
 
 
 class LoginView(View):

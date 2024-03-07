@@ -72,7 +72,7 @@ def test(event_publisher):
     assert list(User.objects.values_list('chat_id', 'date_joined')) == [(845834975, joined_date)]
     assert list(UserAction.objects.values('action', 'date_time', 'user_id')) == [
         {
-            'action': 'Reactivated',
+            'action': 'Subscribed',
             'date_time': joined_date,
             'user_id': 845834975,
         },
