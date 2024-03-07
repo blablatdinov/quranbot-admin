@@ -29,7 +29,6 @@ def _publish_event(queue_name: str, event_name: str, event_version: int, event_d
         ),
     )
     channel = connection.channel()
-    channel.queue_declare(queue=queue_name)
     channel.basic_publish(
         exchange='',
         routing_key=queue_name,

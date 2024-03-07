@@ -1,3 +1,4 @@
+{% load date_time %}
 {% load build_url %}
 
 <div id="messages-list">
@@ -6,7 +7,8 @@
       <tr>
         <th scope="col">Идентификатор сообщения</th>
         <th scope="col">Текст</th>
-        <th scope="col">Отправлено</th>
+        <th scope="col">Отправлено от</th>
+        <th scope="col">Время отправки/получения</th>
       </tr>
     </thead>
     <tbody>
@@ -15,6 +17,7 @@
           <th scope="row">{{ message.message_id }}</th>
           <th>{{ message.message_json.text }}</th>
           <th>{{ message.message_json.from.id }}</th>
+          <th>{{ message.message_json.date|timestamp_to_time|date:"d M Y" }}</th>
         </tr>
       {% endfor %}
     </tbody>
