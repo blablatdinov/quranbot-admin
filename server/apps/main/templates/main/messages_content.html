@@ -15,7 +15,7 @@
       {% for message in page.object_list %}
         <tr>
           <th scope="row">{{ message.message_id }}</th>
-          <th>{{ message.message_json.text }}</th>
+          <th>{{ message.message_json.text | truncatechars:100 }}</th>
           <th>{{ message.message_json.from.id }}</th>
           <th>{{ message.message_json.date|timestamp_to_time|date:"d M Y" }}</th>
         </tr>
