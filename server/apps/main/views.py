@@ -227,6 +227,27 @@ def messages(request: HttpRequest) -> HttpResponse:
     )
 
 
+def message(request: HttpRequest, message_id: int) -> HttpResponse:
+    """Просмотр сообщения."""
+    message = Message.objects.get(message_id=int(message_id))
+    trigger_message_json = None
+    trigger_message = None
+    if message.trigger_message_id:
+        trigger_message = Message.objects.filter(message_id=message.trigger_message_id).first()
+        if trigger_message:
+            trigger_message_json = json.dumps(trigger_message.message_json, indent=2, ensure_ascii=False)
+    return render(
+        request,
+        'main/message_detail.html',
+        context={
+            'message': message,
+            'trigger_message': trigger_message,
+            'trigger_message_json': trigger_message_json,
+            'message_json': json.dumps(message.message_json, indent=2, ensure_ascii=False),
+        },
+    )
+
+
 def users_count_badge(request: HttpRequest) -> HttpResponse:
     """Кол-во пользователей."""
     return JsonResponse({

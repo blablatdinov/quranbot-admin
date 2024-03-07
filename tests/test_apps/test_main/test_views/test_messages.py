@@ -1,3 +1,5 @@
+import random
+
 import pytest
 
 pytestmark = [pytest.mark.django_db]
@@ -7,6 +9,7 @@ pytestmark = [pytest.mark.django_db]
 def messages(mixer, faker):
     return mixer.cycle(20).blend(
         'main.Message',
+        message_id=(random.randint(1000, 9999) for x in range(20)),  # noqa: S311. Not secure issue
         message_json={
             'text': faker.text(),
             'from': {'id': 123},
