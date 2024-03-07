@@ -24,6 +24,7 @@ from server.apps.main.views import (
     index,
     landing,
     messages,
+    message,
     new_mailing,
     users_count_badge,
     users_page,
@@ -58,9 +59,9 @@ urlpatterns = [
     path('users', login_required(users_page), name='users'),
     path('days', login_required(days), name='days'),
     path('messages', login_required(messages), name='messages'),
+    path('messages/<int:message_id>', login_required(message), name='message'),
     path('api/v1/count-github-badge', users_count_badge, name='users_count_badge'),
     path('mailings', login_required(MailingsView.as_view()), name='mailings'),
-    path('mailings/new', login_required(new_mailing), name='new_mailing'),
 ]
 
 if settings.DEBUG:  # pragma: no cover
