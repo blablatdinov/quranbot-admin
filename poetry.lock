@@ -1508,13 +1508,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "hypothesis"
-version = "6.98.18"
+version = "6.99.0"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.98.18-py3-none-any.whl", hash = "sha256:254a67baf07dd13de72062491cd64f9e161e10b6760251f5824d6fa22d141ce9"},
-    {file = "hypothesis-6.98.18.tar.gz", hash = "sha256:01b7a02dde6f0848cba1d1fcf8a87dbe94c4fca21e7d45a401c090702947aad1"},
+    {file = "hypothesis-6.99.0-py3-none-any.whl", hash = "sha256:6e59b66322ff9d066e39c511af40d107c1d944891bbf608a7f03c5e7c8dfaef4"},
+    {file = "hypothesis-6.99.0.tar.gz", hash = "sha256:1f740a8ecd2ac1bdaf6fb9025cb2bacccf5f7222137298b6445ddd01caff5552"},
 ]
 
 [package.dependencies]
@@ -1522,9 +1522,10 @@ attrs = ">=22.2.0"
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
-all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "django (>=3.2)", "dpcontracts (>=0.4)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2024.1)"]
+all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "crosshair-tool (>=0.0.50)", "django (>=3.2)", "dpcontracts (>=0.4)", "hypothesis-crosshair (>=0.0.1)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2024.1)"]
 cli = ["black (>=19.10b0)", "click (>=7.0)", "rich (>=9.0.0)"]
 codemods = ["libcst (>=0.3.16)"]
+crosshair = ["crosshair-tool (>=0.0.50)", "hypothesis-crosshair (>=0.0.1)"]
 dateutil = ["python-dateutil (>=1.4)"]
 django = ["django (>=3.2)"]
 dpcontracts = ["dpcontracts (>=0.4)"]
@@ -3619,4 +3620,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "874cb1e91f3ab37dc54b1de3c18989d8c7168f3ff4af696c85f11b4f0b3a4184"
+content-hash = "f9a227cc55b335fd4a184a825c387dab4da5f46840123e03ef065394f0d3bd68"
