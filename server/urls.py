@@ -28,6 +28,8 @@ from server.apps.main.views import (
     new_mailing,
     users_count_badge,
     users_page,
+    failed_events,
+    resolve_event,
 )
 
 admin.autodiscover()
@@ -63,6 +65,8 @@ urlpatterns = [
     path('api/v1/count-github-badge', users_count_badge, name='users_count_badge'),
     path('mailings', login_required(MailingsView.as_view()), name='mailings'),
     path('mailings/new', login_required(new_mailing), name='new_mailing'),
+    path('failed-events/<str:event_id>/resolved', login_required(resolve_event), name='resolve_event'),
+    path('failed-events', login_required(failed_events), name='failed_events'),
 ]
 
 if settings.DEBUG:  # pragma: no cover

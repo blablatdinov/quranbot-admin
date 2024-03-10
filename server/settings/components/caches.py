@@ -1,12 +1,21 @@
 """Caching."""
 # https://docs.djangoproject.com/en/4.2/topics/cache/
+from server.settings.components import config
 
 CACHES = {
     'default': {
-        # TODO: use some other cache in production,
-        # like https://github.com/jazzband/django-redis
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://{0}:{1}@{2}:{3}/{4}'.format(
+            config('REDIS_USER'),
+            config('REDIS_PASS'),
+            config('REDIS_HOST'),
+            config('REDIS_PORT'),
+            config('REDIS_DB'),
+        ),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
 }
 
 

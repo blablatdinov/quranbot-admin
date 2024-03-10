@@ -1,0 +1,35 @@
+{% load date_time %}
+
+<div id="failed-events-table">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Название события:</th>
+        <th scope="col">Время генерации события:</th>
+        <th scope="col">Версия события:</th>
+        <th scope="col">Тело сообщения:</th>
+        <th scope="col">Отметить решенным</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for failed_event in bodies %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{ failed_event.event_name }}</td>
+          <td>{{ failed_event.event_time|timestamp_to_time|date:"d M Y H:i:s" }}</td>
+          <td>{{ failed_event.event_version }}</td>
+          <td><pre style="width: 600px; overflow-y: auto">{{ failed_event.json }}</pre</td>
+          <td>
+            <a
+              class="btn btn-primary"
+              href="/failed-events/{{ failed_event.event_id }}/resolved"
+              hx-get="/failed-events/{{ failed_event.event_id }}/resolved"
+              hx-target="#failed-events-table"
+            >Решено</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<div>
