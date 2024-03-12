@@ -155,3 +155,12 @@ def _handle_users(
             action='Subscribed',
             user_id=decoded_body['data']['user_id'],
         )
+    elif decoded_body['event_name'] == 'User.Unsubscribed':  # pragma: no cover
+        user = User.objects.get(chat_id=decoded_body['data']['user_id'])
+        user.is_active = False
+        user.save()
+        UserAction.objects.create(
+            date_time=decoded_body['data']['date_time'],
+            action='Unsubscribed',
+            user_id=decoded_body['data']['user_id'],
+        )
