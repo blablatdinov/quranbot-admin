@@ -1,4 +1,5 @@
 """Caching."""
+
 # https://docs.djangoproject.com/en/4.2/topics/cache/
 from server.settings.components import config
 
@@ -14,8 +15,8 @@ CACHES = {
         ),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
+        },
+    },
 }
 
 

@@ -21,15 +21,15 @@ from server.apps.main.views import (
     MailingsView,
     ayats_page,
     days,
+    failed_events,
     index,
     landing,
     message,
     messages,
     new_mailing,
+    resolve_event,
     users_count_badge,
     users_page,
-    failed_events,
-    resolve_event,
 )
 
 admin.autodiscover()

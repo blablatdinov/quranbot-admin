@@ -72,6 +72,7 @@ def receiver(root_loop: Generator[int, None, None]) -> None:
                     routing_key='failed-events',
                     body=body,
                 )
+                continue
             try:
                 with transaction.atomic():
                     handler(channel, method_frame, decoded_body)

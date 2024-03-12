@@ -86,6 +86,7 @@ style = "https://raw.githubusercontent.com/wemake-services/wemake-python-stylegu
 target-version = "py311"  # TODO: up to 3.12
 line-length = 120
 preview = true
+output-format = "concise"
 
 [tool.ruff.lint]
 select = ["ALL"]
