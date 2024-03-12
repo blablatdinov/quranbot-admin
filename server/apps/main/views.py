@@ -5,9 +5,11 @@ import json
 import time
 import uuid
 
+import attrs
 import pika
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -16,6 +18,20 @@ from django.urls import reverse
 from django.views import View
 
 from server.apps.main.models import Ayat, Mailing, Message, User, UserAction
+
+
+def _rabbit_channel() -> pika.channel.Channel:
+    connection = pika.BlockingConnection(
+        pika.URLParameters(
+            'amqp://{0}:{1}@{2}:5672/{3}'.format(
+                settings.RABBITMQ_USER,
+                settings.RABBITMQ_PASS,
+                settings.RABBITMQ_HOST,
+                settings.RABBITMQ_VHOST,
+            ),
+        ),
+    )
+    return connection.channel()
 
 
 def _publish_event(queue_name: str, event_name: str, event_version: int, event_data: dict) -> None:  # type: ignore [type-arg]
@@ -321,3 +337,86 @@ def new_mailing(request: HttpRequest) -> HttpResponse:
     if 'Hx-Request' in request.headers:
         return render(request, 'main/new_mailing_form.html')
     return render(request, 'main/new_mailing_page.html')
+
+
+@attrs.define(frozen=True)
+class _FailedEvent:
+    _json: dict  # type: ignore [type-arg]
+
+    @property
+    def event_name(self) -> str:
+        """Имя события."""
+        return self._json['event_name']
+
+    @property
+    def event_version(self) -> int:
+        """Версия события."""
+        return self._json['event_version']
+
+    @property
+    def event_time(self) -> int:
+        """Время отправки события."""
+        return self._json['event_time']
+
+    @property
+    def event_id(self) -> str:
+        """Идентификатор события."""
+        return self._json['event_id']
+
+    @property
+    def json(self) -> str:
+        """Json."""
+        return json.dumps(self._json, indent=2, ensure_ascii=False)
+
+
+def failed_events(request: HttpRequest) -> HttpResponse:
+    """Список необработанных событий."""
+    channel = _rabbit_channel()
+    events = []
+    body = b'1'
+    while body:
+        method_frame, _, body = channel.basic_get('failed-events')
+        if not body:
+            break
+        events.append((
+            method_frame,
+            _FailedEvent(json.loads(body.decode('utf-8'))),
+        ))
+    bodies = []
+    for method_frame, failed_event_body in events:
+        bodies.append(failed_event_body)
+        channel.basic_nack(method_frame.delivery_tag)
+    cache.set('failed_events', '[{0}]'.format(','.join([body.json for body in bodies])))
+    return render(
+        request,
+        'main/failed_events.html',
+        context={
+            'bodies': bodies,
+        },
+    )
+
+
+def resolve_event(request: HttpRequest, event_id: str) -> HttpResponse:
+    """Пометить событие разрешенным."""
+    channel = _rabbit_channel()
+    body = b'1'
+    bodies = [_FailedEvent(x) for x in json.loads(cache.get('failed_events')) if x['event_id'] != event_id]
+    frames = []
+    while body:
+        method_frame, _, body = channel.basic_get('failed-events')
+        if not body:
+            break
+        if json.loads(body.decode('utf-8'))['event_id'] == event_id:
+            channel.basic_ack(method_frame.delivery_tag)
+        else:
+            frames.append(method_frame)
+    for method_frame in frames:
+        channel.basic_nack(method_frame.delivery_tag)
+    cache.set('failed_events', '[{0}]'.format(','.join([body.json for body in bodies])))
+    return render(
+        request,
+        'main/failed_events_table.html',
+        context={
+            'bodies': bodies,
+        },
+    )

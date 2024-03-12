@@ -181,7 +181,7 @@ def test_button_pushed(event_publisher, user):
             'event_time': str(int(time.time())),
             'producer': 'tests',
             'data': {
-                'json': {'callback_query': {'id': 239874, 'from': {'id': user.chat_id}}},
+                'json': json.dumps({'callback_query': {'id': 239874, 'from': {'id': user.chat_id}}}),
                 'timestamp': str(date_time),
             },
         },

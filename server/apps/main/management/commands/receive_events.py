@@ -67,6 +67,11 @@ def receiver(root_loop: Generator[int, None, None]) -> None:
                         str(err),  # noqa: TRY401
                     ),
                 )
+                channel.basic_publish(
+                    exchange='',
+                    routing_key='failed-events',
+                    body=body,
+                )
                 continue
             try:
                 with transaction.atomic():
@@ -119,11 +124,12 @@ def _handle_updates_log(
                 mailing=mailing,
             )
     elif decoded_body['event_name'] == 'Button.Pushed':  # pragma: no cover
+        callback_dict = json.loads(decoded_body['data']['json'])
         CallbackData.objects.create(
-            callback_id=int(decoded_body['data']['json']['callback_query']['id']),
+            callback_id=int(callback_dict['callback_query']['id']),
             date_time=datetime.datetime.fromisoformat(decoded_body['data']['timestamp']),
-            user_id=decoded_body['data']['json']['callback_query']['from']['id'],
-            json=decoded_body['data']['json'],
+            user_id=callback_dict['callback_query']['from']['id'],
+            json=callback_dict,
         )
 
 
