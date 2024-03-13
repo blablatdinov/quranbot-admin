@@ -1039,13 +1039,13 @@ files = [
 
 [[package]]
 name = "dotenv-linter"
-version = "0.4.0"
+version = "0.5.0"
 description = "Linting dotenv files like a charm!"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.9,<4.0"
 files = [
-    {file = "dotenv-linter-0.4.0.tar.gz", hash = "sha256:88ea58482d0f4a79822538155b13b31cd54d213197d157ed06fdd532963583c9"},
-    {file = "dotenv_linter-0.4.0-py3-none-any.whl", hash = "sha256:2c73f0fc750f5599ad656f5ab9e62561460a533915ee30feb7259ff2393be6f5"},
+    {file = "dotenv_linter-0.5.0-py3-none-any.whl", hash = "sha256:fd01cca7f2140cb1710f49cbc1bf0e62397a75a6f0522d26a8b9b2331143c8bd"},
+    {file = "dotenv_linter-0.5.0.tar.gz", hash = "sha256:4862a8393e5ecdfb32982f1b32dbc006fff969a7b3c8608ba7db536108beeaea"},
 ]
 
 [package.dependencies]
@@ -1053,7 +1053,7 @@ attrs = "*"
 click = ">=6,<9"
 click_default_group = ">=1.2,<2.0"
 ply = ">=3.11,<4.0"
-typing_extensions = ">=3.6,<5.0"
+typing_extensions = ">=4.0,<5.0"
 
 [[package]]
 name = "dparse"
@@ -3653,4 +3653,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "23bbb7775ffb315eba09f579f7bacb85d8c1025db1ee814113c4f998a29ea92b"
+content-hash = "e911e49ab040b4826b5ca5542438cf01ca7ec764deffedfa186220fda29911f8"
