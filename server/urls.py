@@ -30,6 +30,7 @@ from server.apps.main.views import (
     resolve_event,
     users_count_badge,
     users_page,
+    delete_mailing,
 )
 
 admin.autodiscover()
@@ -65,6 +66,7 @@ urlpatterns = [
     path('api/v1/count-github-badge', users_count_badge, name='users_count_badge'),
     path('mailings', login_required(MailingsView.as_view()), name='mailings'),
     path('mailings/new', login_required(new_mailing), name='new_mailing'),
+    path('mailings/<str:mailing_id>/delete', login_required(delete_mailing), name='delete_mailing'),
     path('failed-events/<str:event_id>/resolved', login_required(resolve_event), name='resolve_event'),
     path('failed-events', login_required(failed_events), name='failed_events'),
 ]

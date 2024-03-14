@@ -1,3 +1,4 @@
+import random
 import json
 from itertools import cycle, islice
 
@@ -43,7 +44,7 @@ def mailings(mixer, user):
     mailings = mixer.cycle(5).blend('main.Mailing')
     mixer.cycle(40).blend(
         'main.Message',
-        message_json={},
+        message_json=({'chat': {'id': random.randint(1000, 9999)}} for _ in range(40)),
         mailing=(x for x in islice(cycle(mailings), 40)),
         from_id=user.chat_id,
     )
@@ -79,3 +80,10 @@ def test_create_mailing(client, event_reader):
         'text': 'Hello',
         'group': 'admins',
     }
+
+
+
+def test_delete_mailing(client, mailings):
+    response = client.get('/mailings/{0}/delete'.format(mailings[0].mailing_id))
+
+    assert response.status_code == 200
