@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.db import connection
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -35,17 +36,7 @@ def _rabbit_channel() -> pika.channel.Channel:
 
 
 def _publish_event(queue_name: str, event_name: str, event_version: int, event_data: dict) -> None:  # type: ignore [type-arg]
-    connection = pika.BlockingConnection(
-        pika.URLParameters(
-            'amqp://{0}:{1}@{2}:5672/{3}'.format(
-                settings.RABBITMQ_USER,
-                settings.RABBITMQ_PASS,
-                settings.RABBITMQ_HOST,
-                settings.RABBITMQ_VHOST,
-            ),
-        ),
-    )
-    channel = connection.channel()
+    channel = _rabbit_channel()
     channel.basic_publish(
         exchange='',
         routing_key=queue_name,
@@ -420,3 +411,27 @@ def resolve_event(request: HttpRequest, event_id: str) -> HttpResponse:
             'bodies': bodies,
         },
     )
+
+
+def delete_mailing(request: HttpRequest, mailing_id: str) -> HttpResponse:
+    """Удаление рассылки."""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            '\n'.join([
+                "SELECT msg.message_json->'chat'->'id', msg.message_id",
+                'FROM mailings AS m',
+                'LEFT JOIN messages AS msg ON msg.mailing_id = m.mailing_id',
+                "WHERE m.mailing_id = '{0}'".format(mailing_id),
+            ]),
+        )
+        for chat_id, message_id in cursor.fetchall():
+            _publish_event(
+                'quranbot.messages',
+                'Messages.Deleted',
+                2,
+                {
+                    'message_id': int(message_id),
+                    'chat_id': int(chat_id),
+                },
+            )
+    return HttpResponse('Mailing {0} deleted'.format(mailing_id))

@@ -1,11 +1,12 @@
 {% load build_url %}
 
-<div id="users-list">
+<div id="mailings-list">
   <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Кол-во доставленных сообщений</th>
+        <th scope="col">Удалить</th>
       </tr>
     </thead>
     <tbody>
@@ -13,6 +14,12 @@
         <tr>
           <th scope="row">{{ mailing.mailing_id }}</th>
           <td>{{ mailing.message_set.count }}</td>
+          <td>
+            <a class="btn btn-danger"
+               href="{% url 'delete_mailing' mailing.mailing_id %}"
+               hx-get="{% url 'delete_mailing' mailing.mailing_id %}"
+               hx-target="#mailings-list">Удалить</a>
+          </td>
         </tr>
       {% endfor %}
     </tbody>
