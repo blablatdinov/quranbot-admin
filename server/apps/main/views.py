@@ -8,10 +8,10 @@ import uuid
 import attrs
 import pika
 from django.conf import settings
-from django.db import connection
 from django.contrib.auth import authenticate, login
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.db import connection
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -413,16 +413,17 @@ def resolve_event(request: HttpRequest, event_id: str) -> HttpResponse:
     )
 
 
-def delete_mailing(request, mailing_id):
-    # message_chat_ids = Mailing.objects.get(mailing_id=mailing_id).message_set.values_list('message_id', 'chat_id')
+def delete_mailing(request: HttpRequest, mailing_id: str) -> HttpResponse:
+    """Удаление рассылки."""
     with connection.cursor() as cursor:
-        cursor.execute('\n'.join([
-            "SELECT msg.message_json->'chat'->'id', msg.message_id",
-            'FROM mailings AS m',
-            'LEFT JOIN messages AS msg ON msg.mailing_id = m.mailing_id',
-            "WHERE m.mailing_id = '{0}'".format(mailing_id),
-        ]))
-        chnl = _rabbit_channel()
+        cursor.execute(
+            '\n'.join([
+                "SELECT msg.message_json->'chat'->'id', msg.message_id",
+                'FROM mailings AS m',
+                'LEFT JOIN messages AS msg ON msg.mailing_id = m.mailing_id',
+                "WHERE m.mailing_id = '{0}'".format(mailing_id),
+            ]),
+        )
         for chat_id, message_id in cursor.fetchall():
             _publish_event(
                 'quranbot.messages',

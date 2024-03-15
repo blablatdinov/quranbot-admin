@@ -21,6 +21,7 @@ from server.apps.main.views import (
     MailingsView,
     ayats_page,
     days,
+    delete_mailing,
     failed_events,
     index,
     landing,
@@ -30,7 +31,6 @@ from server.apps.main.views import (
     resolve_event,
     users_count_badge,
     users_page,
-    delete_mailing,
 )
 
 admin.autodiscover()
