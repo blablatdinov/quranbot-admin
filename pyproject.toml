@@ -62,7 +62,7 @@ polint = "0.4"
 dennis = "1.1.0"
 dump-env = "1.4.0"
 ipython = "8.22.2"
-ruff = "0.3.3"
+ruff = "0.3.4"
 deltaver = "0.2.1"
 mixer = "7.2.2"
 
