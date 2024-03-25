@@ -35,7 +35,7 @@ django-migration-linter = "5.0.0"
 django-extra-checks = "0.14.0"
 nplusone = "1.0.0"
 
-wemake-python-styleguide = "0.18.0"
+wemake-python-styleguide = "0.19.0"
 flake8-pytest-style = "1.7.2"
 # flake8-django = "^1.4"
 flake8-logging-format = "0.9.0"
