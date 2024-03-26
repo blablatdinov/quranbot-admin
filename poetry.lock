@@ -3587,13 +3587,13 @@ files = [
 
 [[package]]
 name = "wemake-python-styleguide"
-version = "0.19.0"
+version = "0.19.2"
 description = "The strictest and most opinionated python linter ever"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "wemake_python_styleguide-0.19.0-py3-none-any.whl", hash = "sha256:1b150abbb098bca86eb0f478e751399dc50d656a4252d680556fa3a32e502dcd"},
-    {file = "wemake_python_styleguide-0.19.0.tar.gz", hash = "sha256:7a5276010286430b484cc88efdd6ee075ef2e1f44986664effa54a05192ef8f6"},
+    {file = "wemake_python_styleguide-0.19.2-py3-none-any.whl", hash = "sha256:d53205dbb629755026d853d15fb3ca03ebb2717c97de4198b5676b9bdc0663bd"},
+    {file = "wemake_python_styleguide-0.19.2.tar.gz", hash = "sha256:850fe70e6d525fd37ac51778e552a121a489f1bd057184de96ffd74a09aef414"},
 ]
 
 [package.dependencies]
@@ -3653,4 +3653,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e95223139ba61e667b32e10a79f88c61cf5ef4d7f7af3b376ef564a6e81d1fd4"
+content-hash = "15160d232a7a95599d264e7015cc607f0561c4128f964af5a8157dd81ebe3f65"
