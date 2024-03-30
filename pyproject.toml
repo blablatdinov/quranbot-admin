@@ -31,7 +31,7 @@ django-redis = "^5.4.0"
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "4.3.0"
 django-querycount = "0.8.3"
-django-migration-linter = "5.0.0"
+django-migration-linter = "5.1.0"
 django-extra-checks = "0.14.0"
 nplusone = "1.0.0"
 
