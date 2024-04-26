@@ -42,7 +42,7 @@ flake8-logging-format = "0.9.0"
 nitpick = "0.35.0"
 doc8 = "1.1.1"
 
-pytest = "8.1.1"
+pytest = "8.1.2"
 pytest-django = "4.8.0"
 pytest-cov = "4.1.0"
 covdefaults = "2.3.0"
