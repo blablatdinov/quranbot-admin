@@ -65,6 +65,7 @@ ipython = "8.22.2"
 ruff = "0.3.2"
 deltaver = "0.2.1"
 mixer = "7.2.2"
+pytest-playwright = "0.4.4"
 
 [build-system]
 requires = ["poetry-core>=1.6"]
