@@ -63,7 +63,7 @@ dennis = "1.1.0"
 dump-env = "1.5.0"
 ipython = "8.24.0"
 ruff = "0.4.5"
-deltaver = "0.2.1"
+deltaver = "0.2.2"
 mixer = "7.2.2"
 
 [build-system]
