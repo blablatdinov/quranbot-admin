@@ -1,9 +1,9 @@
 ---
 name: Deploy
-"on":
+
+on:
   push:
-    branches:
-      - master
+    tags: "*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
