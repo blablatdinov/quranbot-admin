@@ -15,7 +15,7 @@ django-csp = "3.8"
 django-health-check = "3.18.3"
 django-http-referrer-policy = "1.1.1"
 django-permissions-policy = "4.20.0"
-django-stubs-ext = "4.2.7"
+django-stubs-ext = "5.0.2"
 
 psycopg2-binary = "2.9.9"
 gunicorn = "22.0.0"
