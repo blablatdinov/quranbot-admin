@@ -15,7 +15,7 @@ permissions:
 jobs:
   check:
     env:
-      TZ: "Europe/Moscow"
+      TZ: "Europe/Moscowupdate your CHANGELOG.md with new version entries and release dates"
     runs-on: ubuntu-latest
     services:
       postgres:
