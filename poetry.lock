@@ -807,13 +807,13 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-extra-checks"
-version = "0.14.0"
+version = "0.15.1"
 description = "Collection of useful checks for Django Checks Framework"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_extra_checks-0.14.0-py3-none-any.whl", hash = "sha256:3e0d7413bac22eae7c26bf1b1be4eb7c7e5b86eb7eaa3f9c546c910553f6fbcf"},
-    {file = "django_extra_checks-0.14.0.tar.gz", hash = "sha256:1f3436d485ef23b0836afc6d7447b53bd64a088ba0a1a617d9500e876548fb77"},
+    {file = "django_extra_checks-0.15.1-py3-none-any.whl", hash = "sha256:3e724a76285331ca42cf340f94cea82cef99ebfe435ec27831b5edddcc9d5bcb"},
+    {file = "django_extra_checks-0.15.1.tar.gz", hash = "sha256:9a9ceba3d2c405cbf01fef718c46fbbdba46d3b402767869a05fe57684fc716d"},
 ]
 
 [package.extras]
@@ -3730,4 +3730,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "a09ab0a10aca47fb4726377039a66c185c22b31c4d30f41a83fb7c51b4070d9b"
+content-hash = "0cc9cc39a6590108faf113796bf7b1e9b9b52a338353f4eef640fcc2f1840b78"

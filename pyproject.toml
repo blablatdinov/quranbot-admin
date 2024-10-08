@@ -32,7 +32,7 @@ django-redis = "^5.4.0"
 django-debug-toolbar = "4.4.3"
 django-querycount = "0.8.3"
 django-migration-linter = "5.1.0"
-django-extra-checks = "0.14.0"
+django-extra-checks = "0.15.1"
 nplusone = "1.0.0"
 
 wemake-python-styleguide = "0.19.2"
