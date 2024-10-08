@@ -19,7 +19,7 @@ def fake_generator() -> Generator[int, None, None]:
         yield 1
 
 
-@pytest.fixture()
+@pytest.fixture
 def event_publisher():
     def _event_publisher(queue_name, event_data):
         connection = pika.BlockingConnection(
@@ -45,7 +45,7 @@ def event_publisher():
     return _event_publisher
 
 
-@pytest.fixture()
+@pytest.fixture
 def user(mixer):
     return mixer.blend(User, referrer_id=None)
 

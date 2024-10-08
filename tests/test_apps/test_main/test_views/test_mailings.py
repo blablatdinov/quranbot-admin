@@ -9,7 +9,7 @@ from django.conf import settings
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def event_reader():
     connection = pika.BlockingConnection(
         pika.URLParameters(
@@ -34,12 +34,12 @@ def event_reader():
     return _event_reader
 
 
-@pytest.fixture()
+@pytest.fixture
 def user(mixer):
     return mixer.blend('main.User', referrer_id=None)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mailings(mixer, user):
     mailings = mixer.cycle(5).blend('main.Mailing')
     mixer.cycle(40).blend(

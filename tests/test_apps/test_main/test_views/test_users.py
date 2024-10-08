@@ -8,7 +8,7 @@ from server.apps.main.models import User
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def users(mixer):
     return mixer.cycle(130).blend(User, referrer_id=None)
 

@@ -19,22 +19,22 @@ pytest_plugins = [
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def mixer():
     return mixer_
 
 
-@pytest.fixture()
+@pytest.fixture
 def anon():
     return Client()
 
 
-@pytest.fixture()
+@pytest.fixture
 def user(mixer):
     return mixer.blend('main.User', is_active=True, is_superuser=True, referrer_id=None)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(anon, user):
     anon.force_login(user)
     return anon

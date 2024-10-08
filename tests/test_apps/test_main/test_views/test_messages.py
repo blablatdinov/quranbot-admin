@@ -5,7 +5,7 @@ import pytest
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def messages(mixer, faker):
     return mixer.cycle(20).blend(
         'main.Message',

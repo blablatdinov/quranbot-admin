@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def ayats(mixer):
     return mixer.cycle(230).blend('main.Ayat')
 

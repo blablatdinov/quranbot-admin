@@ -6,7 +6,6 @@ from django.test import Client
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.mark.django_db()
 def test_health_check(anon: Client) -> None:
     """This test ensures that health check is accessible."""
     response = anon.get('/health/')

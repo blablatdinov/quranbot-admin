@@ -6,12 +6,12 @@ from server.apps.main.models import Ayat
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def nullday_ayats(mixer):
     return mixer.cycle(8).blend('main.Ayat', day=None)
 
 
-@pytest.fixture()
+@pytest.fixture
 def ayats(mixer):
     return mixer.cycle(20).blend('main.Ayat')
 

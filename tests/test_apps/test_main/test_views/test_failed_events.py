@@ -8,7 +8,7 @@ from django.conf import settings
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _failed_events():
     connection = pika.BlockingConnection(
         pika.URLParameters(
