@@ -17,7 +17,7 @@ django-http-referrer-policy = "1.1.1"
 django-permissions-policy = "4.21.0"
 django-stubs-ext = "5.1.0"
 
-psycopg2-binary = "2.9.9"
+psycopg2-binary = "2.9.10"
 gunicorn = "23.0.0"
 python-decouple = "3.8"
 structlog = "24.4.0"
