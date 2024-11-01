@@ -916,18 +916,18 @@ test = ["coverage (>=7.2.7)", "django-add-default-value (>=0.4.0)", "mysqlclient
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.21.0"
+version = "4.23.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "django_permissions_policy-4.21.0-py3-none-any.whl", hash = "sha256:9ec1edd028d8f4ea0cc9c1f44ad0c8c3339aec3aa796e40630dd3c3875f3b50e"},
-    {file = "django_permissions_policy-4.21.0.tar.gz", hash = "sha256:233f5de198ba8f4ee85ba9ffd5dacfd02c9d661bdaf11e91eb45ae02e6f0e915"},
+    {file = "django_permissions_policy-4.23.0-py3-none-any.whl", hash = "sha256:54e67d50fce3f93e5288e0e56a4292731b5dd1afe8c1322ec001b236eb21ecbe"},
+    {file = "django_permissions_policy-4.23.0.tar.gz", hash = "sha256:11a9b481bb0cfe5925534f2edd7ce1307a4ed81d1e33c59f6b8fddb511badf74"},
 ]
 
 [package.dependencies]
 asgiref = ">=3.6"
-django = ">=3.2"
+django = ">=4.2"
 
 [[package]]
 name = "django-querycount"
@@ -3886,4 +3886,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "53645e39e11fa529608061d3a4aaf684fb0708d389dc99efe19e353c14cf3a4e"
+content-hash = "572fd1754c920ede904b908753138bb4d2dfb69edff99c6ff3d7b27f9e3ed154"
