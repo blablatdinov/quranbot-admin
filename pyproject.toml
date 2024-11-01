@@ -125,7 +125,9 @@ ignore = [
   "TD",      # "todo" formats
   "PLR630",  # We not respect staticmethods
   "TCH003",  # type checing block
-  "G001"     # Logging statement uses `str.format`
+  "G001",    # Logging statement uses `str.format`
+  "DOC201",  # `return` is not documented in docstrin
+  "DOC501",  # Raised exception `UnreachebleCaseError` missing from docstring
 ]
 
 [tool.ruff.lint.flake8-quotes]
