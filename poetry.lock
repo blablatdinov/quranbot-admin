@@ -750,13 +750,13 @@ tests = ["check-manifest (>=0.42)", "mock (>=1.3.0)", "pytest (==5.4.3)", "pytes
 
 [[package]]
 name = "django"
-version = "5.1.1"
+version = "5.1.4"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "Django-5.1.1-py3-none-any.whl", hash = "sha256:71603f27dac22a6533fb38d83072eea9ddb4017fead6f67f2562a40402d61c3f"},
-    {file = "Django-5.1.1.tar.gz", hash = "sha256:021ffb7fdab3d2d388bc8c7c2434eb9c1f6f4d09e6119010bbb1694dda286bc2"},
+    {file = "Django-5.1.4-py3-none-any.whl", hash = "sha256:236e023f021f5ce7dee5779de7b286565fdea5f4ab86bae5338e3f7b69896cf0"},
+    {file = "Django-5.1.4.tar.gz", hash = "sha256:de450c09e91879fa5a307f696e57c851955c910a438a35e6b4c895e86bedc82a"},
 ]
 
 [package.dependencies]
@@ -3886,4 +3886,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "53645e39e11fa529608061d3a4aaf684fb0708d389dc99efe19e353c14cf3a4e"
+content-hash = "b29db2bb001f9309125b8b9571a776082002c208e87ce9d47ee2afe323201c52"
