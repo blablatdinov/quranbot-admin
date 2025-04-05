@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+
+  compose-setup:
+    cmds:
+      - docker compose build
+
+  compose-run:
+    cmds:
+      - docker compose run project poetry run python manage.py runserver
+
+  compose-bash:
+    cmds:
+      - docker compose run project bash
+
+  compose-test:
+    cmds:
+      - docker compose run project task test
+
+  compose-lint:
+    cmds:
+      - docker compose run project task lint
+
+  test:
+    cmds:
+      - poetry run pytest
+
+  fmt:
+    cmds:
+      - poetry run ruff format
+      - poetry run ruff check --fix --unsafe-fixes
+
+  lint:
+    cmds:
+      - poetry run ruff check

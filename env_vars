@@ -1,0 +1,3 @@
+DATABASE_URL=psql://admin:admin@postgres:5432/project
+DEBUG=on
+TOOLBAR=on

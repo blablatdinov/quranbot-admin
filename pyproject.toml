@@ -1,0 +1,65 @@
+[tool.poetry]
+name = "django-templates-boilerplate"
+version = "0.1.0"
+description = ""
+authors = ["Almaz Ilaletdinov <a.ilaletdinov@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+Django = "5.1.4"
+djangorestframework = "3.15.2"
+djangorestframework-simplejwt = "5.3.1"
+drf-yasg = "1.21.8"
+django-split-settings = "1.3.2"
+django-environ = "0.11.2"
+Pillow = "11.0.0"
+psycopg2-binary = "2.9.10"
+
+[tool.poetry.dev-dependencies]
+isort = "5.13.2"
+django-debug-toolbar = "4.4.6"
+pytest-django = "4.9.0"
+pytest = "8.3.4"
+ipython = "8.31.0"
+beautifulsoup4 = "4.12.3"
+model-bakery = "1.20.0"
+lxml = "5.3.0"
+ruff = "0.8.4"
+time-machine = "2.16.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+preview = true
+output-format = "concise"
+
+[tool.ruff.lint]
+select = ["ALL"]
+fixable = ["ALL"]
+ignore = [
+  "D",
+  "DOC",
+  "FIX",
+  "TD",
+  "CPY",
+  "ANN",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*" = ["RUF012", "E501"]
+"tests/*" = [
+  "S101",    # use of `assert` detected
+  "D",       # Docstrings
+  "ANN",     # Annotations
+  "PLR2004", # Magic value
+  "PLR0913", # Too many arguments to function call
+]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "double"
