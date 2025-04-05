@@ -1,5 +1,4 @@
 import pytest
-
 from blog.models import Post
 
 pytestmark = [pytest.mark.django_db]
