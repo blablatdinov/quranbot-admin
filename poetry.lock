@@ -718,13 +718,13 @@ typing-extensions = ">=4.9,<5.0"
 
 [[package]]
 name = "dennis"
-version = "1.1.0"
+version = "1.3.0"
 description = "Utilities for working with gettext PO and POT files to ease development and improve localization quality"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.10"
 files = [
-    {file = "dennis-1.1.0-py3-none-any.whl", hash = "sha256:305ec6531b49edaf0434cb19b5498b7d66870e229234672cfad6a95811b9d66c"},
-    {file = "dennis-1.1.0.tar.gz", hash = "sha256:8cfa89acbee5acd3e70714fbc45d9dc23446a2418624c17b1dcfdf0bdd33bbe0"},
+    {file = "dennis-1.3.0-py3-none-any.whl", hash = "sha256:f6f06ffc44bd95ff4a6f898f3da4e0972fa4faefd4e9eb835513dca76aa20bb6"},
+    {file = "dennis-1.3.0.tar.gz", hash = "sha256:48be916cb7471c55542470475a9e0a169d91c9b584fa289e85ccd8bccd53e3e9"},
 ]
 
 [package.dependencies]
@@ -3886,4 +3886,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "53645e39e11fa529608061d3a4aaf684fb0708d389dc99efe19e353c14cf3a4e"
+content-hash = "5b227cddd54a577905355253ccb9f8e31fa7211795298cc905ddad24298fbc16"
